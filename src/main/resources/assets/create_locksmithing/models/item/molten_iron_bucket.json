@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "create_locksmithing:item/molten_iron_bucket"
-  }
+  "parent": "neoforge:item/bucket_drip",
+  "loader": "neoforge:fluid_container",
+  "fluid": "create_locksmithing:molten_iron"
 }

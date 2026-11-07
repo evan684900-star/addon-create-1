@@ -152,8 +152,9 @@ public class ScreenshotTour {
 			BlockPos cutter = p.east(4);
 			level.setBlockAndUpdate(cutter, ModBlocks.KEY_CUTTER.getDefaultState()
 				.setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.SOUTH));
-			level.setBlockAndUpdate(cutter.north(), AllBlocks.CREATIVE_MOTOR.getDefaultState()
-				.setValue(CreativeMotorBlock.FACING, Direction.SOUTH));
+			// orientée sud : l'axe la traverse d'est en ouest, le moteur est à l'ouest
+			level.setBlockAndUpdate(cutter.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState()
+				.setValue(CreativeMotorBlock.FACING, Direction.EAST));
 			if (level.getBlockEntity(cutter) instanceof KeyCutterBlockEntity be)
 				be.getItemCapability().insertItem(0, ModItems.BLANK_KEY.asStack(4), false);
 			// Les 4 niveaux d'oxydation de la porte
@@ -179,6 +180,10 @@ public class ScreenshotTour {
 		STEPS.add(new Step(10, () -> shot(mc, "01_overview")));
 		STEPS.add(new Step(60, () -> teleport(mc, 3.2, -59.4, 3.2, 160f, 30f)));
 		STEPS.add(new Step(10, () -> shot(mc, "02_machines_close")));
+		STEPS.add(new Step(60, () -> teleport(mc, 2.5, -58.6, 1.6, 180f, 55f)));
+		STEPS.add(new Step(10, () -> shot(mc, "02b_casting_anvil_top")));
+		STEPS.add(new Step(60, () -> teleport(mc, 5.6, -59.2, 1.9, 150f, 35f)));
+		STEPS.add(new Step(10, () -> shot(mc, "02c_key_cutter")));
 		STEPS.add(new Step(60, () -> teleport(mc, 8.0, -59.0, 3.6, 180f, 10f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03_doors")));
 		STEPS.add(new Step(60, () -> teleport(mc, 6.5, -58.6, -2.5, 0f, 25f)));
@@ -226,7 +231,26 @@ public class ScreenshotTour {
 		STEPS.add(new Step(20, () -> mc.setScreen(new InventoryScreen(mc.player))));
 		STEPS.add(new Step(10, () -> shot(mc, "07_items")));
 
-		// 3. Les tutos Ponder
+		// 3. JEI
+		STEPS.add(new Step(40, () -> {
+			mc.setScreen(null);
+			var runtime = io.github.evan684900star.locksmithing.compat.jei.LocksmithingJeiPlugin.runtime;
+			if (runtime != null)
+				runtime.getRecipesGui().showTypes(java.util.List.of(
+					io.github.evan684900star.locksmithing.compat.jei.LocksmithingJeiPlugin.MELTING));
+		}));
+		STEPS.add(new Step(10, () -> shot(mc, "07b_jei_melting")));
+		STEPS.add(new Step(40, () -> {
+			var runtime = io.github.evan684900star.locksmithing.compat.jei.LocksmithingJeiPlugin.runtime;
+			if (runtime != null)
+				runtime.getRecipesGui().showTypes(java.util.List.of(
+					io.github.evan684900star.locksmithing.compat.jei.LocksmithingJeiPlugin.CASTING,
+					io.github.evan684900star.locksmithing.compat.jei.LocksmithingJeiPlugin.KEY_CUTTING));
+		}));
+		STEPS.add(new Step(10, () -> shot(mc, "07c_jei_casting")));
+		STEPS.add(new Step(10, () -> mc.setScreen(null)));
+
+		// 4. Les tutos Ponder
 		String[][] ponders = { { "pressed_plank", "08_ponder_compressed_wood" }, { "muffle_furnace", "09_ponder_muffle_furnace" },
 			{ "casting_anvil", "10_ponder_casting_anvil" }, { "key_cutter", "11_ponder_key_cutter" },
 			{ "armored_copper_door", "12_ponder_armored_door" } };

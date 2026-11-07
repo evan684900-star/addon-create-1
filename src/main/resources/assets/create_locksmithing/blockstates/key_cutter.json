@@ -1,17 +1,17 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=south": {
       "model": "create_locksmithing:block/key_cutter/block"
     },
-    "facing=east": {
+    "facing=west": {
       "model": "create_locksmithing:block/key_cutter/block",
       "y": 90
     },
-    "facing=south": {
+    "facing=north": {
       "model": "create_locksmithing:block/key_cutter/block",
       "y": 180
     },
-    "facing=west": {
+    "facing=east": {
       "model": "create_locksmithing:block/key_cutter/block",
       "y": 270
     }

@@ -2,20 +2,24 @@ package io.github.evan684900star.locksmithing.content.keycutter;
 
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nullable;
 
+import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 
 import io.github.evan684900star.locksmithing.recipe.KeyCuttingRecipe;
 import io.github.evan684900star.locksmithing.registry.ModDataComponents;
 import io.github.evan684900star.locksmithing.registry.ModMenus;
 import io.github.evan684900star.locksmithing.registry.ModRecipeTypes;
+import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
@@ -28,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
@@ -57,6 +62,8 @@ public class KeyCutterBlockEntity extends KineticBlockEntity implements MenuProv
 
 	private int selected = -1;
 	private int progress;
+	/** Vrai pendant la taille (synchronisé avec le client pour les étincelles). */
+	private boolean cutting;
 
 	final ContainerData dataAccess = new ContainerData() {
 		@Override
@@ -116,19 +123,27 @@ public class KeyCutterBlockEntity extends KineticBlockEntity implements MenuProv
 	@Override
 	public void tick() {
 		super.tick();
-		if (level == null || level.isClientSide)
+		if (level == null)
 			return;
+		if (level.isClientSide) {
+			if (cutting)
+				spawnSparks();
+			return;
+		}
 
 		RecipeHolder<KeyCuttingRecipe> recipe = getSelectedRecipe();
 		float speed = Math.abs(getSpeed());
 		if (recipe == null || speed == 0 || !canOutput(recipe.value().result())) {
 			progress = 0;
+			setCutting(false);
 			return;
 		}
 
+		setCutting(true);
 		progress += Mth.clamp((int) speed, 1, 512);
-		if (level.getGameTime() % 8 == 0)
-			level.playSound(null, worldPosition, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.15f, 1.6f);
+		if (level.getGameTime() % 20 == 0)
+			level.playSound(null, worldPosition, ModSounds.KEY_CUTTER_CUT.get(), SoundSource.BLOCKS, 0.5f,
+				0.9f + 0.2f * level.random.nextFloat());
 		if (progress < WORK)
 			return;
 
@@ -140,7 +155,32 @@ public class KeyCutterBlockEntity extends KineticBlockEntity implements MenuProv
 		ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
 		if (output.isEmpty())
 			inventory.setStackInSlot(SLOT_OUTPUT, key);
-		level.playSound(null, worldPosition, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 0.8f, 1.2f);
+		level.playSound(null, worldPosition, ModSounds.KEY_CUTTER_DONE.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
+	}
+
+	private void setCutting(boolean value) {
+		if (cutting == value)
+			return;
+		cutting = value;
+		sendData();
+	}
+
+	/** Étincelles là où la lame touche la clé. */
+	private void spawnSparks() {
+		if (level.random.nextFloat() > 0.4f)
+			return;
+		Direction facing = getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING);
+		Vec3 saw = Vec3.atCenterOf(worldPosition).add(KeyCutterBlock.sawOffset(facing));
+		Vec3 contact = saw.add(-facing.getStepX() * 0.3, -0.05, -facing.getStepZ() * 0.3);
+		level.addParticle(ParticleTypes.ELECTRIC_SPARK, contact.x, contact.y, contact.z,
+			(level.random.nextDouble() - 0.5) * 0.2 - facing.getStepX() * 0.1, 0.1 + level.random.nextDouble() * 0.1,
+			(level.random.nextDouble() - 0.5) * 0.2 - facing.getStepZ() * 0.1);
+	}
+
+	/** La clé à afficher sur l'enclume : celle en cours de taille, sinon celle qui vient d'être taillée. */
+	public ItemStack getDisplayedKey() {
+		ItemStack input = inventory.getStackInSlot(SLOT_INPUT);
+		return input.isEmpty() ? inventory.getStackInSlot(SLOT_OUTPUT) : input.copyWithCount(1);
 	}
 
 	private boolean canOutput(ItemStack result) {
@@ -173,6 +213,7 @@ public class KeyCutterBlockEntity extends KineticBlockEntity implements MenuProv
 		tag.put("Inventory", inventory.serializeNBT(registries));
 		tag.putInt("Selected", selected);
 		tag.putInt("Progress", progress);
+		tag.putBoolean("Cutting", cutting);
 	}
 
 	@Override
@@ -181,6 +222,7 @@ public class KeyCutterBlockEntity extends KineticBlockEntity implements MenuProv
 		inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
 		selected = tag.contains("Selected") ? tag.getInt("Selected") : -1;
 		progress = tag.getInt("Progress");
+		cutting = tag.getBoolean("Cutting");
 	}
 
 	/** Entonnoirs/trémies : clés vierges dedans, clés taillées dehors. */

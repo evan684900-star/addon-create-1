@@ -37,133 +37,184 @@ def ml(path):
 # ============================================================================================
 # Modèles et états de bloc
 # ============================================================================================
-def face(tex, cull=None, uv=None):
-    f = {"texture": tex}
-    if uv:
-        f["uv"] = uv
+# Rotations de l'enclume de Minecraft : le modèle est dessiné pour facing=south
+ANVIL_Y = {"south": 0, "west": 90, "north": 180, "east": 270}
+
+
+def f(tex, uv=None, rotation=None, cull=None):
+    out = {"texture": tex}
+    if uv is not None:
+        out["uv"] = uv
+    if rotation:
+        out["rotation"] = rotation
     if cull:
-        f["cullface"] = cull
-    return f
+        out["cullface"] = cull
+    return out
 
 
-def box(frm, to, tex="#side", up=None, down=None, faces=None, cull_down=False):
-    fs = {d: face(tex) for d in ("north", "south", "east", "west")}
-    fs["up"] = face(up or tex)
-    fs["down"] = face(down or tex, "down" if cull_down else None)
-    if faces:
-        fs.update(faces)
-    return {"from": frm, "to": to, "faces": fs}
+def vanilla_anvil_elements(with_top_face=True):
+    """Exactement les éléments de l'enclume de Minecraft (template_anvil), textures #body et #top."""
+    top_faces = {
+        "down": f("#body", [3, 0, 13, 16], 180),
+        "north": f("#body", [3, 0, 13, 6]),
+        "south": f("#body", [3, 0, 13, 6]),
+        "west": f("#body", [10, 0, 16, 16], 90),
+        "east": f("#body", [16, 0, 10, 16], 270),
+    }
+    if with_top_face:
+        top_faces["up"] = f("#top", [3, 0, 13, 16], 180)
+    return [
+        {"from": [2, 0, 2], "to": [14, 4, 14], "faces": {
+            "down": f("#body", [2, 2, 14, 14], 180, "down"),
+            "up": f("#body", [2, 2, 14, 14], 180),
+            "north": f("#body", [2, 12, 14, 16]),
+            "south": f("#body", [2, 12, 14, 16]),
+            "west": f("#body", [0, 2, 4, 14], 90),
+            "east": f("#body", [4, 2, 0, 14], 270)}},
+        {"from": [4, 4, 3], "to": [12, 5, 13], "faces": {
+            "up": f("#body", [4, 3, 12, 13], 180),
+            "north": f("#body", [4, 11, 12, 12]),
+            "south": f("#body", [4, 11, 12, 12]),
+            "west": f("#body", [4, 3, 5, 13], 90),
+            "east": f("#body", [5, 3, 4, 13], 270)}},
+        {"from": [6, 5, 4], "to": [10, 10, 12], "faces": {
+            "north": f("#body", [6, 6, 10, 11]),
+            "south": f("#body", [6, 6, 10, 11]),
+            "west": f("#body", [5, 4, 10, 12], 90),
+            "east": f("#body", [10, 4, 5, 12], 270)}},
+        {"from": [3, 10, 0], "to": [13, 16, 16], "faces": top_faces},
+    ]
 
 
-def anvil_model():
+def top_piece(x0, z0, x1, z1):
+    """Morceau plat du dessus de l'enclume, avec la même texture que l'enclume entière (sans raccord visible)."""
+    return {"from": [x0, 16, z0], "to": [x1, 16, z1],
+            "faces": {"up": f("#top", [16 - x0, 16 - z0, 16 - x1, 16 - z1])}}
+
+
+def casting_anvil_model():
+    """L'enclume de Minecraft avec un moule incrusté au milieu du dessus (creux : x 6..10, z 4..12, 2 px)."""
+    mold_up = lambda x0, z0, x1, z1: {"from": [x0, 16, z0], "to": [x1, 16, z1], "faces": {"up": f("#mold")}}
+    elements = vanilla_anvil_elements(with_top_face=False)
+    elements += [
+        # dessus de l'enclume autour du moule
+        top_piece(3, 0, 13, 3), top_piece(3, 13, 13, 16), top_piece(3, 3, 5, 13), top_piece(11, 3, 13, 13),
+        # bord du moule
+        mold_up(5, 3, 11, 4), mold_up(5, 12, 11, 13), mold_up(5, 4, 6, 12), mold_up(10, 4, 11, 12),
+        # parois intérieures du creux
+        {"from": [5, 14, 4], "to": [6, 16, 12], "faces": {"east": f("#mold")}},
+        {"from": [10, 14, 4], "to": [11, 16, 12], "faces": {"west": f("#mold")}},
+        {"from": [6, 14, 3], "to": [10, 16, 4], "faces": {"south": f("#mold")}},
+        {"from": [6, 14, 12], "to": [10, 16, 13], "faces": {"north": f("#mold")}},
+        # fond du creux (plaque de fer)
+        {"from": [6, 13, 4], "to": [10, 14, 12], "faces": {"up": f("#floor")}},
+    ]
     return {
         "parent": "minecraft:block/block",
         "textures": {
-            "particle": ml("block/casting_anvil_side"),
-            "side": ml("block/casting_anvil_side"),
-            "top": ml("block/casting_anvil_top"),
-            "cavity": ml("block/casting_anvil_cavity"),
+            "particle": "minecraft:block/anvil",
+            "body": "minecraft:block/anvil",
+            "top": "minecraft:block/anvil_top",
+            "mold": ml("block/mold_side"),
+            "floor": ml("block/mold_floor"),
         },
-        "elements": [
-            box([2, 0, 2], [14, 4, 14], up="#top", cull_down=True),
-            box([4, 4, 3], [12, 5, 13]),
-            box([6, 5, 4], [10, 10, 12]),
-            box([0, 10, 3], [16, 13, 13], up="#cavity"),
-            box([0, 13, 3], [16, 16, 6], up="#top", faces={"south": face("#cavity")}),
-            box([0, 13, 10], [16, 16, 13], up="#top", faces={"north": face("#cavity")}),
-            box([0, 13, 6], [4, 16, 10], up="#top", faces={"east": face("#cavity")}),
-            box([12, 13, 6], [16, 16, 10], up="#top", faces={"west": face("#cavity")}),
-        ],
+        "elements": elements,
     }
 
 
-def cutter_body_elements():
+def saw_supports():
+    """Deux petits supports en alliage d'andésite qui tiennent l'axe de la lame (au bout, côté sud)."""
     return [
-        box([2, 0, 2], [14, 4, 14], up="#top", cull_down=True),
-        box([5, 4, 3], [11, 10, 14]),
-        box([1, 10, 2], [15, 14, 14], up="#top"),
-        box([4, 14, 6], [7, 16, 10], up="#top"),
-        box([9, 14, 6], [12, 16, 10], up="#top"),
+        {"from": [6, 16, 10], "to": [7, 17, 12], "faces": {d: f("#mold") for d in ("north", "south", "east", "west", "up")}},
+        {"from": [9, 16, 10], "to": [10, 17, 12], "faces": {d: f("#mold") for d in ("north", "south", "east", "west", "up")}},
     ]
 
 
-def saw_elements(south=True):
-    """Lame + moyeu. Le modèle tournant est dessiné vers le SUD (convention de Create)."""
-    blade = [0, 0, 14.5], [16, 16, 15.5]
-    hub = [6.5, 6.5, 13], [9.5, 9.5, 16]
-    if not south:
-        blade = [0, 0, 0.5], [16, 16, 1.5]
-        hub = [6.5, 6.5, 0], [9.5, 9.5, 3]
+def saw_partial_elements():
+    """Lame (disque de 10 px) centrée dans le bloc, dessinée vers le SUD (axe Z) ; le code la place sur l'enclume."""
     full = [0, 0, 16, 16]
     return [
-        {"from": blade[0], "to": blade[1],
-         "faces": {"north": face("#saw", uv=full), "south": face("#saw", uv=full)}},
-        {"from": hub[0], "to": hub[1],
-         "faces": {d: face("#hub", uv=[0, 0, 3, 3]) for d in ("north", "south", "east", "west", "up", "down")}},
+        {"from": [3, 3, 7.5], "to": [13, 13, 8.5],
+         "faces": {"north": f("#saw", full), "south": f("#saw", full)}},
+        {"from": [7, 7, 7], "to": [9, 9, 9],
+         "faces": {d: f("#hub", [0, 0, 2, 2]) for d in ("north", "south", "east", "west", "up", "down")}},
     ]
-
-
-CUTTER_TEXTURES = {
-    "particle": ml("block/casting_anvil_side"),
-    "side": ml("block/casting_anvil_side"),
-    "top": ml("block/key_cutter_top"),
-    "saw": ml("block/key_cutter_saw"),
-    "hub": ml("block/key_cutter_hub"),
-}
 
 
 def models():
     m = os.path.join(ASSETS, "models")
     bs = os.path.join(ASSETS, "blockstates")
 
+    def anvil_states(model):
+        return {"variants": {
+            f"facing={fa}": ({"model": model, "y": y} if y else {"model": model}) for fa, y in ANVIL_Y.items()}}
+
     # Enclume de moulage
-    write_json(os.path.join(m, "block", "casting_anvil.json"), anvil_model())
-    write_json(os.path.join(bs, "casting_anvil.json"), {"variants": {
-        f"facing={f}": {"model": ml("block/casting_anvil"), "y": y} if y else {"model": ml("block/casting_anvil")}
-        for f, y in FACING_Y.items()}})
+    write_json(os.path.join(m, "block", "casting_anvil.json"), casting_anvil_model())
+    write_json(os.path.join(bs, "casting_anvil.json"), anvil_states(ml("block/casting_anvil")))
     write_json(os.path.join(m, "item", "casting_anvil.json"), {"parent": ml("block/casting_anvil")})
 
-    # Machine à tailler les clés : corps fixe + lame tournante (modèle partiel)
+    # Machine à tailler les clés : enclume de Minecraft + supports ; l'axe et la lame tournent (rendu à part)
+    textures = {
+        "particle": "minecraft:block/anvil",
+        "body": "minecraft:block/anvil",
+        "top": "minecraft:block/anvil_top",
+        "mold": ml("block/mold_side"),
+        "saw": ml("block/key_cutter_saw"),
+        "hub": ml("block/key_cutter_hub"),
+    }
     write_json(os.path.join(m, "block", "key_cutter", "block.json"), {
         "parent": "minecraft:block/block",
-        "textures": {k: v for k, v in CUTTER_TEXTURES.items() if k in ("particle", "side", "top")},
-        "elements": cutter_body_elements(),
+        "textures": {k: v for k, v in textures.items() if k not in ("saw", "hub")},
+        "elements": vanilla_anvil_elements() + saw_supports(),
     })
     write_json(os.path.join(m, "block", "key_cutter", "saw.json"), {
         "render_type": "minecraft:cutout",
         "textures": {"particle": ml("block/key_cutter_saw"), "saw": ml("block/key_cutter_saw"),
                      "hub": ml("block/key_cutter_hub")},
-        "elements": saw_elements(south=True),
+        "elements": saw_partial_elements(),
     })
+    # Objet : la lame est figée à sa place (axe X, centre x 8, y 15, z 11)
+    full = [0, 0, 16, 16]
+    item_saw = [
+        {"from": [7.5, 10, 6], "to": [8.5, 20, 16], "faces": {"east": f("#saw", full), "west": f("#saw", full)}},
+        {"from": [7, 14, 10], "to": [9, 16, 12], "faces": {d: f("#hub", [0, 0, 2, 2]) for d in ("north", "south", "east", "west", "up")}},
+    ]
     write_json(os.path.join(m, "item", "key_cutter.json"), {
         "parent": "minecraft:block/block",
         "render_type": "minecraft:cutout",
-        "textures": CUTTER_TEXTURES,
-        "elements": cutter_body_elements() + saw_elements(south=False),
+        "textures": textures,
+        "elements": vanilla_anvil_elements() + saw_supports() + item_saw,
     })
-    write_json(os.path.join(bs, "key_cutter.json"), {"variants": {
-        f"facing={f}": {"model": ml("block/key_cutter/block"), "y": y} if y else {"model": ml("block/key_cutter/block")}
-        for f, y in FACING_Y.items()}})
+    write_json(os.path.join(bs, "key_cutter.json"), anvil_states(ml("block/key_cutter/block")))
 
-    # Four à moufle
+    # Four à moufle : boîtier en cuivre de Create + bouche de four façon Minecraft (calque transparent)
     for lit in (False, True):
         name = "muffle_furnace_on" if lit else "muffle_furnace"
+        casing = "create:block/copper_casing"
+        cube = {d: f("#casing", cull=d) for d in ("north", "south", "east", "west", "up", "down")}
         write_json(os.path.join(m, "block", f"{name}.json"), {
-            "parent": "minecraft:block/orientable_with_bottom",
+            "parent": "minecraft:block/block",
+            "render_type": "minecraft:cutout",
             "textures": {
-                "top": ml("block/muffle_furnace_top"),
-                "bottom": ml("block/muffle_furnace_bottom"),
-                "side": ml("block/muffle_furnace_side"),
-                "front": ml(f"block/{name.replace('muffle_furnace', 'muffle_furnace_front')}"),
+                "particle": casing,
+                "casing": casing,
+                "front": ml("block/muffle_furnace_front_on" if lit else "block/muffle_furnace_front"),
+                "vent": ml("block/muffle_furnace_top"),
             },
+            "elements": [
+                {"from": [0, 0, 0], "to": [16, 16, 16], "faces": cube},
+                {"from": [0, 0, -0.01], "to": [16, 16, -0.01], "faces": {"north": f("#front", cull="north")}},
+                {"from": [0, 16.01, 0], "to": [16, 16.01, 16], "faces": {"up": f("#vent", cull="up")}},
+            ],
         })
     variants = {}
-    for f, y in FACING_Y.items():
+    for fa, y in FACING_Y.items():
         for lit in ("false", "true"):
             v = {"model": ml("block/muffle_furnace_on" if lit == "true" else "block/muffle_furnace")}
             if y:
                 v["y"] = y
-            variants[f"facing={f},lit={lit}"] = v
+            variants[f"facing={fa},lit={lit}"] = v
     write_json(os.path.join(bs, "muffle_furnace.json"), {"variants": variants})
     write_json(os.path.join(m, "item", "muffle_furnace.json"), {"parent": ml("block/muffle_furnace")})
 
@@ -204,8 +255,17 @@ def models():
     # Objets "plats"
     flat = ["pressed_plank", "compressed_wood", "mold", "saw_blade", "blank_key", "copper_key", "armored_copper_door"]
     flat += [f"{metal}_bar" for metal in METALS]
-    flat += [f"molten_{metal}_bucket" for metal in METALS]
-    flat += [f"molten_{metal}_bottle" for metal in METALS]
+    # Seaux et fioles : ceux de Minecraft, avec le métal en fusion dedans
+    for metal in METALS:
+        write_json(os.path.join(m, "item", f"molten_{metal}_bucket.json"), {
+            "parent": "neoforge:item/bucket_drip",
+            "loader": "neoforge:fluid_container",
+            "fluid": ml(f"molten_{metal}"),
+        })
+        write_json(os.path.join(m, "item", f"molten_{metal}_bottle.json"), {
+            "parent": "minecraft:item/generated",
+            "textures": {"layer0": "minecraft:item/potion_overlay", "layer1": "minecraft:item/potion"},
+        })
     for name in flat:
         write_json(os.path.join(m, "item", f"{name}.json"), {
             "parent": "minecraft:item/handheld" if name.endswith("_bar") else "minecraft:item/generated",
@@ -227,73 +287,75 @@ PONDER = {
     "compressed_wood": (
         ("Making Compressed Wood", "Fabriquer du bois compressé"),
         [
-            ("Any wooden plank pressed by a Mechanical Press becomes a Pressed Plank",
-             "N'importe quelle planche de bois passée sous une Presse mécanique devient une Planche pressée"),
-            ("Then, compacting 4 Pressed Planks in a Basin gives 1 Compressed Wood",
-             "Ensuite, compacter 4 Planches pressées dans un Bassin donne 1 Bois compressé"),
-            ("Compressed Wood is used to craft Armored Doors",
-             "Le bois compressé sert à fabriquer les portes blindées"),
+            ("Pressing any plank gives a Pressed Plank", "La presse aplatit n'importe quelle planche"),
+            ("4 Pressed Planks compacted in a Basin = 1 Compressed Wood",
+             "4 planches pressées compactées dans un bassin = 1 bois compressé"),
         ],
     ),
     "muffle_furnace": (
-        ("Melting Ingots in the Muffle Furnace", "Faire fondre des lingots dans le four à moufle"),
+        ("The Muffle Furnace", "Le four à moufle"),
         [
-            ("The Muffle Furnace has to sit on a lit Blaze Burner",
-             "Le four à moufle doit être posé sur un Brûleur à Blaze allumé"),
-            ("Right-click it with Iron, Gold, Copper or Zinc ingots to load them. Funnels and hoppers work too",
-             "Clic droit avec des lingots de fer, d'or, de cuivre ou de zinc pour les mettre dedans. Les entonnoirs et les entonnoirs de Minecraft marchent aussi"),
-            ("Each ingot melts into 90 mB of molten metal: exactly one bar",
-             "Chaque lingot fond en 90 mB de métal en fusion : exactement une barre"),
-            ("Collect it with an empty Bucket (1000 mB) or Glass Bottle (90 mB), or pump it out through pipes",
-             "Récupérez-le avec un seau vide (1000 mB) ou une fiole (90 mB), ou pompez-le avec des tuyaux"),
-            ("A superheated Blaze Burner melts twice as fast",
-             "Un Brûleur à Blaze surchauffé fait fondre deux fois plus vite"),
+            ("Needs a lit Blaze Burner below", "Il lui faut un Brûleur à Blaze allumé dessous"),
+            ("Right-click with ingots to load them", "Clic droit avec des lingots pour les charger"),
+            ("1 ingot = 90 mB of molten metal", "1 lingot = 90 mB de métal en fusion"),
+            ("Collect it with a Bucket, a Bottle or pipes", "Récupérez-le au seau, à la fiole ou avec des tuyaux"),
+            ("Superheated: twice as fast", "Surchauffé : deux fois plus rapide"),
         ],
     ),
     "casting_anvil": (
-        ("Casting Bars with the Casting Anvil", "Couler des barres avec l'enclume de moulage"),
+        ("The Casting Anvil", "L'enclume de moulage"),
         [
-            ("Right-click the Casting Anvil to open its interface",
-             "Clic droit sur l'enclume de moulage pour ouvrir son interface"),
-            ("Put a bucket or a bottle of molten metal in the left slot: it is poured into the mold",
-             "Mettez un seau ou une fiole de métal en fusion à gauche : il est versé dans le moule"),
-            ("Once it has cooled down, a bar comes out on the right. One bar uses 90 mB",
-             "Une fois refroidi, une barre sort à droite. Une barre utilise 90 mB"),
-            ("Fluid pipes can also fill the mold, and funnels can take the bars out",
-             "Les tuyaux peuvent aussi remplir le moule, et les entonnoirs peuvent sortir les barres"),
+            ("Right-click to open it", "Clic droit pour l'ouvrir"),
+            ("Bucket or bottle of molten metal on the left", "Seau ou fiole de métal en fusion à gauche"),
+            ("90 mB = 1 bar, out on the right", "90 mB = 1 barre, qui sort à droite"),
+            ("Pipes and funnels work too", "Les tuyaux et les entonnoirs marchent aussi"),
         ],
     ),
     "key_cutter": (
-        ("Cutting Keys", "Tailler des clés"),
+        ("The Key Cutter", "La machine à tailler les clés"),
         [
-            ("The Key Cutter needs rotational force, given to the shaft at its back",
-             "La machine à tailler les clés a besoin de rotation, donnée à l'axe à l'arrière"),
-            ("Right-click it, put a Blank Key in the left slot and choose the key to cut",
-             "Clic droit dessus, mettez une clé vierge à gauche et choisissez la clé à tailler"),
-            ("Every key that comes out is unique, even if two of them look the same",
-             "Chaque clé qui sort est unique, même si deux clés se ressemblent"),
-            ("The faster it spins, the faster keys are cut",
-             "Plus elle tourne vite, plus les clés sont taillées vite"),
+            ("Needs rotation through its shaft", "Il lui faut de la rotation par l'axe"),
+            ("Blank Key on the left, then pick the key", "Clé vierge à gauche, puis choisissez la clé"),
+            ("Every cut key is unique", "Chaque clé taillée est unique"),
+            ("Faster rotation, faster cutting", "Plus ça tourne vite, plus ça taille vite"),
         ],
     ),
     "armored_door": (
-        ("Locking an Armored Copper Door", "Verrouiller une porte en cuivre blindée"),
+        ("The Armored Copper Door", "La porte en cuivre blindée"),
         [
-            ("Armored Doors cannot be opened by hand, nor with redstone",
-             "Les portes blindées ne s'ouvrent ni à la main, ni avec de la redstone"),
-            ("The first cut key used on a door becomes its only key",
-             "La première clé taillée utilisée sur une porte devient sa seule clé"),
-            ("Any other key is refused, even another Copper Key",
-             "Toute autre clé est refusée, même une autre clé en cuivre"),
-            ("Breaking the door resets its lock. It takes 42 seconds with an Iron Axe, less with a better one",
-             "Casser la porte remet sa serrure à zéro. Il faut 42 secondes avec une hache en fer, moins avec une meilleure"),
-            ("Like copper, the door slowly oxidizes over time",
-             "Comme le cuivre, la porte s'oxyde petit à petit"),
-            ("Use a Honeycomb to wax it and keep its look. An Axe scrapes off wax and oxidation",
-             "Un rayon de miel la cire et garde son apparence. Une hache retire la cire et l'oxydation"),
+            ("No hand, no redstone: only a key", "Ni main, ni redstone : seulement une clé"),
+            ("The first key used becomes its key", "La première clé utilisée devient sa clé"),
+            ("Other keys are refused", "Les autres clés sont refusées"),
+            ("Breaking it resets the lock (42 s with an Iron Axe)",
+             "La casser remet la serrure à zéro (42 s à la hache en fer)"),
+            ("It oxidizes like copper", "Elle s'oxyde comme le cuivre"),
+            ("Honeycomb waxes it, an Axe scrapes it", "Le miel la cire, la hache la gratte"),
         ],
     ),
 }
+
+# Sons : nom de l'événement -> (fichiers, sous-titre EN, sous-titre FR)
+SOUNDS = {
+    "door.unlock": (["door_unlock"], "Lock opens", "Serrure qui s'ouvre"),
+    "door.lock": (["door_lock"], "Lock closes", "Serrure qui se ferme"),
+    "door.locked": (["door_locked"], "Door is locked", "Porte verrouillée"),
+    "key.bind": (["key_bind1", "key_bind2"], "Key fits the lock", "La clé s'adapte à la serrure"),
+    "key_cutter.cut": (["key_cutter_cut1", "key_cutter_cut2"], "Key Cutter grinds", "La machine taille une clé"),
+    "key_cutter.done": (["key_cutter_done"], "Key cut", "Clé taillée"),
+    "casting_anvil.hiss": (["casting_hiss1", "casting_hiss2", "casting_hiss3"], "Metal cools down", "Le métal refroidit"),
+    "casting_anvil.clink": (["casting_clink"], "Bar cast", "Barre coulée"),
+    "muffle_furnace.load": (["muffle_furnace_load"], "Ingots loaded", "Lingots chargés"),
+}
+
+
+def sounds_json():
+    out = {}
+    for event, (files, _, _) in SOUNDS.items():
+        out[event] = {
+            "subtitle": f"subtitles.{MOD}.{event}",
+            "sounds": [ml(name) for name in files],
+        }
+    write_json(os.path.join(ASSETS, "sounds.json"), out)
 
 
 def lang():
@@ -389,6 +451,27 @@ def lang():
     tip(f"item.{MOD}.blank_key",
         ("Cut it in a _Key Cutter_ to get a key.",
          "À tailler dans une _machine à tailler les clés_ pour obtenir une clé."), [])
+
+    # Sous-titres des sons
+    for event, (_, sub_en, sub_fr) in SOUNDS.items():
+        add(f"subtitles.{MOD}.{event}", sub_en, sub_fr)
+
+    # JEI
+    add(f"jei.{MOD}.melting", "Melting", "Fonte")
+    add(f"jei.{MOD}.casting", "Casting", "Moulage")
+    add(f"jei.{MOD}.key_cutting", "Key Cutting", "Taille de clé")
+    add(f"jei.{MOD}.heated", "Lit Blaze Burner", "Brûleur à Blaze allumé")
+    add(f"jei.{MOD}.rotation", "Needs rotation", "Rotation nécessaire")
+    add(f"jei.{MOD}.seconds", "%s s", "%s s")
+    add(f"jei.{MOD}.info.armored_door",
+        "Opens only with a cut key. The first key used on the door becomes its only key; breaking the door resets the lock. "
+        "Takes 42 seconds to break with an Iron Axe. Oxidizes like copper: wax it with a Honeycomb.",
+        "S'ouvre seulement avec une clé taillée. La première clé utilisée devient sa seule clé ; casser la porte remet "
+        "la serrure à zéro. 42 secondes pour la casser à la hache en fer. S'oxyde comme le cuivre : un rayon de miel la cire.")
+    add(f"jei.{MOD}.info.key",
+        "Cut in a Key Cutter. Every cut key is unique: the first one used on an Armored Door becomes its key.",
+        "Se taille dans la machine à tailler les clés. Chaque clé est unique : la première utilisée sur une porte "
+        "blindée devient sa clé.")
 
     # Tutos Ponder
     for scene, ((h_en, h_fr), texts) in PONDER.items():
@@ -643,9 +726,9 @@ def schematics():
     write_structure("casting_anvil", (5, 2, 5), b)
 
     b = floor()
-    # la lame regarde vers la caméra (nord), le moteur est derrière
+    # machine longue nord-sud (lame au bout nord), l'axe la traverse d'ouest en est : moteur à l'ouest
     b[(2, 1, 2)] = (ml("key_cutter"), {"facing": "north"})
-    b[(2, 1, 3)] = ("create:creative_motor", {"facing": "north"})
+    b[(1, 1, 2)] = ("create:creative_motor", {"facing": "east"})
     write_structure("key_cutter", (5, 2, 5), b)
 
     b = floor()
@@ -668,6 +751,7 @@ def gametest_structure():
 def main():
     models()
     lang()
+    sounds_json()
     recipes()
     loot()
     tags()

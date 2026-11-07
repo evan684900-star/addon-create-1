@@ -279,88 +279,6 @@ def blank_key():
     return img
 
 
-BUCKET_BODY = mask_from([
-    "................",
-    "................",
-    "................",
-    "..############..",
-    "..#..........#..",
-    "..############..",
-    "...##########...",
-    "...##########...",
-    "...##########...",
-    "....########....",
-    "....########....",
-    "....########....",
-    ".....######.....",
-    ".....######.....",
-    "................",
-    "................",
-])
-
-
-def bucket(molten):
-    img = shade(blank(), BUCKET_BODY, IRON)
-    px = img.load()
-    # bord du seau
-    for x in range(2, 14):
-        px[x, 3] = IRON[3]
-    # surface du métal en fusion (deux lignes, plus chaude au centre)
-    for x in range(3, 13):
-        px[x, 4] = molten[4] if 5 <= x <= 9 else molten[3]
-        px[x, 5] = molten[3] if 6 <= x <= 8 else molten[2]
-    px[2, 4] = IRON[2]
-    px[13, 4] = IRON[1]
-    px[2, 5] = IRON[2]
-    px[13, 5] = IRON[1]
-    # anse
-    for (x, y) in [(2, 2), (3, 1), (12, 1), (13, 2)]:
-        px[x, y] = IRON[1]
-    for x in range(4, 12):
-        px[x, 0] = IRON[1]
-    return img
-
-
-BOTTLE = mask_from([
-    "................",
-    "......####......",
-    "......####......",
-    ".......##.......",
-    ".......##.......",
-    "......####......",
-    ".....######.....",
-    "....########....",
-    "...##########...",
-    "...##########...",
-    "...##########...",
-    "...##########...",
-    "...##########...",
-    "....########....",
-    ".....######.....",
-    "................",
-])
-GLASS = [rgb("3d4f5c"), rgb("8fb3c7"), rgb("bcd6e4"), rgb("dceef7"), rgb("ffffff")]
-
-
-def bottle(molten):
-    img = blank()
-    px = img.load()
-    for (x, y) in BOTTLE:
-        if y <= 2:
-            px[x, y] = WOOD[2] if y == 1 else WOOD[1]  # bouchon
-        elif y >= 8 and (x, y - 1) in BOTTLE and (x, y + 1) in BOTTLE and (x - 1, y) in BOTTLE and (x + 1, y) in BOTTLE:
-            heat = molten[4] if (x in (6, 7) and y in (9, 10)) else molten[3] if y < 11 else molten[2]
-            px[x, y] = heat
-        elif (x, y - 1) in BOTTLE and (x - 1, y) in BOTTLE and (x + 1, y) in BOTTLE and (x, y + 1) in BOTTLE:
-            px[x, y] = (GLASS[2][0], GLASS[2][1], GLASS[2][2], 110)
-        else:
-            px[x, y] = GLASS[1]
-    px[5, 9] = GLASS[4]
-    px[5, 10] = GLASS[3]
-    shade_outline(img, BOTTLE, GLASS[0])
-    return img
-
-
 # --------------------------------------------------------------------------------------------
 # Porte en cuivre blindée
 # --------------------------------------------------------------------------------------------
@@ -434,138 +352,95 @@ def door_item():
 # --------------------------------------------------------------------------------------------
 # Blocs
 # --------------------------------------------------------------------------------------------
-def steel_frame(px, pal=IRON):
-    for i in range(16):
-        px[i, 0] = pal[3]
-        px[0, i] = pal[3]
-        px[i, 15] = pal[1]
-        px[15, i] = pal[1]
-    for (x, y) in [(1, 1), (14, 1), (1, 14), (14, 14)]:
-        px[x, y] = pal[4]
+STONE = [rgb("1c1c1f"), rgb("2c2c31"), rgb("3a3a40"), rgb("4a4a52"), rgb("5c5c66")]
+FIRE = [rgb("7a2a05"), rgb("c9520e"), rgb("f08a1c"), rgb("ffc23a"), rgb("fff2a0")]
 
 
-BRICK = [rgb("6b5a48"), rgb("b8a07c"), rgb("cdb894"), rgb("ddcaa6")]
-
-
-def refractory(px, x0, y0, x1, y1, seed):
-    rnd = random.Random(seed)
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            row = (y - y0) // 3
-            off = 0 if row % 2 == 0 else 3
-            mortar = (y - y0) % 3 == 2 or (x - x0 + off) % 6 == 5
-            px[x, y] = BRICK[0] if mortar else rnd.choice(BRICK[1:])
-
-
-def furnace_side():
-    img = Image.new("RGBA", (16, 16), IRON[2])
+def furnace_front_overlay(lit):
+    """Bouche de four façon Minecraft, posée par-dessus le boîtier en cuivre de Create (le reste est transparent)."""
+    img = blank()
     px = img.load()
-    refractory(px, 1, 1, 14, 14, 31)
-    steel_frame(px)
+    # linteau en pierre
+    for x in range(3, 13):
+        px[x, 3] = STONE[4]
+        px[x, 4] = STONE[3]
+    # ouverture voûtée
+    mouth = rect(4, 6, 11, 12) | rect(5, 5, 10, 5)
+    for (x, y) in mouth:
+        px[x, y] = STONE[0]
+    for y in range(5, 13):
+        px[3, y] = STONE[3]
+        px[12, y] = STONE[2]
+    px[4, 5] = STONE[3]
+    px[11, 5] = STONE[2]
+    # grille
+    for x in (6, 9):
+        for y in range(6, 9):
+            px[x, y] = STONE[2]
+    if lit:
+        flames = [
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "......2....2....",
+            ".....232..23....",
+            "....233322333...",
+            "....334343443...",
+            "....3444444443..",
+            "....44444444....",
+        ]
+        for y, row in enumerate(flames):
+            for x, c in enumerate(row):
+                if c != "." and (x, y) in mouth:
+                    px[x, y] = FIRE[int(c)]
+        for x in range(4, 12):
+            px[x, 12] = FIRE[4] if x % 3 else FIRE[3]
+    # sole en pierre
+    for x in range(3, 13):
+        px[x, 13] = STONE[4]
     return img
 
 
-def furnace_top():
-    img = Image.new("RGBA", (16, 16), IRON[2])
+def furnace_top_overlay():
+    """Grille d'aération sur le dessus."""
+    img = blank()
     px = img.load()
-    rnd = random.Random(32)
-    for y in range(16):
-        for x in range(16):
-            px[x, y] = IRON[2] if rnd.random() > 0.15 else IRON[3]
     for y in (4, 7, 10):
         for x in range(4, 12):
-            px[x, y] = rgb("141416")
-            px[x, y + 1] = IRON[1]
-    steel_frame(px)
+            px[x, y] = STONE[0]
+            px[x, y + 1] = STONE[3]
     return img
 
 
-def furnace_bottom():
-    img = Image.new("RGBA", (16, 16), IRON[1])
+def mold_side():
+    """Le moule (alliage d'andésite), incrusté dans l'enclume."""
+    img = Image.new("RGBA", (16, 16), ANDESITE[2])
     px = img.load()
-    steel_frame(px)
-    return img
-
-
-def furnace_front(lit):
-    img = furnace_side()
-    px = img.load()
-    # ouverture de la moufle (voûtée)
-    hole = rect(4, 6, 11, 12) | rect(5, 5, 10, 5)
-    rnd = random.Random(33)
-    for (x, y) in hole:
-        if lit:
-            heat = rnd.choice([MOLTEN["iron"][3], MOLTEN["iron"][4], MOLTEN["iron"][2]])
-            px[x, y] = heat if y > 7 else MOLTEN["iron"][2]
-        else:
-            px[x, y] = rgb("1a1210") if y < 10 else rgb("2b1a14")
-    for x in range(3, 13):
-        px[x, 13] = IRON[1]
-    for y in range(5, 13):
-        px[3, y] = IRON[3]
-        px[12, y] = IRON[1]
-    for x in range(4, 12):
-        px[x, 4] = IRON[3]
-    # le creuset
-    for x in range(6, 10):
-        px[x, 11] = BRICK[0] if not lit else rgb("6b2a10")
-        px[x, 12] = BRICK[0] if not lit else rgb("4a1a08")
-    return img
-
-
-def cast_iron(seed, light=False):
-    img = Image.new("RGBA", (16, 16), CAST_IRON[2])
-    px = img.load()
-    rnd = random.Random(seed)
+    rnd = random.Random(61)
     for y in range(16):
         for x in range(16):
             r = rnd.random()
-            c = CAST_IRON[2] if r > 0.25 else CAST_IRON[1] if r > 0.1 else CAST_IRON[3]
-            if light:
-                c = CAST_IRON[3] if r > 0.25 else CAST_IRON[2] if r > 0.1 else CAST_IRON[4]
-            px[x, y] = c
-    return img
-
-
-def anvil_side():
-    img = cast_iron(41)
-    px = img.load()
-    for x in range(16):
-        px[x, 0] = CAST_IRON[3]
-        px[x, 15] = CAST_IRON[0]
-    return img
-
-
-def anvil_top():
-    img = cast_iron(42, light=True)
-    px = img.load()
+            px[x, y] = ANDESITE[3] if r < 0.18 else ANDESITE[1] if r < 0.3 else ANDESITE[2]
     for i in range(16):
-        px[i, 0] = CAST_IRON[4]
-        px[0, i] = CAST_IRON[4]
+        px[i, 0] = ANDESITE[4]
     return img
 
 
-def anvil_cavity():
-    img = Image.new("RGBA", (16, 16), rgb("101113"))
+def mold_floor():
+    """Fond du moule : la plaque de fer de la recette."""
+    img = Image.new("RGBA", (16, 16), IRON[2])
     px = img.load()
-    rnd = random.Random(43)
+    rnd = random.Random(62)
     for y in range(16):
         for x in range(16):
-            if rnd.random() < 0.2:
-                px[x, y] = rgb("1d1e22")
-    return img
-
-
-def cutter_top():
-    img = cast_iron(44, light=True)
-    px = img.load()
-    for x in range(16):
-        px[x, 7] = CAST_IRON[1]
-        px[x, 8] = CAST_IRON[4]
-    for y in range(16):
-        if y % 4 == 0:
-            px[2, y] = CAST_IRON[1]
-            px[13, y] = CAST_IRON[1]
+            if rnd.random() < 0.15:
+                px[x, y] = IRON[1]
+    for (x, y) in [(1, 1), (14, 1), (1, 14), (14, 14)]:
+        px[x, y] = IRON[3]
     return img
 
 
@@ -885,9 +760,6 @@ def main():
     save(saw_blade(), "item", "saw_blade.png")
     save(blank_key(), "item", "blank_key.png")
     save(key(COPPER, True), "item", "copper_key.png")
-    for name, ramp in MOLTEN.items():
-        save(bucket(ramp), "item", f"molten_{name}_bucket.png")
-        save(bottle(ramp), "item", f"molten_{name}_bottle.png")
     save(door_item(), "item", "armored_copper_door.png")
 
     # Porte (4 niveaux d'oxydation)
@@ -896,18 +768,14 @@ def main():
         save(door_half(pal, False), "block", f"{prefix}armored_copper_door_bottom.png")
         save(door_half(pal, True), "block", f"{prefix}armored_copper_door_top.png")
 
-    # Four à moufle
-    save(furnace_side(), "block", "muffle_furnace_side.png")
-    save(furnace_top(), "block", "muffle_furnace_top.png")
-    save(furnace_bottom(), "block", "muffle_furnace_bottom.png")
-    save(furnace_front(False), "block", "muffle_furnace_front.png")
-    save(furnace_front(True), "block", "muffle_furnace_front_on.png")
+    # Four à moufle (par-dessus le boîtier en cuivre de Create)
+    save(furnace_front_overlay(False), "block", "muffle_furnace_front.png")
+    save(furnace_front_overlay(True), "block", "muffle_furnace_front_on.png")
+    save(furnace_top_overlay(), "block", "muffle_furnace_top.png")
 
-    # Enclume de moulage et machine à clés
-    save(anvil_side(), "block", "casting_anvil_side.png")
-    save(anvil_top(), "block", "casting_anvil_top.png")
-    save(anvil_cavity(), "block", "casting_anvil_cavity.png")
-    save(cutter_top(), "block", "key_cutter_top.png")
+    # Moule de l'enclume, lame de la machine à clés (le reste reprend les textures de l'enclume de Minecraft)
+    save(mold_side(), "block", "mold_side.png")
+    save(mold_floor(), "block", "mold_floor.png")
     save(saw_disc(), "block", "key_cutter_saw.png")
     save(hub(), "block", "key_cutter_hub.png")
 

@@ -1,0 +1,60 @@
+{
+  "door.unlock": {
+    "subtitle": "subtitles.create_locksmithing.door.unlock",
+    "sounds": [
+      "create_locksmithing:door_unlock"
+    ]
+  },
+  "door.lock": {
+    "subtitle": "subtitles.create_locksmithing.door.lock",
+    "sounds": [
+      "create_locksmithing:door_lock"
+    ]
+  },
+  "door.locked": {
+    "subtitle": "subtitles.create_locksmithing.door.locked",
+    "sounds": [
+      "create_locksmithing:door_locked"
+    ]
+  },
+  "key.bind": {
+    "subtitle": "subtitles.create_locksmithing.key.bind",
+    "sounds": [
+      "create_locksmithing:key_bind1",
+      "create_locksmithing:key_bind2"
+    ]
+  },
+  "key_cutter.cut": {
+    "subtitle": "subtitles.create_locksmithing.key_cutter.cut",
+    "sounds": [
+      "create_locksmithing:key_cutter_cut1",
+      "create_locksmithing:key_cutter_cut2"
+    ]
+  },
+  "key_cutter.done": {
+    "subtitle": "subtitles.create_locksmithing.key_cutter.done",
+    "sounds": [
+      "create_locksmithing:key_cutter_done"
+    ]
+  },
+  "casting_anvil.hiss": {
+    "subtitle": "subtitles.create_locksmithing.casting_anvil.hiss",
+    "sounds": [
+      "create_locksmithing:casting_hiss1",
+      "create_locksmithing:casting_hiss2",
+      "create_locksmithing:casting_hiss3"
+    ]
+  },
+  "casting_anvil.clink": {
+    "subtitle": "subtitles.create_locksmithing.casting_anvil.clink",
+    "sounds": [
+      "create_locksmithing:casting_clink"
+    ]
+  },
+  "muffle_furnace.load": {
+    "subtitle": "subtitles.create_locksmithing.muffle_furnace.load",
+    "sounds": [
+      "create_locksmithing:muffle_furnace_load"
+    ]
+  }
+}

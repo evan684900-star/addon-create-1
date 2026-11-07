@@ -1,9 +1,86 @@
 {
-  "parent": "minecraft:block/orientable_with_bottom",
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
   "textures": {
-    "top": "create_locksmithing:block/muffle_furnace_top",
-    "bottom": "create_locksmithing:block/muffle_furnace_bottom",
-    "side": "create_locksmithing:block/muffle_furnace_side",
-    "front": "create_locksmithing:block/muffle_furnace_front_on"
-  }
+    "particle": "create:block/copper_casing",
+    "casing": "create:block/copper_casing",
+    "front": "create_locksmithing:block/muffle_furnace_front_on",
+    "vent": "create_locksmithing:block/muffle_furnace_top"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#casing",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#casing",
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#casing",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#casing",
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#casing",
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#casing",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        -0.01
+      ],
+      "faces": {
+        "north": {
+          "texture": "#front",
+          "cullface": "north"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16.01,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#vent",
+          "cullface": "up"
+        }
+      }
+    }
+  ]
 }

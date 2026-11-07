@@ -138,12 +138,13 @@ public class LocksmithingGameTests {
 
 	@GameTest(template = "empty", timeoutTicks = 600)
 	public static void keyCutterCutsUniqueKeys(GameTestHelper helper) {
-		BlockPos motor = new BlockPos(2, 1, 1);
+		// Machine orientée nord : l'axe la traverse d'ouest en est, le moteur est à l'ouest
+		BlockPos motor = new BlockPos(1, 1, 2);
 		BlockPos cutter = new BlockPos(2, 1, 2);
 		helper.setBlock(cutter, ModBlocks.KEY_CUTTER.getDefaultState()
-			.setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.SOUTH));
+			.setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.NORTH));
 		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState()
-			.setValue(CreativeMotorBlock.FACING, Direction.SOUTH));
+			.setValue(CreativeMotorBlock.FACING, Direction.EAST));
 		KeyCutterBlockEntity be = helper.getBlockEntity(cutter);
 		be.getItemCapability().insertItem(0, ModItems.BLANK_KEY.asStack(2), false);
 		UUID[] first = new UUID[1];

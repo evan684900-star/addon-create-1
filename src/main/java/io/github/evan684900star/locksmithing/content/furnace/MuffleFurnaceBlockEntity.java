@@ -14,6 +14,7 @@ import io.github.evan684900star.locksmithing.Locksmithing;
 import io.github.evan684900star.locksmithing.content.fluid.FluidContainers;
 import io.github.evan684900star.locksmithing.recipe.MeltingRecipe;
 import io.github.evan684900star.locksmithing.registry.ModRecipeTypes;
+import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -180,6 +181,7 @@ public class MuffleFurnaceBlockEntity extends SmartBlockEntity implements IHaveG
 				ItemStack remainder = inventory.insertItem(0, stack.copy(), false);
 				if (!player.getAbilities().instabuild)
 					player.setItemInHand(hand, remainder);
+				level.playSound(null, worldPosition, ModSounds.FURNACE_LOAD.get(), SoundSource.BLOCKS, 0.7f, 1f);
 			}
 			return ItemInteractionResult.sidedSuccess(level != null && level.isClientSide);
 		}

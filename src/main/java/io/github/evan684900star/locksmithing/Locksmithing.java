@@ -17,6 +17,7 @@ import io.github.evan684900star.locksmithing.registry.ModFluids;
 import io.github.evan684900star.locksmithing.registry.ModItems;
 import io.github.evan684900star.locksmithing.registry.ModMenus;
 import io.github.evan684900star.locksmithing.registry.ModRecipeTypes;
+import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +45,7 @@ public class Locksmithing {
 		ModCreativeTabs.register(modEventBus);
 		ModDataComponents.register(modEventBus);
 		ModRecipeTypes.register(modEventBus);
+		ModSounds.register(modEventBus);
 
 		ModFluids.register();
 		ModBlocks.register();

@@ -14,6 +14,7 @@ import io.github.evan684900star.locksmithing.content.fluid.FluidContainers;
 import io.github.evan684900star.locksmithing.recipe.CastingRecipe;
 import io.github.evan684900star.locksmithing.registry.ModMenus;
 import io.github.evan684900star.locksmithing.registry.ModRecipeTypes;
+import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -209,7 +210,8 @@ public class CastingAnvilBlockEntity extends SmartBlockEntity implements MenuPro
 			grown.grow(result.getCount());
 			inventory.setStackInSlot(SLOT_OUTPUT, grown);
 		}
-		level.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.4f);
+		level.playSound(null, worldPosition, ModSounds.CASTING_HISS.get(), SoundSource.BLOCKS, 0.6f, 1f);
+		level.playSound(null, worldPosition, ModSounds.CASTING_CLINK.get(), SoundSource.BLOCKS, 0.7f, 1f);
 	}
 
 	/** Pour les tutos Ponder : affiche directement un contenu dans le moule. */

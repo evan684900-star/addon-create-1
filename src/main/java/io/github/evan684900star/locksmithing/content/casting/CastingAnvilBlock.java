@@ -24,21 +24,21 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** Enclume de moulage : une enclume avec un moule creusé au milieu. Clic droit = interface. */
+/** Enclume de moulage : l'enclume de Minecraft avec un moule incrusté au milieu. Clic droit = interface. */
 public class CastingAnvilBlock extends HorizontalDirectionalBlock implements IBE<CastingAnvilBlockEntity>, IWrenchable {
 	public static final MapCodec<CastingAnvilBlock> CODEC = simpleCodec(CastingAnvilBlock::new);
 
-	// Forme pour une enclume orientée nord/sud (longue sur l'axe X) et est/ouest (longue sur l'axe Z).
-	private static final VoxelShape SHAPE_X = Shapes.or(
+	// Mêmes formes que l'enclume de Minecraft (longue dans l'axe de FACING)
+	private static final VoxelShape SHAPE_Z = Shapes.or(
 		Block.box(2, 0, 2, 14, 4, 14),
 		Block.box(4, 4, 3, 12, 5, 13),
 		Block.box(6, 5, 4, 10, 10, 12),
-		Block.box(0, 10, 3, 16, 16, 13));
-	private static final VoxelShape SHAPE_Z = Shapes.or(
+		Block.box(3, 10, 0, 13, 16, 16));
+	private static final VoxelShape SHAPE_X = Shapes.or(
 		Block.box(2, 0, 2, 14, 4, 14),
 		Block.box(3, 4, 4, 13, 5, 12),
 		Block.box(4, 5, 6, 12, 10, 10),
-		Block.box(3, 10, 0, 13, 16, 16));
+		Block.box(0, 10, 3, 16, 16, 13));
 
 	public CastingAnvilBlock(Properties properties) {
 		super(properties);
@@ -57,12 +57,13 @@ public class CastingAnvilBlock extends HorizontalDirectionalBlock implements IBE
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		// Comme l'enclume de Minecraft : on voit son grand côté en la posant
+		return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getClockWise());
 	}
 
 	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return state.getValue(FACING).getAxis() == Direction.Axis.Z ? SHAPE_X : SHAPE_Z;
+		return state.getValue(FACING).getAxis() == Direction.Axis.Z ? SHAPE_Z : SHAPE_X;
 	}
 
 	@Override

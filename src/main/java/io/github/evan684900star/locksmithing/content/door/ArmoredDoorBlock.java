@@ -10,6 +10,7 @@ import com.simibubi.create.foundation.block.IBE;
 
 import io.github.evan684900star.locksmithing.content.key.KeyItem;
 import io.github.evan684900star.locksmithing.registry.ModBlockEntities;
+import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -107,7 +108,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 			return InteractionResult.PASS;
 		if (!level.isClientSide) {
 			player.displayClientMessage(Component.translatable("message.create_locksmithing.door.need_key"), true);
-			level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.6f, 1.2f);
+			level.playSound(null, pos, ModSounds.DOOR_LOCKED.get(), SoundSource.BLOCKS, 0.8f, 1f);
 		}
 		return InteractionResult.sidedSuccess(level.isClientSide);
 	}
@@ -128,7 +129,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 
 		if (!stack.is(getKeyItem())) {
 			player.displayClientMessage(Component.translatable("message.create_locksmithing.door.wrong_key_type"), true);
-			level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.6f, 1.2f);
+			level.playSound(null, pos, ModSounds.DOOR_LOCKED.get(), SoundSource.BLOCKS, 0.8f, 1f);
 			return ItemInteractionResult.CONSUME;
 		}
 
@@ -141,14 +142,16 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 			lock.bind(keyId);
 			player.displayClientMessage(
 				Component.translatable("message.create_locksmithing.door.bound", KeyItem.shortCode(keyId)), true);
-			level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.8f, 1.6f);
+			level.playSound(null, pos, ModSounds.KEY_BIND.get(), SoundSource.BLOCKS, 0.8f, 1f);
 		} else if (!keyId.equals(lock.getLockId())) {
 			player.displayClientMessage(Component.translatable("message.create_locksmithing.door.wrong_key"), true);
-			level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.6f, 1.2f);
+			level.playSound(null, pos, ModSounds.DOOR_LOCKED.get(), SoundSource.BLOCKS, 0.8f, 1f);
 			return ItemInteractionResult.CONSUME;
 		}
 
-		setOpen(player, level, state, pos, !isOpen(state));
+		boolean opening = !isOpen(state);
+		level.playSound(null, pos, (opening ? ModSounds.DOOR_UNLOCK : ModSounds.DOOR_LOCK).get(), SoundSource.BLOCKS, 1f, 1f);
+		setOpen(player, level, state, pos, opening);
 		return ItemInteractionResult.CONSUME;
 	}
 

@@ -31,7 +31,7 @@ public class ModBlockEntities {
 
 	public static final BlockEntityEntry<KeyCutterBlockEntity> KEY_CUTTER =
 		REGISTRATE.blockEntity("key_cutter", KeyCutterBlockEntity::new)
-			.visual(() -> KeyCutterVisual::new, false)
+			.visual(() -> KeyCutterVisual::new, true)
 			.validBlocks(ModBlocks.KEY_CUTTER)
 			.renderer(() -> KeyCutterRenderer::new)
 			.register();

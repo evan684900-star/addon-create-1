@@ -9,14 +9,19 @@ et toute la chaîne pour les fabriquer (bois compressé, métal en fusion, moule
 |---|---|
 | **Planche pressée** | N'importe quelle planche passée sous une **Presse mécanique** (sur un dépôt ou un tapis). |
 | **Bois compressé** | **4 planches pressées** compactées (Presse mécanique + Bassin). |
-| **Four à moufle** | Posé sur un **Brûleur à Blaze allumé**, fait fondre les lingots de **fer, or, cuivre, zinc** : 1 lingot = **90 mB**. Brûleur surchauffé = 2× plus rapide. Clic droit avec des lingots pour les charger, avec un **seau** (1000 mB) ou une **fiole** (90 mB) pour récupérer le métal. Les entonnoirs/trémies chargent, les pompes/tuyaux de Create vident. |
-| **Métal en fusion** (×4) | Se met en seau et en fiole, passe dans les tuyaux/réservoirs/becs verseurs de Create, **ne se pose pas par terre**. |
-| **Enclume de moulage** | Clic droit = interface : seau/fiole de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
+| **Four à moufle** | Boîtier en cuivre de Create avec une bouche de four. Posé sur un **Brûleur à Blaze allumé**, fait fondre les lingots de **fer, or, cuivre, zinc** : 1 lingot = **90 mB**. Brûleur surchauffé = 2× plus rapide. Clic droit avec des lingots pour les charger, avec un **seau** (1000 mB) ou une **fiole** (90 mB) pour récupérer le métal. Les entonnoirs/trémies chargent, les pompes/tuyaux de Create vident. |
+| **Métal en fusion** (×4) | Se met dans le **seau** et la **fiole** de Minecraft (on voit le métal dedans), passe dans les tuyaux/réservoirs/becs verseurs de Create, **ne se pose pas par terre**. |
+| **Enclume de moulage** | L'enclume de Minecraft avec un **moule incrusté** au milieu. Clic droit = interface : seau/fiole de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
 | **Barres** de fer, or, cuivre, zinc | Sortent de l'enclume de moulage. |
-| **Machine à tailler les clés** | A besoin de **rotation** (axe à l'arrière). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
+| **Machine à tailler les clés** | L'enclume de Minecraft avec une **lame de scie sur le dessus**. A besoin de **rotation** (l'axe traverse le pied). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
 | **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. |
 
 Chaque machine a un **tuto Ponder** (touche **W** au-dessus de l'objet), en français et en anglais.
+
+Avec **JEI** installé : catégories *Fonte*, *Moulage* et *Taille de clé*, plus une fiche d'info sur la porte et la clé
+(les recettes de presse, compactage, bec verseur et égouttoir sont dans les catégories de Create).
+
+Sons : serrure, clés, taille, coulée… tous trouvés sur OpenGameArt en licence CC0, voir [SOUNDS_CREDITS.md](SOUNDS_CREDITS.md).
 
 ## Recettes
 
