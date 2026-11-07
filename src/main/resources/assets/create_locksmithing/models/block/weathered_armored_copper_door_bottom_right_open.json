@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_right_open",
+  "textures": {
+    "bottom": "create_locksmithing:block/weathered_armored_copper_door_bottom",
+    "top": "create_locksmithing:block/weathered_armored_copper_door_top"
+  }
+}

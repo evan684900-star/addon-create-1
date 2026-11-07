@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/iron"
+    },
+    "M": {
+      "item": "create_locksmithing:mold"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "pattern": [
+    "BMB",
+    " B ",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_locksmithing:casting_anvil"
+  }
+}

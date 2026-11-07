@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_locksmithing:block/casting_anvil"
+    },
+    "facing=east": {
+      "model": "create_locksmithing:block/casting_anvil",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_locksmithing:block/casting_anvil",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_locksmithing:block/casting_anvil",
+      "y": 270
+    }
+  }
+}

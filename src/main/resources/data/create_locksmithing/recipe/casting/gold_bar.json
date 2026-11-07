@@ -1,0 +1,13 @@
+{
+  "type": "create_locksmithing:casting",
+  "fluid": {
+    "type": "neoforge:single",
+    "fluid": "create_locksmithing:molten_gold",
+    "amount": 90
+  },
+  "result": {
+    "id": "create_locksmithing:gold_bar",
+    "count": 1
+  },
+  "time": 60
+}

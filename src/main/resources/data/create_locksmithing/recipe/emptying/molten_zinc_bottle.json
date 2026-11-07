@@ -1,0 +1,17 @@
+{
+  "type": "create:emptying",
+  "ingredients": [
+    {
+      "item": "create_locksmithing:molten_zinc_bottle"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:glass_bottle"
+    },
+    {
+      "id": "create_locksmithing:molten_zinc",
+      "amount": 90
+    }
+  ]
+}

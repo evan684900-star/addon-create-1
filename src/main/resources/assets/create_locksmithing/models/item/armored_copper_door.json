@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "create_locksmithing:item/armored_copper_door"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 90,
+      "fluid": "create_locksmithing:molten_zinc"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_locksmithing:molten_zinc_bottle"
+    }
+  ]
+}

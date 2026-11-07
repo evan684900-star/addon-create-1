@@ -1,0 +1,13 @@
+{
+  "type": "create_locksmithing:casting",
+  "fluid": {
+    "type": "neoforge:single",
+    "fluid": "create_locksmithing:molten_zinc",
+    "amount": 90
+  },
+  "result": {
+    "id": "create_locksmithing:zinc_bar",
+    "count": 1
+  },
+  "time": 60
+}

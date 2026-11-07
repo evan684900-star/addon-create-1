@@ -1,0 +1,11 @@
+{
+  "type": "create_locksmithing:melting",
+  "ingredient": {
+    "tag": "c:ingots/zinc"
+  },
+  "result": {
+    "id": "create_locksmithing:molten_zinc",
+    "amount": 90
+  },
+  "time": 100
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top": "create_locksmithing:block/muffle_furnace_top",
+    "bottom": "create_locksmithing:block/muffle_furnace_bottom",
+    "side": "create_locksmithing:block/muffle_furnace_side",
+    "front": "create_locksmithing:block/muffle_furnace_front"
+  }
+}

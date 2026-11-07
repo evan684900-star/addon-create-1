@@ -1,0 +1,53 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "create_locksmithing:armored_copper_door",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "create_locksmithing:armored_copper_door",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "create_locksmithing:armored_copper_door",
+              "properties": [
+                "oxidation",
+                "waxed"
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:inverted",
+                  "term": {
+                    "condition": "minecraft:block_state_property",
+                    "block": "create_locksmithing:armored_copper_door",
+                    "properties": {
+                      "oxidation": "unaffected",
+                      "waxed": "false"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "create_locksmithing:blocks/armored_copper_door"
+}

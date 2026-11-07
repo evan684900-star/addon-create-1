@@ -1,0 +1,11 @@
+{
+  "type": "create_locksmithing:melting",
+  "ingredient": {
+    "tag": "c:ingots/gold"
+  },
+  "result": {
+    "id": "create_locksmithing:molten_gold",
+    "amount": 90
+  },
+  "time": 100
+}

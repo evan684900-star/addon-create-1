@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "K": {
+      "item": "minecraft:bricks"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PFP",
+    "KKK"
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_locksmithing:muffle_furnace"
+  }
+}

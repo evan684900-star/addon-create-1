@@ -1,0 +1,8 @@
+{
+  "values": [
+    "create_locksmithing:iron_bar",
+    "create_locksmithing:gold_bar",
+    "create_locksmithing:copper_bar",
+    "create_locksmithing:zinc_bar"
+  ]
+}

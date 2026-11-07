@@ -1,0 +1,11 @@
+{
+  "type": "create_locksmithing:melting",
+  "ingredient": {
+    "tag": "c:ingots/copper"
+  },
+  "result": {
+    "id": "create_locksmithing:molten_copper",
+    "amount": 90
+  },
+  "time": 100
+}

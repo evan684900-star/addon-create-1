@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "create_locksmithing:copper_bar"
+    },
+    "C": {
+      "item": "create_locksmithing:compressed_wood"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BCB",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_locksmithing:armored_copper_door"
+  }
+}

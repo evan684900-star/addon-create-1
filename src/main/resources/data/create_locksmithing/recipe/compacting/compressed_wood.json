@@ -1,0 +1,22 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "create_locksmithing:pressed_plank"
+    },
+    {
+      "item": "create_locksmithing:pressed_plank"
+    },
+    {
+      "item": "create_locksmithing:pressed_plank"
+    },
+    {
+      "item": "create_locksmithing:pressed_plank"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_locksmithing:compressed_wood"
+    }
+  ]
+}

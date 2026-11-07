@@ -1,0 +1,11 @@
+{
+  "type": "create_locksmithing:melting",
+  "ingredient": {
+    "tag": "c:ingots/iron"
+  },
+  "result": {
+    "id": "create_locksmithing:molten_iron",
+    "amount": 90
+  },
+  "time": 100
+}

@@ -1,0 +1,13 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "tag": "minecraft:planks"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_locksmithing:pressed_plank"
+    }
+  ]
+}
