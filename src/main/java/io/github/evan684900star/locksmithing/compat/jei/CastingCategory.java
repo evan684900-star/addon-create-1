@@ -38,6 +38,6 @@ class CastingCategory extends SimpleCategory<RecipeHolder<CastingRecipe>> {
 	public void draw(RecipeHolder<CastingRecipe> holder, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX,
 		double mouseY) {
 		drawArrow(graphics);
-		drawNote(graphics, Component.translatable("jei.create_locksmithing.seconds", holder.value().time() / 20f), 0);
+		drawNote(graphics, seconds(holder.value().time()), 0);
 	}
 }

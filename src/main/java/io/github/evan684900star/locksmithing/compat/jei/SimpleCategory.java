@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 
 /** Base commune : une entrée, une flèche, une sortie, et une ligne de texte en dessous. */
 abstract class SimpleCategory<T> implements IRecipeCategory<T> {
-	protected static final int WIDTH = 116, HEIGHT = 44;
-	protected static final int IN_X = 14, OUT_X = 86, SLOT_Y = 6, ARROW_X = 44, ARROW_Y = 6;
+	protected static final int WIDTH = 150, HEIGHT = 50;
+	protected static final int IN_X = 32, OUT_X = 102, SLOT_Y = 6, ARROW_X = 63, ARROW_Y = 6;
 
 	private final RecipeType<T> type;
 	private final Component title;
@@ -59,6 +59,13 @@ abstract class SimpleCategory<T> implements IRecipeCategory<T> {
 	/** Texte gris centré sous la recette. */
 	protected void drawNote(GuiGraphics graphics, Component text, int line) {
 		var font = Minecraft.getInstance().font;
-		graphics.drawString(font, text, (WIDTH - font.width(text)) / 2, 27 + line * 9, 0xFF808080, false);
+		graphics.drawString(font, text, (WIDTH - font.width(text)) / 2, 29 + line * 10, 0xFF808080, false);
+	}
+
+	/** Durée en secondes, sans ".0" inutile (60 ticks -> "3 s"). */
+	protected static Component seconds(int ticks) {
+		float s = ticks / 20f;
+		String text = s == Math.floor(s) ? String.valueOf((int) s) : String.valueOf(s);
+		return Component.translatable("jei.create_locksmithing.seconds", text);
 	}
 }

@@ -182,7 +182,7 @@ public class ScreenshotTour {
 		STEPS.add(new Step(10, () -> shot(mc, "02_machines_close")));
 		STEPS.add(new Step(60, () -> teleport(mc, 2.5, -58.6, 1.6, 180f, 55f)));
 		STEPS.add(new Step(10, () -> shot(mc, "02b_casting_anvil_top")));
-		STEPS.add(new Step(60, () -> teleport(mc, 5.6, -59.2, 1.9, 150f, 35f)));
+		STEPS.add(new Step(60, () -> teleport(mc, 3.4, -59.2, 2.0, 215f, 38f)));
 		STEPS.add(new Step(10, () -> shot(mc, "02c_key_cutter")));
 		STEPS.add(new Step(60, () -> teleport(mc, 8.0, -59.0, 3.6, 180f, 10f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03_doors")));

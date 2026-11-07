@@ -51,7 +51,7 @@ public class CastingAnvilRenderer extends SafeBlockEntityRenderer<CastingAnvilBl
 			// La barre refroidie repose sur le métal
 			ms.translate(0.5, surface + 1 / 32f, 0.5);
 			// La barre (dessinée en diagonale) est couchée dans la longueur du moule
-			ms.mulPose(Axis.YP.rotationDegrees(alongZ ? 135 : 45));
+			ms.mulPose(Axis.YP.rotationDegrees(alongZ ? 45 : 135));
 			ms.mulPose(Axis.XP.rotationDegrees(90));
 			ms.scale(0.5f, 0.5f, 0.5f);
 			Minecraft.getInstance()

@@ -37,6 +37,6 @@ class MeltingCategory extends SimpleCategory<RecipeHolder<MeltingRecipe>> {
 		double mouseY) {
 		drawArrow(graphics);
 		drawNote(graphics, Component.translatable("jei.create_locksmithing.heated"), 0);
-		drawNote(graphics, Component.translatable("jei.create_locksmithing.seconds", holder.value().time() / 20f), 1);
+		drawNote(graphics, seconds(holder.value().time()), 1);
 	}
 }
