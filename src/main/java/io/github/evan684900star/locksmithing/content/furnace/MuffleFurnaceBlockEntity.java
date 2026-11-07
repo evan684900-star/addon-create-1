@@ -169,9 +169,7 @@ public class MuffleFurnaceBlockEntity extends SmartBlockEntity implements IHaveG
 			if (level != null && !level.isClientSide) {
 				tank.drain(capacity, IFluidHandler.FluidAction.EXECUTE);
 				player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled));
-				level.playSound(null, worldPosition,
-					stack.is(net.minecraft.world.item.Items.BUCKET) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BOTTLE_FILL,
-					SoundSource.BLOCKS, 1f, 1f);
+				level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1f, 1f);
 			}
 			return ItemInteractionResult.sidedSuccess(level != null && level.isClientSide);
 		}

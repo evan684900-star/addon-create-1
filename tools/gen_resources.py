@@ -255,16 +255,12 @@ def models():
     # Objets "plats"
     flat = ["pressed_plank", "compressed_wood", "mold", "saw_blade", "blank_key", "copper_key", "armored_copper_door"]
     flat += [f"{metal}_bar" for metal in METALS]
-    # Seaux et fioles : ceux de Minecraft, avec le métal en fusion dedans
+    # Seaux : celui de Minecraft, avec le métal en fusion dedans
     for metal in METALS:
         write_json(os.path.join(m, "item", f"molten_{metal}_bucket.json"), {
             "parent": "neoforge:item/bucket_drip",
             "loader": "neoforge:fluid_container",
             "fluid": ml(f"molten_{metal}"),
-        })
-        write_json(os.path.join(m, "item", f"molten_{metal}_bottle.json"), {
-            "parent": "minecraft:item/generated",
-            "textures": {"layer0": "minecraft:item/potion_overlay", "layer1": "minecraft:item/potion"},
         })
     for name in flat:
         write_json(os.path.join(m, "item", f"{name}.json"), {
@@ -298,7 +294,7 @@ PONDER = {
             ("Needs a lit Blaze Burner below", "Il lui faut un Brûleur à Blaze allumé dessous"),
             ("Right-click with ingots to load them", "Clic droit avec des lingots pour les charger"),
             ("1 ingot = 90 mB of molten metal", "1 lingot = 90 mB de métal en fusion"),
-            ("Collect it with a Bucket, a Bottle or pipes", "Récupérez-le au seau, à la fiole ou avec des tuyaux"),
+            ("Collect it with a Bucket or pipes", "Récupérez-le au seau ou avec des tuyaux"),
             ("Superheated: twice as fast", "Surchauffé : deux fois plus rapide"),
         ],
     ),
@@ -306,7 +302,7 @@ PONDER = {
         ("The Casting Anvil", "L'enclume de moulage"),
         [
             ("Right-click to open it", "Clic droit pour l'ouvrir"),
-            ("Bucket or bottle of molten metal on the left", "Seau ou fiole de métal en fusion à gauche"),
+            ("Bucket of molten metal on the left", "Seau de métal en fusion à gauche"),
             ("90 mB = 1 bar, out on the right", "90 mB = 1 barre, qui sort à droite"),
             ("Pipes and funnels work too", "Les tuyaux et les entonnoirs marchent aussi"),
         ],
@@ -383,7 +379,6 @@ def lang():
     for metal, (e, f, de) in METAL_NAMES.items():
         add(f"item.{MOD}.{metal}_bar", f"{e} Bar", f"Barre {de}")
         add(f"item.{MOD}.molten_{metal}_bucket", f"Molten {e} Bucket", f"Seau {de} en fusion")
-        add(f"item.{MOD}.molten_{metal}_bottle", f"Bottle of Molten {e}", f"Fiole {de} en fusion")
         name_fr = {"iron": "Fer", "gold": "Or", "copper": "Cuivre", "zinc": "Zinc"}[metal] + " en fusion"
         add(f"fluid.{MOD}.molten_{metal}", f"Molten {e}", name_fr)
         add(f"fluid_type.{MOD}.molten_{metal}", f"Molten {e}", name_fr)
@@ -431,14 +426,14 @@ def lang():
         ("_Melts ingots_ into _molten metal_ when placed on a _lit Blaze Burner_.",
          "_Fait fondre les lingots_ en _métal en fusion_ quand il est posé sur un _Brûleur à Blaze allumé_."),
         [(("When R-Clicked", "Clic droit"),
-          ("With _ingots_: loads them. With a _Bucket_ or _Glass Bottle_: collects the molten metal.",
-           "Avec des _lingots_ : les charge. Avec un _seau_ ou une _fiole_ : récupère le métal en fusion."))])
+          ("With _ingots_: loads them. With an empty _Bucket_: collects the molten metal.",
+           "Avec des _lingots_ : les charge. Avec un _seau vide_ : récupère le métal en fusion."))])
     tip(f"block.{MOD}.casting_anvil",
         ("Casts _molten metal_ into _bars_. One bar = _90 mB_.",
          "Coule le _métal en fusion_ en _barres_. Une barre = _90 mB_."),
         [(("When R-Clicked", "Clic droit"),
-          ("Opens the _interface_: molten metal _bucket or bottle_ on the left, _bar_ on the right.",
-           "Ouvre l'_interface_ : _seau ou fiole_ de métal en fusion à gauche, _barre_ à droite."))])
+          ("Opens the _interface_: molten metal _bucket_ on the left, _bar_ on the right.",
+           "Ouvre l'_interface_ : _seau_ de métal en fusion à gauche, _barre_ à droite."))])
     tip(f"block.{MOD}.key_cutter",
         ("Cuts _Blank Keys_ into _unique keys_. Needs _rotational force_ from the back.",
          "Taille les _clés vierges_ en _clés uniques_. A besoin de _rotation_ par l'arrière."),
@@ -522,7 +517,7 @@ def recipes():
         "results": [{"id": ml("compressed_wood")}],
     })
 
-    # Fonte, moulage, fioles
+    # Fonte et moulage
     for metal in METALS:
         fluid = ml(f"molten_{metal}")
         write_json(os.path.join(r, "melting", f"{metal}_ingot.json"), {
@@ -536,17 +531,6 @@ def recipes():
             "fluid": {"type": "neoforge:single", "fluid": fluid, "amount": 90},
             "result": {"id": ml(f"{metal}_bar"), "count": 1},
             "time": 60,
-        })
-        write_json(os.path.join(r, "filling", f"molten_{metal}_bottle.json"), {
-            "type": "create:filling",
-            "ingredients": [item("minecraft:glass_bottle"),
-                            {"type": "neoforge:single", "amount": 90, "fluid": fluid}],
-            "results": [{"id": ml(f"molten_{metal}_bottle")}],
-        })
-        write_json(os.path.join(r, "emptying", f"molten_{metal}_bottle.json"), {
-            "type": "create:emptying",
-            "ingredients": [item(ml(f"molten_{metal}_bottle"))],
-            "results": [{"id": "minecraft:glass_bottle"}, {"id": fluid, "amount": 90}],
         })
 
     # Clés

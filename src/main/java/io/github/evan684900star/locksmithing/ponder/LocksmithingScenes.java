@@ -138,7 +138,7 @@ public class LocksmithingScenes {
 			.pointAt(util.vector().topOf(furnace))
 			.placeNearTarget()
 			.attachKeyFrame()
-			.text("Collect it with a Bucket, a Bottle or pipes");
+			.text("Collect it with a Bucket or pipes");
 		scene.overlay().showControls(util.vector().topOf(furnace), Pointing.DOWN, 30).rightClick()
 			.withItem(new ItemStack(Items.BUCKET));
 		scene.idle(35);
@@ -181,7 +181,7 @@ public class LocksmithingScenes {
 			.pointAt(util.vector().topOf(anvil))
 			.placeNearTarget()
 			.attachKeyFrame()
-			.text("Bucket or bottle of molten metal on the left");
+			.text("Bucket of molten metal on the left");
 		scene.overlay().showControls(util.vector().topOf(anvil), Pointing.DOWN, 30).withItem(bucket);
 		scene.idle(25);
 		scene.world().modifyBlockEntity(anvil, CastingAnvilBlockEntity.class,

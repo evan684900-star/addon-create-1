@@ -62,8 +62,7 @@ public class LocksmithingGameTests {
 			"The blank key should have exactly one key to cut");
 		for (String id : new String[] { "pressing/pressed_plank", "compacting/compressed_wood", "crafting/mold",
 			"crafting/casting_anvil", "crafting/saw_blade", "crafting/key_cutter", "crafting/blank_key",
-			"crafting/armored_copper_door", "crafting/muffle_furnace", "filling/molten_iron_bottle",
-			"emptying/molten_iron_bottle" })
+			"crafting/armored_copper_door", "crafting/muffle_furnace" })
 			helper.assertTrue(level.getRecipeManager().byKey(Locksmithing.asResource(id)).isPresent(), "Missing recipe " + id);
 		helper.succeed();
 	}

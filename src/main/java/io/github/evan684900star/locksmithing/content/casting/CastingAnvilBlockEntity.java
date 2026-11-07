@@ -131,7 +131,7 @@ public class CastingAnvilBlockEntity extends SmartBlockEntity implements MenuPro
 
 	/* Règles du moule */
 
-	/** Un seau ou une fiole remplie d'un métal que le moule sait couler. */
+	/** Un seau rempli d'un métal que le moule sait couler. */
 	public boolean isCastableContainer(ItemStack stack) {
 		FluidStack contained = FluidContainers.getContained(stack);
 		return !contained.isEmpty() && level != null && ModRecipeTypes.findCasting(level, contained).isPresent();
@@ -148,7 +148,7 @@ public class CastingAnvilBlockEntity extends SmartBlockEntity implements MenuPro
 			|| tank.getFluidAmount() < FluidContainers.INGOT;
 	}
 
-	/** Remplit le moule (utilisé par les tuyaux et par le seau/la fiole). Renvoie la quantité acceptée. */
+	/** Remplit le moule (utilisé par les tuyaux et par le seau). Renvoie la quantité acceptée. */
 	public int fill(FluidStack stack, IFluidHandler.FluidAction action) {
 		if (!canAccept(stack))
 			return 0;
@@ -169,7 +169,7 @@ public class CastingAnvilBlockEntity extends SmartBlockEntity implements MenuPro
 		cast();
 	}
 
-	/** Vide le seau / la fiole posé(e) dans l'emplacement de gauche. */
+	/** Vide le seau posé dans l'emplacement de gauche. */
 	private void pourContainer() {
 		ItemStack container = inventory.getStackInSlot(SLOT_CONTAINER);
 		FluidStack contained = FluidContainers.getContained(container);
@@ -271,7 +271,7 @@ public class CastingAnvilBlockEntity extends SmartBlockEntity implements MenuPro
 		maxProgress = Math.max(1, tag.getInt("MaxProgress"));
 	}
 
-	/** Pour les entonnoirs/trémies : insérer des seaux/fioles pleins, sortir les barres et les récipients vides. */
+	/** Pour les entonnoirs/trémies : insérer des seaux pleins, sortir les barres et les seaux vides. */
 	private record CastingItemHandler(CastingAnvilBlockEntity be) implements IItemHandler {
 		@Override
 		public int getSlots() {

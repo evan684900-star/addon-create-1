@@ -222,9 +222,7 @@ public class ScreenshotTour {
 				ModItems.COPPER_BAR.asStack(), ModItems.ZINC_BAR.asStack(), ModItems.MOLD.asStack(),
 				ModItems.SAW_BLADE.asStack(), ModItems.BLANK_KEY.asStack(), ModItems.COPPER_KEY.asStack(),
 				new ItemStack(ModFluids.MOLTEN_IRON.get().getBucket()), new ItemStack(ModFluids.MOLTEN_GOLD.get().getBucket()),
-				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()),
-				ModItems.MOLTEN_IRON_BOTTLE.asStack(), ModItems.MOLTEN_GOLD_BOTTLE.asStack(),
-				ModItems.MOLTEN_COPPER_BOTTLE.asStack(), ModItems.MOLTEN_ZINC_BOTTLE.asStack() };
+				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()) };
 			for (int i = 0; i < stacks.length; i++)
 				player.getInventory().setItem(9 + i, stacks[i]);
 		})));

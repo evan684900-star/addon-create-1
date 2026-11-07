@@ -35,7 +35,6 @@ public class ModCreativeTabs {
 				output.accept(ModItems.BLANK_KEY);
 				output.accept(ModItems.COPPER_KEY);
 				ModFluids.ALL.forEach(f -> output.accept(f.get().getBucket()));
-				ModItems.BOTTLES.forEach(output::accept);
 			})
 			.build());
 

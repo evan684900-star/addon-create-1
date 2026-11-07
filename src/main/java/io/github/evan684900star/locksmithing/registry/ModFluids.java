@@ -22,7 +22,7 @@ public class ModFluids {
 	public static final List<FluidEntry<MoltenMetalFluid>> ALL = List.of(MOLTEN_IRON, MOLTEN_GOLD, MOLTEN_COPPER, MOLTEN_ZINC);
 
 	/**
-	 * Métal en fusion : se met en seau, en fiole et passe dans les tuyaux/réservoirs de Create,
+	 * Métal en fusion : se met dans le seau de Minecraft et passe dans les tuyaux/réservoirs de Create,
 	 * mais ne peut pas être posé dans le monde (pas de bloc liquide).
 	 */
 	private static FluidEntry<MoltenMetalFluid> molten(String metal) {
