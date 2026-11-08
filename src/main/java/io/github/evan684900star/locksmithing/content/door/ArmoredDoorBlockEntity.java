@@ -33,6 +33,8 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 	@Nullable
 	private Boolean lastOpen;
 	private float swingFrom, swingTo, swingStart;
+	/** Dernière ouverture calculée (0 à 1), pour la forme de la porte pendant l'animation. */
+	private float shapeProgress = -1;
 
 	public ArmoredDoorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -76,8 +78,21 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 		return removed;
 	}
 
-	public void startSwing(long visibleAt) {
+	/**
+	 * Serveur : la porte commence à s'ouvrir ({@code open}) ou à se fermer maintenant. Le modèle fixe reviendra à
+	 * {@code visibleAt} ; en attendant, la forme de la porte suit le mouvement (collisions).
+	 */
+	public void startSwing(boolean open, long visibleAt) {
 		this.visibleAt = visibleAt;
+		if (level == null || level.isClientSide)
+			return;
+		float now = level.getGameTime();
+		if (lastOpen == null) {
+			lastOpen = !open;
+			swingFrom = swingTo = open ? 0 : 1;
+			swingStart = now;
+		}
+		swingProgress(open, now);
 	}
 
 	/** Remet le modèle fixe à la fin de l'animation (ou après un rechargement du monde). */
@@ -85,6 +100,8 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 		if (level == null)
 			return;
 		BlockState state = getBlockState();
+		// Côté serveur, l'animation suit le temps du jeu (pour les collisions).
+		swingProgress(state.getValue(ArmoredDoorBlock.OPEN), level.getGameTime());
 		if (state.getValue(ArmoredDoorBlock.VISIBLE)) {
 			visibleAt = -1;
 			return;
@@ -112,7 +129,15 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 			swingTo = target;
 			swingStart = now;
 		}
-		return progressAt(now);
+		shapeProgress = progressAt(now);
+		return shapeProgress;
+	}
+
+	/** Ouverture de 0 à 1 au dernier calcul (rendu côté client, tick côté serveur). */
+	public float getShapeProgress() {
+		if (shapeProgress < 0)
+			return getBlockState().getValue(ArmoredDoorBlock.OPEN) ? 1 : 0;
+		return shapeProgress;
 	}
 
 	private float progressAt(float now) {

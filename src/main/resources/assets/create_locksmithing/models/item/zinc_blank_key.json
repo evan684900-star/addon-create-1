@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "create_locksmithing:item/zinc_blank_key"
+  }
+}

@@ -246,7 +246,7 @@ public class LocksmithingScenes {
 			.attachKeyFrame()
 			.text("Blank Key on the left, then pick the key");
 		scene.overlay().showControls(util.vector().topOf(cutter), Pointing.DOWN, 40).rightClick()
-			.withItem(ModItems.BLANK_KEY.asStack());
+			.withItem(ModItems.COPPER_BLANK_KEY.asStack());
 		scene.idle(70);
 
 		scene.overlay().showText(50)
@@ -322,7 +322,7 @@ public class LocksmithingScenes {
 			.pointAt(front)
 			.placeNearTarget()
 			.attachKeyFrame()
-			.text("Breaking it resets the lock (42 s with an Iron Axe)");
+			.text("Breaking it resets the lock (Iron Axe: 42 s, longer for rarer metals)");
 		scene.idle(70);
 
 		scene.overlay().showText(50)

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "B": {
+      "item": "create_locksmithing:copper_bar"
+    }
+  },
+  "pattern": [
+    "ABB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_locksmithing:copper_blank_key"
+  }
+}

@@ -64,9 +64,17 @@ public class LocksmithingJeiPlugin implements IModPlugin {
 		registration.addRecipes(CASTING, recipes.getAllRecipesFor(ModRecipeTypes.CASTING.get()));
 		registration.addRecipes(KEY_CUTTING, recipes.getAllRecipesFor(ModRecipeTypes.KEY_CUTTING.get()));
 
-		registration.addItemStackInfo(ModBlocks.ARMORED_COPPER_DOOR.asStack(),
-			Component.translatable("jei.create_locksmithing.info.armored_door"));
-		registration.addItemStackInfo(ModItems.COPPER_KEY.asStack(), Component.translatable("jei.create_locksmithing.info.key"));
+		for (var door : ModBlocks.ARMORED_DOORS) {
+			var metal = door.get().getMetal();
+			Component info = Component.translatable("jei.create_locksmithing.info.armored_door", metal.breakSeconds());
+			if (metal.oxidizes())
+				registration.addItemStackInfo(door.asStack(), info,
+					Component.translatable("jei.create_locksmithing.info.armored_door.oxidizes"));
+			else
+				registration.addItemStackInfo(door.asStack(), info);
+			registration.addItemStackInfo(ModItems.keyFor(metal).asStack(),
+				Component.translatable("jei.create_locksmithing.info.key"));
+		}
 	}
 
 	@Override

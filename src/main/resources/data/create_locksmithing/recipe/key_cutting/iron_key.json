@@ -1,0 +1,10 @@
+{
+  "type": "create_locksmithing:key_cutting",
+  "ingredient": {
+    "item": "create_locksmithing:iron_blank_key"
+  },
+  "result": {
+    "id": "create_locksmithing:iron_key",
+    "count": 1
+  }
+}

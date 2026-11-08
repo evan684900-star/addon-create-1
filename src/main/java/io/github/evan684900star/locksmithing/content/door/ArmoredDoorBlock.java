@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
@@ -48,6 +49,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
@@ -72,12 +75,15 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 		SoundEvents.COPPER_TRAPDOOR_CLOSE, SoundEvents.COPPER_TRAPDOOR_OPEN, SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF,
 		SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, SoundEvents.COPPER_BULB_TURN_OFF, SoundEvents.COPPER_BULB_TURN_ON));
 
-	public static final MapCodec<ArmoredDoorBlock> CODEC = simpleCodec(p -> new ArmoredDoorBlock(p, () -> Items.AIR));
+	public static final MapCodec<ArmoredDoorBlock> CODEC =
+		simpleCodec(p -> new ArmoredDoorBlock(p, DoorMetal.COPPER, () -> Items.AIR));
 
+	private final DoorMetal metal;
 	private final Supplier<? extends Item> key;
 
-	public ArmoredDoorBlock(Properties properties, Supplier<? extends Item> key) {
+	public ArmoredDoorBlock(Properties properties, DoorMetal metal, Supplier<? extends Item> key) {
 		super(ARMORED_COPPER, properties);
+		this.metal = metal;
 		this.key = key;
 		registerDefaultState(defaultBlockState().setValue(OXIDATION, WeatherState.UNAFFECTED)
 			.setValue(WAXED, false)
@@ -89,6 +95,10 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	@SuppressWarnings("unchecked")
 	public MapCodec<? extends DoorBlock> codec() {
 		return CODEC;
+	}
+
+	public DoorMetal getMetal() {
+		return metal;
 	}
 
 	/** La clé (taillée) qui rentre dans cette serrure. */
@@ -133,7 +143,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 		Player player, InteractionHand hand, BlockHitResult hitResult) {
-		if (stack.is(Items.HONEYCOMB))
+		if (stack.is(Items.HONEYCOMB) && metal.oxidizes())
 			return wax(stack, state, level, pos, player);
 		if (stack.getItem() instanceof KeyItem)
 			return useKey(stack, state, level, pos, player);
@@ -233,6 +243,22 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 
 	/* Animation */
 
+	/**
+	 * Pendant l'ouverture ou la fermeture, la forme (contour, collisions) suit la porte qui tourne au lieu de
+	 * sauter tout de suite à la position finale.
+	 */
+	@Override
+	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		if (!state.getValue(VISIBLE)) {
+			BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+			if (level.getBlockEntity(lowerPos) instanceof ArmoredDoorBlockEntity door) {
+				BlockState closed = state.setValue(OPEN, false).setValue(VISIBLE, true);
+				return DoorSwing.shape(closed, DoorSwing.ease(door.getShapeProgress()));
+			}
+		}
+		return super.getShape(state, level, pos, context);
+	}
+
 	/** Durée de l'ouverture / de la fermeture, en ticks (20 = 1 seconde). */
 	public static final int SWING_TICKS = 20;
 
@@ -252,7 +278,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 		level.gameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 		ArmoredDoorBlockEntity lock = getLock(level, pos, state);
 		if (lock != null)
-			lock.startSwing(level.getGameTime() + SWING_TICKS + 2);
+			lock.startSwing(open, level.getGameTime() + SWING_TICKS + 2);
 	}
 
 	@Override
@@ -287,6 +313,8 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	@Override
 	public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility,
 		boolean simulate) {
+		if (!metal.oxidizes())
+			return super.getToolModifiedState(state, context, itemAbility, simulate);
 		if (itemAbility == ItemAbilities.AXE_WAX_OFF && state.getValue(WAXED))
 			return state.setValue(WAXED, false);
 		if (itemAbility == ItemAbilities.AXE_SCRAPE && !state.getValue(WAXED)) {
@@ -299,7 +327,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 
 	@Override
 	protected boolean isRandomlyTicking(BlockState state) {
-		return state.getValue(HALF) == DoubleBlockHalf.LOWER && !state.getValue(WAXED)
+		return metal.oxidizes() && state.getValue(HALF) == DoubleBlockHalf.LOWER && !state.getValue(WAXED)
 			&& state.getValue(OXIDATION) != WeatherState.OXIDIZED;
 	}
 

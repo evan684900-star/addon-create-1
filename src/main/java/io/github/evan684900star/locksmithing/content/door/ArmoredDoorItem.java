@@ -12,7 +12,7 @@ import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
 
-/** L'objet porte : garde l'oxydation et la cire quand on la casse puis la repose. */
+/** L'objet porte : garde l'oxydation et la cire quand on la casse puis la repose ; dit combien de temps il faut pour la casser. */
 public class ArmoredDoorItem extends DoubleHighBlockItem {
 	public ArmoredDoorItem(Block block, Properties properties) {
 		super(block, properties);
@@ -21,6 +21,9 @@ public class ArmoredDoorItem extends DoubleHighBlockItem {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
+		if (getBlock() instanceof ArmoredDoorBlock door)
+			tooltip.add(Component.translatable("item.create_locksmithing.armored_door.break_time",
+				door.getMetal().breakSeconds()).withStyle(ChatFormatting.GRAY));
 		BlockItemStateProperties props = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
 		WeatherState oxidation = props.get(ArmoredDoorBlock.OXIDATION);
 		Boolean waxed = props.get(ArmoredDoorBlock.WAXED);

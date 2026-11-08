@@ -961,7 +961,7 @@
       "y": 90
     },
     "visible=false": {
-      "model": "create_locksmithing:block/armored_door_hidden"
+      "model": "create_locksmithing:block/armored_copper_door_hidden"
     }
   }
 }

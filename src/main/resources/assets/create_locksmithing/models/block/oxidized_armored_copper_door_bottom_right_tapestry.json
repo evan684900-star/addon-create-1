@@ -3,7 +3,8 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "particle": "create_locksmithing:block/oxidized_armored_copper_door_bottom",
-    "bottom": "create_locksmithing:block/oxidized_armored_copper_door_bottom_tapestry",
+    "edge": "create_locksmithing:block/oxidized_armored_copper_door_bottom",
+    "panel": "create_locksmithing:block/oxidized_armored_copper_door_bottom_tapestry",
     "leather": "create_locksmithing:block/tapestry"
   },
   "elements": [
@@ -28,7 +29,7 @@
           ],
           "cullface": "down",
           "rotation": 90,
-          "texture": "#bottom"
+          "texture": "#edge"
         },
         "north": {
           "uv": [
@@ -38,7 +39,7 @@
             16
           ],
           "cullface": "north",
-          "texture": "#bottom"
+          "texture": "#edge"
         },
         "south": {
           "uv": [
@@ -48,7 +49,7 @@
             16
           ],
           "cullface": "south",
-          "texture": "#bottom"
+          "texture": "#edge"
         },
         "west": {
           "uv": [
@@ -58,7 +59,7 @@
             16
           ],
           "cullface": "west",
-          "texture": "#bottom"
+          "texture": "#panel"
         },
         "east": {
           "uv": [
@@ -67,7 +68,7 @@
             16,
             16
           ],
-          "texture": "#bottom"
+          "texture": "#panel"
         }
       }
     },

@@ -18,7 +18,7 @@ import io.github.evan684900star.locksmithing.content.tapestry.TapestryRenderer;
 public class ModBlockEntities {
 	public static final BlockEntityEntry<ArmoredDoorBlockEntity> ARMORED_DOOR =
 		REGISTRATE.blockEntity("armored_door", ArmoredDoorBlockEntity::new)
-			.validBlocks(ModBlocks.ARMORED_COPPER_DOOR)
+			.validBlocks(ModBlocks.ARMORED_DOORS)
 			.renderer(() -> ArmoredDoorRenderer::new)
 			.register();
 

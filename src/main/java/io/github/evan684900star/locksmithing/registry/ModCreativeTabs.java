@@ -3,6 +3,7 @@ package io.github.evan684900star.locksmithing.registry;
 import com.simibubi.create.AllCreativeModeTabs;
 
 import io.github.evan684900star.locksmithing.Locksmithing;
+import io.github.evan684900star.locksmithing.content.door.DoorMetal;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -20,7 +21,8 @@ public class ModCreativeTabs {
 			.withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getKey())
 			.icon(() -> ModBlocks.ARMORED_COPPER_DOOR.asStack())
 			.displayItems((params, output) -> {
-				output.accept(ModBlocks.ARMORED_COPPER_DOOR);
+				for (var door : ModBlocks.ARMORED_DOORS)
+					output.accept(door);
 				output.accept(ModBlocks.MUFFLE_FURNACE);
 				output.accept(ModBlocks.CASTING_ANVIL);
 				output.accept(ModBlocks.KEY_CUTTER);
@@ -33,8 +35,10 @@ public class ModCreativeTabs {
 				output.accept(ModItems.ZINC_BAR);
 				output.accept(ModItems.MOLD);
 				output.accept(ModItems.SAW_BLADE);
-				output.accept(ModItems.BLANK_KEY);
-				output.accept(ModItems.COPPER_KEY);
+				for (DoorMetal metal : DoorMetal.values()) {
+					output.accept(ModItems.blankKeyFor(metal));
+					output.accept(ModItems.keyFor(metal));
+				}
 				ModFluids.ALL.forEach(f -> output.accept(f.get().getBucket()));
 			})
 			.build());

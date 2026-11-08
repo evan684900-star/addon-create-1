@@ -1,5 +1,8 @@
 {
   "values": [
-    "create_locksmithing:armored_copper_door"
+    "create_locksmithing:armored_copper_door",
+    "create_locksmithing:armored_iron_door",
+    "create_locksmithing:armored_zinc_door",
+    "create_locksmithing:armored_gold_door"
   ]
 }

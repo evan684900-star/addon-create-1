@@ -1,0 +1,108 @@
+{
+  "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "create_locksmithing:block/armored_zinc_door_top",
+    "edge": "create_locksmithing:block/armored_zinc_door_top",
+    "panel": "create_locksmithing:block/armored_zinc_door_top_tapestry",
+    "leather": "create_locksmithing:block/tapestry"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        3,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            3,
+            16,
+            0
+          ],
+          "cullface": "up",
+          "rotation": 90,
+          "texture": "#edge"
+        },
+        "north": {
+          "uv": [
+            3,
+            0,
+            0,
+            16
+          ],
+          "cullface": "north",
+          "texture": "#edge"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ],
+          "cullface": "south",
+          "texture": "#edge"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "cullface": "west",
+          "texture": "#panel"
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            0,
+            16
+          ],
+          "texture": "#panel"
+        }
+      }
+    },
+    {
+      "from": [
+        1.5,
+        0,
+        0.5
+      ],
+      "to": [
+        1.5,
+        16,
+        15.5
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#leather"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#leather"
+        }
+      }
+    }
+  ]
+}

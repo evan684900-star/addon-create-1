@@ -14,12 +14,13 @@ et toute la chaîne pour les fabriquer (bois compressé, métal en fusion, moule
 | **Enclume de moulage** | L'enclume de Minecraft avec un **moule incrusté** au milieu. Clic droit = interface : seau de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
 | **Barres** de fer, or, cuivre, zinc | Sortent de l'enclume de moulage. |
 | **Machine à tailler les clés** | L'enclume de Minecraft avec une **lame de scie sur le dessus**. A besoin de **rotation** (l'axe traverse le pied). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
-| **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. S'ouvre avec une **animation** : elle pivote sur ses gonds en 1 s. Clic droit avec une **tapisserie** : elle remplace le bois de la porte (des deux côtés, avec ses motifs) ; des **cisailles** la reprennent, et elle revient aussi quand on casse la porte. |
-| **Tapisserie en cuir** | Se pose au mur comme une bannière murale. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. Se pose aussi **sur une porte blindée** à la place du bois. |
+| **Clés vierges et clés** en cuivre, fer, zinc, or | La clé vierge de chaque métal se fait avec ses **barres** ; la machine la taille en clé de ce métal. Une clé n'ouvre que les portes de **son métal**. |
+| **Portes blindées** en cuivre, fer, zinc, or | Ne s'ouvrent ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. Il faut au moins une **hache en fer**, et plus le minerai est rare, plus c'est long : **cuivre 42 s, fer 56 s, zinc 70 s, or 84 s** (plus rapide avec une meilleure hache/Efficacité). Résistent aux explosions. S'ouvrent avec une **animation** (elles pivotent sur leurs gonds en 1 s) et leur **contour/collision suit le mouvement**. Le cuivre s'oxyde : **rayon de miel** pour le cirer, **hache** pour gratter. Clic droit avec une **tapisserie** : elle remplace le bois de la porte (des deux côtés, avec ses motifs) ; des **cisailles** la reprennent, et elle revient aussi quand on casse la porte. |
+| **Tapisserie en cuir** | Se colle **à plat sur un mur**, comme du **papier peint** : 1 bloc de large, 2 de haut, à partir du bloc visé vers le haut. Côte à côte, elles tapissent un mur. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. Se pose aussi **sur une porte blindée** à la place du bois. |
 
 Chaque machine a un **tuto Ponder** (touche **W** au-dessus de l'objet), en français et en anglais.
 
-Avec **JEI** installé : catégories *Fonte*, *Moulage* et *Taille de clé*, plus une fiche d'info sur la porte et la clé
+Avec **JEI** installé : catégories *Fonte*, *Moulage* et *Taille de clé*, plus une fiche d'info sur chaque porte et chaque clé
 (les recettes de presse et de compactage sont dans les catégories de Create).
 
 Sons : serrure, clés, taille, coulée… tous trouvés sur OpenGameArt en licence CC0, voir [SOUNDS_CREDITS.md](SOUNDS_CREDITS.md).
@@ -33,12 +34,12 @@ A P A              . B .                  A A A                . B .
                    P P P                  . A .                P P P
 
 Clé vierge         Porte blindée          Four à moufle          Tapisserie
-A B B              C C C                  P P P                  L L L
-                   C W C                  P F P                  L L L
-                   C W C                  K K K                  L L L
+A X X              X X X                  P P P                  L L L
+                   X W X                  P F P                  L L L
+                   X W X                  K K K                  L L L
 ```
-`A` alliage d'andésite · `P` plaque de fer · `B` bloc de fer (enclume, machine) / barre de fer (clé vierge) ·
-`M` moule · `S` lame de scie · `C` barre de cuivre · `W` bois compressé · `F` fourneau · `K` briques · `L` cuir.
+`A` alliage d'andésite · `P` plaque de fer · `B` bloc de fer · `M` moule · `S` lame de scie ·
+`X` barre du métal de la clé/porte (cuivre, fer, zinc ou or) · `W` bois compressé · `F` fourneau · `K` briques · `L` cuir.
 
 ## Télécharger
 

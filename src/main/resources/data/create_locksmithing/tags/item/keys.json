@@ -1,5 +1,8 @@
 {
   "values": [
-    "create_locksmithing:copper_key"
+    "create_locksmithing:copper_key",
+    "create_locksmithing:iron_key",
+    "create_locksmithing:zinc_key",
+    "create_locksmithing:gold_key"
   ]
 }

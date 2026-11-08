@@ -20,6 +20,9 @@ DATA = os.path.join(ROOT, "data")
 
 METALS = ["iron", "gold", "copper", "zinc"]
 STAGES = ["", "exposed", "weathered", "oxidized"]
+# Métaux des portes et des clés (du minerai le plus courant au plus rare) : temps de casse à la hache en fer
+DOOR_METALS = {"copper": 42, "iron": 56, "zinc": 70, "gold": 84}
+DOOR_NAMES = {"copper": ("Copper", "cuivre"), "iron": ("Iron", "fer"), "zinc": ("Zinc", "zinc"), "gold": ("Gold", "or")}
 FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
 
 
@@ -160,11 +163,12 @@ def saw_supports():
 
 
 def saw_partial_elements():
-    """Lame (disque de 10 px) centrée dans le bloc, dessinée vers le SUD (axe Z) ; le code la place sur l'enclume."""
-    full = [0, 0, 16, 16]
+    """Lame (disque de 12 px, texture pixel pour pixel) centrée dans le bloc, dessinée vers le SUD (axe Z) ;
+    le code la place sur l'enclume."""
+    disc = [2, 2, 14, 14]
     return [
-        {"from": [3, 3, 7.5], "to": [13, 13, 8.5],
-         "faces": {"north": f("#saw", full), "south": f("#saw", full)}},
+        {"from": [2, 2, 7.5], "to": [14, 14, 8.5],
+         "faces": {"north": f("#saw", disc), "south": f("#saw", disc)}},
         {"from": [7, 7, 7], "to": [9, 9, 9],
          "faces": {d: f("#hub", [0, 0, 2, 2]) for d in ("north", "south", "east", "west", "up", "down")}},
     ]
@@ -204,9 +208,9 @@ def models():
         "elements": saw_partial_elements(),
     })
     # Objet : la lame est figée à sa place (axe X, centre x 8, y 15, z 11)
-    full = [0, 0, 16, 16]
+    disc = [2, 2, 14, 14]
     item_saw = [
-        {"from": [7.5, 10, 6], "to": [8.5, 20, 16], "faces": {"east": f("#saw", full), "west": f("#saw", full)}},
+        {"from": [7.5, 9, 5], "to": [8.5, 21, 17], "faces": {"east": f("#saw", disc), "west": f("#saw", disc)}},
         {"from": [7, 14, 10], "to": [9, 16, 12], "faces": {d: f("#hub", [0, 0, 2, 2]) for d in ("north", "south", "east", "west", "up")}},
     ]
     write_json(os.path.join(m, "item", "key_cutter.json"), {
@@ -247,72 +251,74 @@ def models():
     write_json(os.path.join(bs, "muffle_furnace.json"), {"variants": variants})
     write_json(os.path.join(m, "item", "muffle_furnace.json"), {"parent": ml("block/muffle_furnace")})
 
-    # Porte en cuivre blindée (4 niveaux d'oxydation, la cire ne change pas l'apparence)
+    # Portes blindées : une par métal ; le cuivre a 4 niveaux d'oxydation (la cire ne change pas l'apparence)
     parts = ["bottom_left", "bottom_left_open", "bottom_right", "bottom_right_open",
              "top_left", "top_left_open", "top_right", "top_right_open"]
-    for stage in STAGES:
-        prefix = f"{stage}_" if stage else ""
-        for part in parts:
-            write_json(os.path.join(m, "block", f"{prefix}armored_copper_door_{part}.json"), {
-                "parent": f"minecraft:block/door_{part}",
-                "textures": {
-                    "bottom": ml(f"block/{prefix}armored_copper_door_bottom"),
-                    "top": ml(f"block/{prefix}armored_copper_door_top"),
-                },
-            })
-    # Avec une tapisserie : le bois de la texture est transparent, un fond en cuir est caché au milieu de
-    # l'épaisseur (au cas où le rendu de la tapisserie n'est pas dessiné, de très loin), et le code dessine la
-    # tapisserie avec ses motifs juste derrière chaque face.
-    for stage in STAGES:
-        prefix = f"{stage}_" if stage else ""
-        for part in parts:
-            half = "bottom" if part.startswith("bottom") else "top"
-            tex = "#" + half
-            faces = {f: dict(v, texture=tex) for f, v in VANILLA_DOOR_FACES[part].items()}
-            write_json(os.path.join(m, "block", f"{prefix}armored_copper_door_{part}_tapestry.json"), {
-                "ambientocclusion": False,
-                "render_type": "minecraft:cutout",
-                "textures": {
-                    "particle": ml(f"block/{prefix}armored_copper_door_{half}"),
-                    half: ml(f"block/{prefix}armored_copper_door_{half}_tapestry"),
-                    "leather": ml("block/tapestry"),
-                },
-                "elements": [
-                    {"from": [0, 0, 0], "to": [3, 16, 16], "faces": faces},
-                    {"from": [1.5, 0, 0.5], "to": [1.5, 16, 15.5], "faces": {
-                        "west": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
-                        "east": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
-                    }},
-                ],
-            })
-    # Rotations identiques aux portes de Minecraft
-    rot = {
-        ("east", "left", False): 0, ("east", "left", True): 90, ("east", "right", False): 0, ("east", "right", True): 270,
-        ("north", "left", False): 270, ("north", "left", True): 0, ("north", "right", False): 270, ("north", "right", True): 180,
-        ("south", "left", False): 90, ("south", "left", True): 180, ("south", "right", False): 90, ("south", "right", True): 0,
-        ("west", "left", False): 180, ("west", "left", True): 270, ("west", "right", False): 180, ("west", "right", True): 90,
-    }
-    variants = {}
-    for stage in STAGES:
-        prefix = f"{stage}_" if stage else ""
-        oxidation = stage or "unaffected"
-        for (facing, hinge, opened), y in rot.items():
-            for half, part in (("lower", "bottom"), ("upper", "top")):
-                model = ml(f"block/{prefix}armored_copper_door_{part}_{hinge}" + ("_open" if opened else ""))
-                for tapestry in (False, True):
-                    key = (f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},"
-                           f"oxidation={oxidation},tapestry={str(tapestry).lower()},visible=true")
-                    v = {"model": model + ("_tapestry" if tapestry else "")}
-                    if y:
-                        v["y"] = y
-                    variants[key] = v
-    # Pendant l'animation d'ouverture, le modèle fixe est caché (le rendu animé dessine la porte)
-    variants["visible=false"] = {"model": ml("block/armored_door_hidden")}
-    write_json(os.path.join(m, "block", "armored_door_hidden.json"),
-               {"textures": {"particle": ml("block/armored_copper_door_bottom")}})
-    write_json(os.path.join(bs, "armored_copper_door.json"), {"variants": variants})
+    for metal in DOOR_METALS:
+        door = f"armored_{metal}_door"
+        stages = STAGES if metal == "copper" else [""]
+        for stage in stages:
+            name = f"{stage}_{door}" if stage else door
+            for part in parts:
+                write_json(os.path.join(m, "block", f"{name}_{part}.json"), {
+                    "parent": f"minecraft:block/door_{part}",
+                    "textures": {
+                        "bottom": ml(f"block/{name}_bottom"),
+                        "top": ml(f"block/{name}_top"),
+                    },
+                })
+            # Avec une tapisserie : sur les deux grandes faces, le bois de la texture est transparent et le code
+            # dessine la tapisserie (cuir + motifs) juste derrière. Les tranches gardent la texture pleine. Un fond
+            # en cuir est caché au milieu de l'épaisseur (quand la tapisserie n'est pas dessinée, de très loin).
+            for part in parts:
+                half = "bottom" if part.startswith("bottom") else "top"
+                faces = {f: dict(v, texture="#panel" if f in ("west", "east") else "#edge")
+                         for f, v in VANILLA_DOOR_FACES[part].items()}
+                write_json(os.path.join(m, "block", f"{name}_{part}_tapestry.json"), {
+                    "ambientocclusion": False,
+                    "render_type": "minecraft:cutout",
+                    "textures": {
+                        "particle": ml(f"block/{name}_{half}"),
+                        "edge": ml(f"block/{name}_{half}"),
+                        "panel": ml(f"block/{name}_{half}_tapestry"),
+                        "leather": ml("block/tapestry"),
+                    },
+                    "elements": [
+                        {"from": [0, 0, 0], "to": [3, 16, 16], "faces": faces},
+                        {"from": [1.5, 0, 0.5], "to": [1.5, 16, 15.5], "faces": {
+                            "west": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
+                            "east": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
+                        }},
+                    ],
+                })
+        # Rotations identiques aux portes de Minecraft
+        rot = {
+            ("east", "left", False): 0, ("east", "left", True): 90, ("east", "right", False): 0, ("east", "right", True): 270,
+            ("north", "left", False): 270, ("north", "left", True): 0, ("north", "right", False): 270, ("north", "right", True): 180,
+            ("south", "left", False): 90, ("south", "left", True): 180, ("south", "right", False): 90, ("south", "right", True): 0,
+            ("west", "left", False): 180, ("west", "left", True): 270, ("west", "right", False): 180, ("west", "right", True): 90,
+        }
+        variants = {}
+        for stage in stages:
+            name = f"{stage}_{door}" if stage else door
+            oxidation = f"oxidation={stage or 'unaffected'}," if metal == "copper" else ""
+            for (facing, hinge, opened), y in rot.items():
+                for half, part in (("lower", "bottom"), ("upper", "top")):
+                    model = ml(f"block/{name}_{part}_{hinge}" + ("_open" if opened else ""))
+                    for tapestry in (False, True):
+                        key = (f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},"
+                               f"{oxidation}tapestry={str(tapestry).lower()},visible=true")
+                        v = {"model": model + ("_tapestry" if tapestry else "")}
+                        if y:
+                            v["y"] = y
+                        variants[key] = v
+        # Pendant l'animation d'ouverture, le modèle fixe est caché (le rendu animé dessine la porte)
+        variants["visible=false"] = {"model": ml(f"block/{door}_hidden")}
+        write_json(os.path.join(m, "block", f"{door}_hidden.json"),
+                   {"textures": {"particle": ml(f"block/{door}_bottom")}})
+        write_json(os.path.join(bs, f"{door}.json"), {"variants": variants})
 
-    # Tapisserie : rendu par le code (comme une bannière) ; le modèle sert aux particules et à l'icône dynamique
+    # Tapisserie : rendu par le code (panneau de cuir au mur) ; le modèle sert aux particules et à l'icône dynamique
     write_json(os.path.join(bs, "tapestry.json"), {"variants": {"": {"model": ml("block/tapestry")}}})
     write_json(os.path.join(m, "block", "tapestry.json"), {"textures": {"particle": ml("block/tapestry")}})
     write_json(os.path.join(m, "item", "tapestry.json"), {
@@ -332,7 +338,9 @@ def models():
     })
 
     # Objets "plats"
-    flat = ["pressed_plank", "compressed_wood", "mold", "saw_blade", "blank_key", "copper_key", "armored_copper_door"]
+    flat = ["pressed_plank", "compressed_wood", "mold", "saw_blade"]
+    flat += [f"{metal}_blank_key" for metal in DOOR_METALS] + [f"{metal}_key" for metal in DOOR_METALS]
+    flat += [f"armored_{metal}_door" for metal in DOOR_METALS]
     flat += [f"{metal}_bar" for metal in METALS]
     # Seaux : celui de Minecraft, avec le métal en fusion dedans
     for metal in METALS:
@@ -401,8 +409,8 @@ PONDER = {
             ("No hand, no redstone: only a key", "Ni main, ni redstone : seulement une clé"),
             ("The first key used becomes its key", "La première clé utilisée devient sa clé"),
             ("Other keys are refused", "Les autres clés sont refusées"),
-            ("Breaking it resets the lock (42 s with an Iron Axe)",
-             "La casser remet la serrure à zéro (42 s à la hache en fer)"),
+            ("Breaking it resets the lock (Iron Axe: 42 s, longer for rarer metals)",
+             "La casser remet la serrure à zéro (hache en fer : 42 s, plus pour les métaux rares)"),
             ("It oxidizes like copper", "Elle s'oxyde comme le cuivre"),
             ("Honeycomb waxes it, an Axe scrapes it", "Le miel la cire, la hache la gratte"),
             ("A Tapestry replaces the wood", "Une tapisserie remplace le bois"),
@@ -445,7 +453,8 @@ def lang():
     add(f"itemGroup.{MOD}.main", "Create: Locksmithing", "Create: Locksmithing")
 
     # Blocs
-    add(f"block.{MOD}.armored_copper_door", "Armored Copper Door", "Porte en cuivre blindée")
+    for metal, (e, fr_name) in DOOR_NAMES.items():
+        add(f"block.{MOD}.armored_{metal}_door", f"Armored {e} Door", f"Porte en {fr_name} blindée")
     add(f"block.{MOD}.muffle_furnace", "Muffle Furnace", "Four à moufle")
     add(f"block.{MOD}.casting_anvil", "Casting Anvil", "Enclume de moulage")
     add(f"block.{MOD}.key_cutter", "Key Cutter", "Machine à tailler les clés")
@@ -456,8 +465,9 @@ def lang():
     add(f"item.{MOD}.compressed_wood", "Compressed Wood", "Bois compressé")
     add(f"item.{MOD}.mold", "Mold", "Moule")
     add(f"item.{MOD}.saw_blade", "Saw Blade", "Lame de scie")
-    add(f"item.{MOD}.blank_key", "Blank Key", "Clé vierge")
-    add(f"item.{MOD}.copper_key", "Copper Key", "Clé en cuivre")
+    for metal, (e, fr_name) in DOOR_NAMES.items():
+        add(f"item.{MOD}.{metal}_blank_key", f"Blank {e} Key", f"Clé vierge en {fr_name}")
+        add(f"item.{MOD}.{metal}_key", f"{e} Key", f"Clé en {fr_name}")
     for metal, (e, f, de) in METAL_NAMES.items():
         add(f"item.{MOD}.{metal}_bar", f"{e} Bar", f"Barre {de}")
         add(f"item.{MOD}.molten_{metal}_bucket", f"Molten {e} Bucket", f"Seau {de} en fusion")
@@ -472,6 +482,7 @@ def lang():
                         ("oxidized", "Oxidized", "Oxydée")]:
         add(f"item.{MOD}.armored_door.oxidation.{stage}", e, f)
     add(f"item.{MOD}.armored_door.waxed", "Waxed", "Cirée")
+    add(f"item.{MOD}.armored_door.break_time", "%s s to break with an Iron Axe", "%s s pour la casser à la hache en fer")
     add(f"message.{MOD}.door.need_key", "This door is locked: it needs a key",
         "Cette porte est verrouillée : il faut une clé")
     add(f"message.{MOD}.door.wrong_key_type", "This key does not fit this kind of door",
@@ -497,18 +508,27 @@ def lang():
             add(f"{key}.tooltip.condition{i}", cond[0], cond[1])
             add(f"{key}.tooltip.behaviour{i}", beh[0], beh[1])
 
-    tip(f"block.{MOD}.armored_copper_door",
-        ("A _heavy door_ that only opens with its _key_.",
-         "Une _porte lourde_ qui ne s'ouvre qu'avec sa _clé_."),
-        [(("When R-Clicked with a Key", "Clic droit avec une clé"),
-          ("The _first key_ used becomes the _only key_ that opens it. _Breaking_ the door resets the lock.",
-           "La _première clé_ utilisée devient la _seule clé_ qui l'ouvre. _Casser_ la porte remet la serrure à zéro.")),
-         (("Over time", "Avec le temps"),
-          ("_Oxidizes_ like copper. Use a _Honeycomb_ to keep its look, an _Axe_ to scrape it.",
-           "_S'oxyde_ comme le cuivre. Un _rayon de miel_ garde son apparence, une _hache_ la gratte.")),
-         (("When R-Clicked with a Tapestry", "Clic droit avec une tapisserie"),
-          ("The _tapestry_ replaces the _wood_, on both sides. _Shears_ take it back.",
-           "La _tapisserie_ remplace le _bois_, des deux côtés. Des _cisailles_ la reprennent."))])
+    for metal, (e, fr_name) in DOOR_NAMES.items():
+        behaviours = [
+            (("When R-Clicked with a Key", "Clic droit avec une clé"),
+             (f"Only _{e} Keys_ fit. The _first key_ used becomes the _only key_ that opens it. _Breaking_ the door "
+              "resets the lock.",
+              f"Seules les _clés en {fr_name}_ rentrent. La _première clé_ utilisée devient la _seule clé_ qui l'ouvre. "
+              "_Casser_ la porte remet la serrure à zéro."))]
+        if metal == "copper":
+            behaviours.append(
+                (("Over time", "Avec le temps"),
+                 ("_Oxidizes_ like copper. Use a _Honeycomb_ to keep its look, an _Axe_ to scrape it.",
+                  "_S'oxyde_ comme le cuivre. Un _rayon de miel_ garde son apparence, une _hache_ la gratte.")))
+        behaviours.append(
+            (("When R-Clicked with a Tapestry", "Clic droit avec une tapisserie"),
+             ("The _tapestry_ replaces the _wood_, on both sides. _Shears_ take it back.",
+              "La _tapisserie_ remplace le _bois_, des deux côtés. Des _cisailles_ la reprennent.")))
+        tip(f"block.{MOD}.armored_{metal}_door",
+            ("A _heavy door_ that only opens with its _key_. The rarer the metal, the _longer_ it takes to break.",
+             "Une _porte lourde_ qui ne s'ouvre qu'avec sa _clé_. Plus le métal est rare, plus elle est _longue_ "
+             "à casser."),
+            behaviours)
     tip(f"block.{MOD}.muffle_furnace",
         ("_Melts ingots_ into _molten metal_ when placed on a _lit Blaze Burner_.",
          "_Fait fondre les lingots_ en _métal en fusion_ quand il est posé sur un _Brûleur à Blaze allumé_."),
@@ -528,17 +548,20 @@ def lang():
           ("Opens the _interface_ where you _choose_ which key to cut.",
            "Ouvre l'_interface_ où l'on _choisit_ la clé à tailler."))])
     tip(f"block.{MOD}.tapestry",
-        ("A _leather_ wall hanging. Decorate it in a _Loom_, just like a banner.",
-         "Une tenture en _cuir_ à accrocher au mur. Se décore dans un _métier à tisser_, comme une bannière."),
+        ("A _leather_ covering glued _flat on a wall_, like _wallpaper_ (1 block wide, 2 high). "
+         "Decorate it in a _Loom_.",
+         "Un revêtement en _cuir_ collé _à plat sur un mur_, comme du _papier peint_ (1 bloc de large, 2 de haut). "
+         "Se décore dans un _métier à tisser_."),
         [(("When used on an Armored Door", "Sur une porte blindée"),
           ("Replaces the door's _wood_, with its patterns. _Shears_ take it back.",
            "Remplace le _bois_ de la porte, avec ses motifs. Des _cisailles_ la reprennent."))])
-    tip(f"item.{MOD}.copper_key",
-        ("Opens _Armored Copper Doors_. Every cut key is _unique_.",
-         "Ouvre les _portes en cuivre blindées_. Chaque clé taillée est _unique_."), [])
-    tip(f"item.{MOD}.blank_key",
-        ("Cut it in a _Key Cutter_ to get a key.",
-         "À tailler dans une _machine à tailler les clés_ pour obtenir une clé."), [])
+    for metal, (e, fr_name) in DOOR_NAMES.items():
+        tip(f"item.{MOD}.{metal}_key",
+            (f"Opens _Armored {e} Doors_. Every cut key is _unique_.",
+             f"Ouvre les _portes en {fr_name} blindées_. Chaque clé taillée est _unique_."), [])
+        tip(f"item.{MOD}.{metal}_blank_key",
+            (f"Cut it in a _Key Cutter_ to get a _{e} Key_.",
+             f"À tailler dans une _machine à tailler les clés_ pour obtenir une _clé en {fr_name}_."), [])
 
     # Sous-titres des sons
     for event, (_, sub_en, sub_fr) in SOUNDS.items():
@@ -552,12 +575,15 @@ def lang():
     add(f"jei.{MOD}.rotation", "Needs rotation", "Rotation nécessaire")
     add(f"jei.{MOD}.seconds", "%s s", "%s s")
     add(f"jei.{MOD}.info.armored_door",
-        "Opens only with a cut key. The first key used on the door becomes its only key; breaking the door resets the lock. "
-        "Takes 42 seconds to break with an Iron Axe. Oxidizes like copper: wax it with a Honeycomb. "
+        "Opens only with a cut key of its metal. The first key used on the door becomes its only key; breaking the door "
+        "resets the lock. Takes %s seconds to break with an Iron Axe (the rarer the metal, the longer). "
         "Right-click it with a Tapestry to replace its wood; Shears take the tapestry back.",
-        "S'ouvre seulement avec une clé taillée. La première clé utilisée devient sa seule clé ; casser la porte remet "
-        "la serrure à zéro. 42 secondes pour la casser à la hache en fer. S'oxyde comme le cuivre : un rayon de miel la cire. "
-        "Clic droit avec une tapisserie pour remplacer son bois ; des cisailles reprennent la tapisserie.")
+        "S'ouvre seulement avec une clé taillée de son métal. La première clé utilisée devient sa seule clé ; casser la "
+        "porte remet la serrure à zéro. %s secondes pour la casser à la hache en fer (plus le métal est rare, plus c'est "
+        "long). Clic droit avec une tapisserie pour remplacer son bois ; des cisailles reprennent la tapisserie.")
+    add(f"jei.{MOD}.info.armored_door.oxidizes",
+        "Oxidizes like copper: wax it with a Honeycomb.",
+        "S'oxyde comme le cuivre : un rayon de miel la cire.")
     add(f"jei.{MOD}.info.key",
         "Cut in a Key Cutter. Every cut key is unique: the first one used on an Armored Door becomes its key.",
         "Se taille dans la machine à tailler les clés. Chaque clé est unique : la première utilisée sur une porte "
@@ -629,11 +655,12 @@ def recipes():
         })
 
     # Clés
-    write_json(os.path.join(r, "key_cutting", "copper_key.json"), {
-        "type": ml("key_cutting"),
-        "ingredient": item(ml("blank_key")),
-        "result": {"id": ml("copper_key"), "count": 1},
-    })
+    for metal in DOOR_METALS:
+        write_json(os.path.join(r, "key_cutting", f"{metal}_key.json"), {
+            "type": ml("key_cutting"),
+            "ingredient": item(ml(f"{metal}_blank_key")),
+            "result": {"id": ml(f"{metal}_key"), "count": 1},
+        })
 
     # Crafts
     # Moule : la forme demandée (A.A / AAA) est celle du Bassin de Create, donc on ajoute une plaque de fer au fond.
@@ -643,9 +670,11 @@ def recipes():
     shaped("saw_blade", [" A ", "AAA", " A "], {"A": alloy}, ml("saw_blade"))
     shaped("key_cutter", ["SBB", " B ", "PPP"], {"S": item(ml("saw_blade")), "B": iron_block, "P": iron_plate},
            ml("key_cutter"))
-    shaped("blank_key", ["ABB"], {"A": alloy, "B": item(ml("iron_bar"))}, ml("blank_key"))
-    shaped("armored_copper_door", ["BBB", "BCB", "BCB"],
-           {"B": item(ml("copper_bar")), "C": item(ml("compressed_wood"))}, ml("armored_copper_door"))
+    # Clé vierge et porte de chaque métal, avec les barres coulées dans l'enclume de moulage
+    for metal in DOOR_METALS:
+        shaped(f"{metal}_blank_key", ["ABB"], {"A": alloy, "B": item(ml(f"{metal}_bar"))}, ml(f"{metal}_blank_key"))
+        shaped(f"armored_{metal}_door", ["BBB", "BCB", "BCB"],
+               {"B": item(ml(f"{metal}_bar")), "C": item(ml("compressed_wood"))}, ml(f"armored_{metal}_door"))
     shaped("tapestry", ["LLL", "LLL", "LLL"], {"L": item("minecraft:leather")}, ml("tapestry"))
     shaped("muffle_furnace", ["PPP", "PFP", "KKK"],
            {"P": iron_plate, "F": item("minecraft:furnace"), "K": item("minecraft:bricks")}, ml("muffle_furnace"))
@@ -679,51 +708,56 @@ def loot():
                     "include": ["minecraft:custom_name", "minecraft:item_name", "minecraft:hide_additional_tooltip",
                                 "minecraft:banner_patterns", "minecraft:rarity"],
                 }],
+                # les motifs sont dans la moitié basse
+                "conditions": [{"condition": "minecraft:block_state_property", "block": ml("tapestry"),
+                                "properties": {"half": "lower"}}],
             }],
             "conditions": [{"condition": "minecraft:survives_explosion"}],
         }],
         "random_sequence": ml("blocks/tapestry"),
     })
 
-    door = ml("armored_copper_door")
-    write_json(os.path.join(lt, "armored_copper_door.json"), {
-        "type": "minecraft:block",
-        "pools": [{
-            "rolls": 1.0,
-            "bonus_rolls": 0.0,
-            "entries": [{
-                "type": "minecraft:item",
-                "name": door,
-                "conditions": [{"condition": "minecraft:block_state_property", "block": door,
-                                "properties": {"half": "lower"}}],
-                # garde l'oxydation et la cire, seulement si elles ne sont pas "neuves"
-                "functions": [{
-                    "function": "minecraft:copy_state",
-                    "block": door,
-                    "properties": ["oxidation", "waxed"],
-                    "conditions": [{"condition": "minecraft:inverted", "term": {
-                        "condition": "minecraft:block_state_property", "block": door,
-                        "properties": {"oxidation": "unaffected", "waxed": "false"}}}],
-                }],
+    for metal in DOOR_METALS:
+        door = ml(f"armored_{metal}_door")
+        entry = {
+            "type": "minecraft:item",
+            "name": door,
+            "conditions": [{"condition": "minecraft:block_state_property", "block": door,
+                            "properties": {"half": "lower"}}],
+        }
+        if metal == "copper":
+            # garde l'oxydation et la cire, seulement si elles ne sont pas "neuves"
+            entry["functions"] = [{
+                "function": "minecraft:copy_state",
+                "block": door,
+                "properties": ["oxidation", "waxed"],
+                "conditions": [{"condition": "minecraft:inverted", "term": {
+                    "condition": "minecraft:block_state_property", "block": door,
+                    "properties": {"oxidation": "unaffected", "waxed": "false"}}}],
+            }]
+        write_json(os.path.join(lt, f"armored_{metal}_door.json"), {
+            "type": "minecraft:block",
+            "pools": [{
+                "rolls": 1.0,
+                "bonus_rolls": 0.0,
+                "entries": [entry],
+                "conditions": [{"condition": "minecraft:survives_explosion"}],
             }],
-            "conditions": [{"condition": "minecraft:survives_explosion"}],
-        }],
-        "random_sequence": ml("blocks/armored_copper_door"),
-    })
-
+            "random_sequence": ml(f"blocks/armored_{metal}_door"),
+        })
 
 def tags():
-    door = ml("armored_copper_door")
+    door = [ml(f"armored_{metal}_door") for metal in DOOR_METALS]
     machines = [ml("muffle_furnace"), ml("casting_anvil"), ml("key_cutter")]
     t = lambda *p: os.path.join(DATA, *p)
-    write_json(t("minecraft", "tags", "block", "mineable", "axe.json"), {"values": [door]})
+    write_json(t("minecraft", "tags", "block", "mineable", "axe.json"), {"values": door})
     write_json(t("minecraft", "tags", "block", "mineable", "pickaxe.json"), {"values": machines})
-    write_json(t("minecraft", "tags", "block", "needs_iron_tool.json"), {"values": [door]})
-    write_json(t("minecraft", "tags", "block", "doors.json"), {"values": [door]})
-    write_json(t("minecraft", "tags", "item", "doors.json"), {"values": [door]})
+    write_json(t("minecraft", "tags", "block", "needs_iron_tool.json"), {"values": door})
+    write_json(t("minecraft", "tags", "block", "doors.json"), {"values": door})
+    write_json(t("minecraft", "tags", "item", "doors.json"), {"values": door})
     # Une contraption de Create ne doit pas pouvoir emporter une porte verrouillée
-    write_json(t("create", "tags", "block", "non_movable.json"), {"values": [door]})
-    write_json(t(MOD, "tags", "item", "keys.json"), {"values": [ml("copper_key")]})
+    write_json(t("create", "tags", "block", "non_movable.json"), {"values": door})
+    write_json(t(MOD, "tags", "item", "keys.json"), {"values": [ml(f"{metal}_key") for metal in DOOR_METALS]})
     write_json(t(MOD, "tags", "item", "bars.json"), {"values": [ml(f"{m}_bar") for m in METALS]})
 
 

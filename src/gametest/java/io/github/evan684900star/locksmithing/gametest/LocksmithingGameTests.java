@@ -14,8 +14,12 @@ import io.github.evan684900star.locksmithing.Locksmithing;
 import io.github.evan684900star.locksmithing.content.casting.CastingAnvilBlockEntity;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlock;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlockEntity;
+import io.github.evan684900star.locksmithing.content.door.DoorMetal;
+import io.github.evan684900star.locksmithing.content.door.DoorSwing;
 import io.github.evan684900star.locksmithing.content.furnace.MuffleFurnaceBlockEntity;
 import io.github.evan684900star.locksmithing.content.keycutter.KeyCutterBlockEntity;
+import io.github.evan684900star.locksmithing.content.tapestry.TapestryBlock;
+import io.github.evan684900star.locksmithing.content.tapestry.TapestryBlockEntity;
 import io.github.evan684900star.locksmithing.registry.ModBlocks;
 import io.github.evan684900star.locksmithing.registry.ModDataComponents;
 import io.github.evan684900star.locksmithing.registry.ModFluids;
@@ -58,11 +62,16 @@ public class LocksmithingGameTests {
 		for (var fluid : ModFluids.ALL)
 			helper.assertTrue(ModRecipeTypes.findCasting(level, new FluidStack(ModFluids.source(fluid), 90)).isPresent(),
 				"No casting recipe for " + fluid.getId());
-		helper.assertTrue(ModRecipeTypes.findKeyCutting(level, ModItems.BLANK_KEY.asStack()).size() == 1,
-			"The blank key should have exactly one key to cut");
+		for (DoorMetal metal : DoorMetal.values()) {
+			var cuts = ModRecipeTypes.findKeyCutting(level, ModItems.blankKeyFor(metal).asStack());
+			helper.assertTrue(cuts.size() == 1 && cuts.get(0).value().result().is(ModItems.keyFor(metal).get()),
+				"The blank " + metal.id() + " key should cut into a " + metal.id() + " key");
+			for (String id : new String[] { "crafting/" + metal.id() + "_blank_key", "crafting/armored_" + metal.id() + "_door" })
+				helper.assertTrue(level.getRecipeManager().byKey(Locksmithing.asResource(id)).isPresent(), "Missing recipe " + id);
+		}
 		for (String id : new String[] { "pressing/pressed_plank", "compacting/compressed_wood", "crafting/mold",
-			"crafting/casting_anvil", "crafting/saw_blade", "crafting/key_cutter", "crafting/blank_key",
-			"crafting/armored_copper_door", "crafting/muffle_furnace", "crafting/tapestry" })
+			"crafting/casting_anvil", "crafting/saw_blade", "crafting/key_cutter", "crafting/muffle_furnace",
+			"crafting/tapestry" })
 			helper.assertTrue(level.getRecipeManager().byKey(Locksmithing.asResource(id)).isPresent(), "Missing recipe " + id);
 		helper.succeed();
 	}
@@ -145,7 +154,7 @@ public class LocksmithingGameTests {
 		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState()
 			.setValue(CreativeMotorBlock.FACING, Direction.EAST));
 		KeyCutterBlockEntity be = helper.getBlockEntity(cutter);
-		be.getItemCapability().insertItem(0, ModItems.BLANK_KEY.asStack(2), false);
+		be.getItemCapability().insertItem(0, ModItems.COPPER_BLANK_KEY.asStack(2), false);
 		UUID[] first = new UUID[1];
 		helper.startSequence()
 			.thenWaitUntil(() -> helper.assertTrue(be.getItemCapability().getStackInSlot(1).is(ModItems.COPPER_KEY.get()),
@@ -169,7 +178,7 @@ public class LocksmithingGameTests {
 		BlockPos cutter = new BlockPos(2, 1, 2);
 		helper.setBlock(cutter, ModBlocks.KEY_CUTTER.getDefaultState());
 		KeyCutterBlockEntity be = helper.getBlockEntity(cutter);
-		be.getItemCapability().insertItem(0, ModItems.BLANK_KEY.asStack(), false);
+		be.getItemCapability().insertItem(0, ModItems.COPPER_BLANK_KEY.asStack(), false);
 		helper.runAfterDelay(100, () -> {
 			helper.assertTrue(be.getItemCapability().getStackInSlot(1).isEmpty(), "No key without rotation");
 			helper.succeed();
@@ -248,31 +257,99 @@ public class LocksmithingGameTests {
 	}
 
 	@GameTest(template = "empty")
-	public static void doorTakes42SecondsWithIronAxe(GameTestHelper helper) {
-		BlockState door = ModBlocks.ARMORED_COPPER_DOOR.getDefaultState();
-		float hardness = door.getDestroySpeed(helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
-		ItemStack ironAxe = new ItemStack(Items.IRON_AXE);
-		helper.assertTrue(ironAxe.isCorrectToolForDrops(door), "An iron axe should harvest the door");
-		helper.assertFalse(new ItemStack(Items.STONE_AXE).isCorrectToolForDrops(door), "A stone axe must not harvest it");
-		helper.assertFalse(new ItemStack(Items.DIAMOND_PICKAXE).isCorrectToolForDrops(door), "It is mined with an axe");
-		float perTick = ironAxe.getDestroySpeed(door) / hardness / 30f;
-		int ticks = (int) Math.ceil(1f / perTick);
-		helper.assertTrue(ticks == 840, "Expected 840 ticks (42 s) with an iron axe, got " + ticks);
+	public static void doorBreakTimeDependsOnMetal(GameTestHelper helper) {
+		int[] expected = { 42, 56, 70, 84 };
+		for (int i = 0; i < ModBlocks.ARMORED_DOORS.length; i++) {
+			BlockState door = ModBlocks.ARMORED_DOORS[i].getDefaultState();
+			float hardness = door.getDestroySpeed(helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
+			ItemStack ironAxe = new ItemStack(Items.IRON_AXE);
+			helper.assertTrue(ironAxe.isCorrectToolForDrops(door), "An iron axe should harvest " + door);
+			helper.assertFalse(new ItemStack(Items.STONE_AXE).isCorrectToolForDrops(door), "A stone axe must not harvest it");
+			helper.assertFalse(new ItemStack(Items.DIAMOND_PICKAXE).isCorrectToolForDrops(door), "It is mined with an axe");
+			float perTick = ironAxe.getDestroySpeed(door) / hardness / 30f;
+			int ticks = (int) Math.ceil(1f / perTick);
+			helper.assertTrue(ticks == expected[i] * 20,
+				"Expected " + expected[i] + " s with an iron axe for " + door.getBlock() + ", got " + ticks + " ticks");
+		}
 		helper.succeed();
+	}
+
+	@GameTest(template = "empty")
+	public static void doorsOnlyTakeTheirOwnKey(GameTestHelper helper) {
+		BlockPos copper = new BlockPos(1, 1, 2);
+		BlockPos iron = new BlockPos(3, 1, 2);
+		placeDoor(helper, copper, ModBlocks.ARMORED_COPPER_DOOR.getDefaultState());
+		placeDoor(helper, iron, ModBlocks.ARMORED_IRON_DOOR.getDefaultState());
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		ItemStack ironKey = ModItems.IRON_KEY.asStack();
+		ironKey.set(ModDataComponents.KEY_ID.get(), UUID.randomUUID());
+		use(helper, player, copper, ironKey);
+		helper.assertFalse(isOpen(helper, copper), "An iron key must not open a copper door");
+		use(helper, player, iron, ironKey);
+		helper.assertTrue(isOpen(helper, iron), "The iron key should open the iron door");
+		// Seul le cuivre s'oxyde et se cire
+		helper.assertFalse(helper.getBlockState(iron).isRandomlyTicking(), "An iron door must not oxidize");
+		use(helper, player, iron, new ItemStack(Items.HONEYCOMB));
+		helper.assertFalse(helper.getBlockState(iron).getValue(ArmoredDoorBlock.WAXED), "An iron door cannot be waxed");
+		helper.succeed();
+	}
+
+	/** Pendant l'ouverture, la forme de la porte (contour, collisions) tourne avec elle. */
+	@GameTest(template = "empty", timeoutTicks = 100)
+	public static void doorHitboxFollowsTheSwing(GameTestHelper helper) {
+		// Les formes calculées retombent exactement sur celles de Minecraft, fermée et ouverte
+		for (Direction facing : Direction.Plane.HORIZONTAL)
+			for (var hinge : net.minecraft.world.level.block.state.properties.DoorHingeSide.values()) {
+				BlockState closed = ModBlocks.ARMORED_COPPER_DOOR.getDefaultState().setValue(DoorBlock.FACING, facing)
+					.setValue(DoorBlock.HINGE, hinge);
+				var empty = net.minecraft.world.level.EmptyBlockGetter.INSTANCE;
+				helper.assertTrue(DoorSwing.shape(closed, 0).bounds().equals(closed.getShape(empty, BlockPos.ZERO).bounds()),
+					"Closed swing shape should match the door for " + facing + "/" + hinge);
+				helper.assertTrue(DoorSwing.shape(closed, 1).bounds()
+						.equals(closed.setValue(DoorBlock.OPEN, true).getShape(empty, BlockPos.ZERO).bounds()),
+					"Open swing shape should match the open door for " + facing + "/" + hinge);
+			}
+
+		BlockPos lower = new BlockPos(2, 1, 2);
+		placeDoor(helper, lower);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var closedBox = shapeOf(helper, lower);
+		use(helper, player, lower, keyWithId(UUID.randomUUID()));
+		helper.runAfterDelay(10, () -> {
+			var middle = shapeOf(helper, lower);
+			helper.assertFalse(middle.equals(closedBox), "Halfway, the hitbox should have left the closed position");
+			helper.assertTrue(middle.getXsize() > 0.3 && middle.getZsize() > 0.3,
+				"Halfway, the hitbox should be diagonal, got " + middle);
+			helper.assertTrue(shapeOf(helper, lower.above()).equals(middle), "Both halves move together");
+		});
+		helper.runAfterDelay(30, () -> {
+			var open = shapeOf(helper, lower);
+			var vanillaOpen = helper.getBlockState(lower).setValue(ArmoredDoorBlock.VISIBLE, true)
+				.getShape(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO).bounds();
+			helper.assertTrue(open.equals(vanillaOpen), "At the end, the hitbox is the open door: " + open);
+			helper.succeed();
+		});
+	}
+
+	private static net.minecraft.world.phys.AABB shapeOf(GameTestHelper helper, BlockPos pos) {
+		BlockPos abs = helper.absolutePos(pos);
+		return helper.getLevel().getBlockState(abs).getShape(helper.getLevel(), abs).bounds();
 	}
 
 	@GameTest(template = "empty")
 	public static void tapestryWorksWithLoomAndKeepsPatterns(GameTestHelper helper) {
 		// Le métier à tisser accepte tout BannerItem
-		helper.assertTrue(ModBlocks.TAPESTRY.asStack().getItem() instanceof net.minecraft.world.item.BannerItem,
-			"The tapestry must be usable in a Loom");
-		helper.assertTrue("block.create_locksmithing.tapestry".equals(ModBlocks.TAPESTRY.asStack().getDescriptionId()),
+		ItemStack plain = ModBlocks.TAPESTRY.asStack();
+		helper.assertTrue(plain.getItem() instanceof net.minecraft.world.item.BannerItem banner
+			&& banner.getColor() == net.minecraft.world.item.DyeColor.BROWN, "The tapestry must be usable in a Loom");
+		helper.assertTrue("block.create_locksmithing.tapestry".equals(plain.getDescriptionId()),
 			"The tapestry needs its own name");
-		BlockPos wall = new BlockPos(2, 1, 2);
-		BlockPos pos = wall.south();
+
+		// Posée avec l'objet sur la face sud d'un mur : à plat contre le mur, sur 2 blocs vers le haut
+		// (y = 1 est le sol de la zone de test, on se met juste au-dessus)
+		BlockPos wall = new BlockPos(2, 2, 2);
 		helper.setBlock(wall, Blocks.STONE_BRICKS);
-		helper.setBlock(pos, ModBlocks.TAPESTRY.getDefaultState()
-			.setValue(net.minecraft.world.level.block.WallBannerBlock.FACING, Direction.SOUTH));
+		helper.setBlock(wall.above(), Blocks.STONE_BRICKS);
 		var registry = helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN);
 		var patterns = new net.minecraft.world.level.block.entity.BannerPatternLayers.Builder()
 			.add(registry.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.BORDER),
@@ -280,11 +357,27 @@ public class LocksmithingGameTests {
 			.build();
 		ItemStack decorated = ModBlocks.TAPESTRY.asStack();
 		decorated.set(net.minecraft.core.component.DataComponents.BANNER_PATTERNS, patterns);
-		io.github.evan684900star.locksmithing.content.tapestry.TapestryBlockEntity be = helper.getBlockEntity(pos);
-		be.applyComponentsFromItemStack(decorated);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.setItemInHand(InteractionHand.MAIN_HAND, decorated);
+		BlockPos absWall = helper.absolutePos(wall);
+		decorated.useOn(new net.minecraft.world.item.context.UseOnContext(player, InteractionHand.MAIN_HAND,
+			new BlockHitResult(Vec3.atCenterOf(absWall).add(0, 0, 0.5), Direction.SOUTH, absWall, false)));
+		BlockPos pos = wall.south();
+		helper.assertBlockPresent(ModBlocks.TAPESTRY.get(), pos);
+		helper.assertBlockPresent(ModBlocks.TAPESTRY.get(), pos.above());
+		helper.assertTrue(helper.getBlockState(pos).getValue(TapestryBlock.FACING) == Direction.SOUTH,
+			"The tapestry should face away from the wall");
+		helper.assertTrue(helper.getBlockState(pos).getValue(TapestryBlock.HALF) == DoubleBlockHalf.LOWER
+			&& helper.getBlockState(pos.above()).getValue(TapestryBlock.HALF) == DoubleBlockHalf.UPPER,
+			"It goes up from the clicked block (never into the ground)");
+		TapestryBlockEntity be = helper.getBlockEntity(pos);
 		helper.assertTrue(be.getPatterns().equals(patterns), "The tapestry should take the item's patterns");
-		helper.assertTrue(patterns.equals(be.getItem().get(net.minecraft.core.component.DataComponents.BANNER_PATTERNS)),
-			"Picking or breaking it should give back the patterns");
+
+		// Sans mur derrière, elle ne tient pas
+		helper.setBlock(wall.above(), Blocks.AIR);
+		helper.assertBlockNotPresent(ModBlocks.TAPESTRY.get(), pos.above());
+		helper.assertBlockNotPresent(ModBlocks.TAPESTRY.get(), pos);
+		helper.assertTrue(droppedTapestryMatches(helper, pos, patterns), "It should drop once, with its patterns");
 		helper.succeed();
 	}
 
@@ -352,7 +445,11 @@ public class LocksmithingGameTests {
 	}
 
 	private static void placeDoor(GameTestHelper helper, BlockPos lower) {
-		BlockState state = ModBlocks.ARMORED_COPPER_DOOR.getDefaultState().setValue(DoorBlock.FACING, Direction.NORTH);
+		placeDoor(helper, lower, ModBlocks.ARMORED_COPPER_DOOR.getDefaultState());
+	}
+
+	private static void placeDoor(GameTestHelper helper, BlockPos lower, BlockState door) {
+		BlockState state = door.setValue(DoorBlock.FACING, Direction.NORTH);
 		helper.setBlock(lower, state.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER));
 		helper.setBlock(lower.above(), state.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER));
 	}

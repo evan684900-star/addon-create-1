@@ -1,6 +1,10 @@
 package io.github.evan684900star.locksmithing.ponder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.evan684900star.locksmithing.Locksmithing;
+import io.github.evan684900star.locksmithing.content.door.DoorMetal;
 import io.github.evan684900star.locksmithing.registry.ModBlocks;
 import io.github.evan684900star.locksmithing.registry.ModItems;
 import net.createmod.ponder.api.registration.PonderPlugin;
@@ -26,10 +30,15 @@ public class LocksmithingPonderPlugin implements PonderPlugin {
 				ModItems.IRON_BAR.getId(), ModItems.GOLD_BAR.getId(), ModItems.ZINC_BAR.getId())
 			.addStoryBoard("casting_anvil", LocksmithingScenes::castingAnvil);
 
-		helper.forComponents(ModBlocks.KEY_CUTTER.getId(), ModItems.BLANK_KEY.getId(), ModItems.SAW_BLADE.getId())
-			.addStoryBoard("key_cutter", LocksmithingScenes::keyCutter);
-
-		helper.forComponents(ModBlocks.ARMORED_COPPER_DOOR.getId(), ModItems.COPPER_KEY.getId())
-			.addStoryBoard("armored_door", LocksmithingScenes::armoredDoor);
+		List<ResourceLocation> cutter = new ArrayList<>(List.of(ModBlocks.KEY_CUTTER.getId(), ModItems.SAW_BLADE.getId()));
+		List<ResourceLocation> doors = new ArrayList<>();
+		for (DoorMetal metal : DoorMetal.values()) {
+			cutter.add(ModItems.blankKeyFor(metal).getId());
+			doors.add(ModItems.keyFor(metal).getId());
+		}
+		for (var door : ModBlocks.ARMORED_DOORS)
+			doors.add(door.getId());
+		helper.forComponents(cutter).addStoryBoard("key_cutter", LocksmithingScenes::keyCutter);
+		helper.forComponents(doors).addStoryBoard("armored_door", LocksmithingScenes::armoredDoor);
 	}
 }

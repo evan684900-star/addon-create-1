@@ -20,6 +20,15 @@
                 "minecraft:rarity"
               ]
             }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "create_locksmithing:tapestry",
+              "properties": {
+                "half": "lower"
+              }
+            }
           ]
         }
       ],

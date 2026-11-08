@@ -65,6 +65,8 @@ MOLTEN = {
     "zinc": [rgb("27333d"), rgb("4f6676"), rgb("86a3b3"), rgb("bcd8e2"), rgb("eefaff")],
 }
 METALS = {"iron": IRON, "gold": GOLD, "copper": COPPER, "zinc": ZINC}
+# Métaux des portes et des clés, du minerai le plus courant au plus rare
+DOOR_METALS = {"copper": COPPER, "iron": IRON, "zinc": ZINC, "gold": GOLD}
 
 
 # --------------------------------------------------------------------------------------------
@@ -235,48 +237,80 @@ def mold():
     return img
 
 
-def saw_blade():
+def saw_zone(u, v, teeth, base=0.66):
+    """Zone d'une lame de scie circulaire (u, v en rayons, centre en 0, 0)."""
+    r = math.hypot(u, v)
+    if r <= 0.17:
+        return "hole"
+    if r <= 0.36:
+        return "hub"
+    if r <= 0.47:
+        return "ring"
+    if r <= base:
+        return "body"
+    if r <= 1.0:
+        # dents en biais : larges à la base, pointues au bout
+        f = ((math.atan2(v, u) / math.tau) * teeth) % 1.0
+        if f < 1.0 - (r - base) / (1 - base) * 0.95:
+            return "tooth"
+    return None
+
+
+def saw(radius, teeth=8):
+    """Lame de scie vue de face : dents en biais, disque en acier, anneau sombre, moyeu en alliage d'andésite.
+    Chaque pixel prend la zone qui le couvre le plus (8 x 8 échantillons) : contour net, pas de bruit."""
     img = blank()
     px = img.load()
-    disc = circle_mask(8, 8, 6.2, 1.6)
-    teeth = set()
-    for i in range(12):
-        a = i / 12 * math.tau
-        tx = int(round(8 + math.cos(a) * 7.0 - 0.5))
-        ty = int(round(8 + math.sin(a) * 7.0 - 0.5))
-        teeth.add((tx, ty))
-    full = disc | teeth
-    shade(img, full, ANDESITE, noise=0.08, seed=5)
-    # anneau brillant et centre
-    for (x, y) in circle_mask(8, 8, 4.2, 3.4):
-        if (x, y) in full:
-            px[x, y] = ANDESITE[4] if x < 8 else ANDESITE[3]
-    for (x, y) in circle_mask(8, 8, 2.4, 1.6):
-        px[x, y] = BRASS[2] if (x + y) % 2 else BRASS[3]
-    for (x, y) in teeth:
-        px[x, y] = IRON[3]
+    zones = {}
+    n = 8
+    for y in range(16):
+        for x in range(16):
+            count = {}
+            for sy in range(n):
+                for sx in range(n):
+                    z = saw_zone((x + (sx + 0.5) / n - 8) / radius, (y + (sy + 0.5) / n - 8) / radius, teeth)
+                    count[z] = count.get(z, 0) + 1
+            z = max(count, key=count.get)
+            if z:
+                zones[(x, y)] = z
+    for (x, y), z in zones.items():
+        d = (x + 0.5 - 8) + (y + 0.5 - 8)
+        lit, dark = d < -0.5, d > 2.5  # lumière en haut à gauche
+        px[x, y] = {
+            "hole": rgb("1b1b1f"),
+            "hub": ANDESITE[4] if lit else ANDESITE[2] if dark else ANDESITE[3],
+            "ring": IRON[1],
+            "body": IRON[3] if lit else IRON[2],
+            "tooth": IRON[4] if lit else IRON[3],
+        }[z]
+    shade_outline(img, set(zones), IRON[0])
     return img
 
 
+def saw_blade():
+    return saw(7.6)
+
+
 def key(pal, cut):
+    """Clé taillée. L'anneau est à droite : en main, il est du côté du joueur et la tige part devant."""
     bow = circle_mask(4.5, 7.5, 3.6, 1.5)
     blade = rect(7, 6, 14, 8)
     shape = bow | blade
     if cut:
         shape |= rect(9, 9, 9, 10) | rect(11, 9, 12, 9) | rect(14, 9, 14, 10)
     img = shade(blank(), shape, pal, highlight_line={(x, 6) for x in range(8, 14)})
-    return img
+    return img.transpose(Image.FLIP_LEFT_RIGHT)
 
 
-def blank_key():
-    # anneau en alliage d'andésite, tige en barres de fer, pas encore de dents
+def blank_key(pal):
+    """Clé vierge : anneau en alliage d'andésite, tige dans le métal de la porte, pas encore de dents."""
     bow = circle_mask(4.5, 7.5, 3.6, 1.5)
     blade = rect(7, 6, 14, 8)
     img = blank()
     shade(img, bow, ANDESITE, outline=False)
-    shade(img, blade, IRON, outline=False, highlight_line={(x, 6) for x in range(8, 14)})
-    shade_outline(img, bow | blade, IRON[0])
-    return img
+    shade(img, blade, pal, outline=False, highlight_line={(x, 6) for x in range(8, 14)})
+    shade_outline(img, bow | blade, pal[0])
+    return img.transpose(Image.FLIP_LEFT_RIGHT)
 
 
 # --------------------------------------------------------------------------------------------
@@ -331,7 +365,7 @@ def door_half(pal, top, tapestry=False):
     return img
 
 
-def door_item():
+def door_item(pal=COPPER):
     img = blank()
     px = img.load()
     shape = rect(4, 0, 11, 15)
@@ -339,20 +373,20 @@ def door_item():
     for (x, y) in shape:
         px[x, y] = rnd.choice(CHIP[:5])
     for y in range(16):
-        px[4, y] = COPPER[3]
-        px[11, y] = COPPER[1]
+        px[4, y] = pal[3]
+        px[11, y] = pal[1]
     for x in range(4, 12):
-        px[x, 0] = COPPER[3]
-        px[x, 15] = COPPER[1]
-        px[x, 5] = COPPER[2]
-        px[x, 10] = COPPER[2]
+        px[x, 0] = pal[3]
+        px[x, 15] = pal[1]
+        px[x, 5] = pal[2]
+        px[x, 10] = pal[2]
     for y in range(1, 15):
         if px[7, y] in CHIP[:5]:
             px[7, y] = WOOD[0]
     px[10, 7] = rgb("0e0e10")
-    px[9, 7] = COPPER[4]
-    px[5, 2] = COPPER[4]
-    px[10, 13] = COPPER[4]
+    px[9, 7] = pal[4]
+    px[5, 2] = pal[4]
+    px[10, 13] = pal[4]
     return img
 
 
@@ -452,31 +486,8 @@ def mold_floor():
 
 
 def saw_disc():
-    """Lame vue de face, transparente autour (rendu cutout)."""
-    img = blank()
-    px = img.load()
-    disc = circle_mask(8, 8, 7.0, 0)
-    for (x, y) in disc:
-        d = math.hypot(x + 0.5 - 8, y + 0.5 - 8)
-        if d > 6.2:
-            # dents : une sur deux autour du bord
-            a = math.atan2(y + 0.5 - 8, x + 0.5 - 8)
-            if int((a + math.pi) / math.tau * 20) % 2 == 0:
-                px[x, y] = IRON[3]
-            continue
-        px[x, y] = ANDESITE[3] if (x + 2 * y) % 5 else ANDESITE[2]
-    for (x, y) in circle_mask(8, 8, 6.3, 5.4):
-        px[x, y] = ANDESITE[1]
-    for (x, y) in circle_mask(8, 8, 3.2, 2.4):
-        px[x, y] = ANDESITE[4]
-    # rayons pour bien voir la rotation
-    for i in range(4):
-        a = i / 4 * math.tau + 0.4
-        for r in range(3, 6):
-            x = int(8 + math.cos(a) * r)
-            y = int(8 + math.sin(a) * r)
-            px[x, y] = ANDESITE[1]
-    return img
+    """Lame posée sur la machine : 12 px de large, plaquée pixel pour pixel (UV 2..14), transparente autour."""
+    return saw(6.1)
 
 
 def hub():
@@ -533,17 +544,13 @@ def stitches(px, x0, y0, x1, y1):
 
 
 def tapestry_leather():
-    """Texture 64x64 au format de la bannière de Minecraft (cuir sur le drapeau, bois sur la barre)."""
+    """Texture 64x64 au format de la bannière de Minecraft (le cuir sur le drapeau ; la barre ne sert plus)."""
     img = Image.new("RGBA", (64, 64), T)
     px = img.load()
     # Drapeau 20x40x1 en (0,0) : dessus/dessous, côtés, face avant (1,1)-(20,40), face arrière (22,1)-(41,40)
     leather_fill(px, 0, 0, 41, 40, 71)
     stitches(px, 1, 1, 20, 40)
     stitches(px, 22, 1, 41, 40)
-    # rangée d'œillets en haut (où le cuir est accroché)
-    for x in range(3, 20, 4):
-        px[x, 3] = DARK_WOOD[0]
-        px[x + 23 - 2, 3] = DARK_WOOD[0]
     # Barre 20x2x2 en (0,42) : bois sombre avec des embouts en fer
     for y in range(42, 46):
         for x in range(0, 44):
@@ -753,9 +760,9 @@ def key_cutter_gui():
     gui_player_inventory(img)
     px = img.load()
     gui_slot(img, 19, 32)
-    # zone de choix des clés (4 x 3 boutons de 16 x 18)
-    for (x, y) in rect(51, 14, 116, 69):
-        px[x, y] = GUI_DARK if (x == 51 or y == 14) else GUI_LIGHT if (x == 116 or y == 69) else (120, 120, 120, 255)
+    # zone de choix des clés (4 x 2 boutons de 16 x 18) ; en dessous, la place du message "rotation nécessaire"
+    for (x, y) in rect(51, 14, 116, 51):
+        px[x, y] = GUI_DARK if (x == 51 or y == 14) else GUI_LIGHT if (x == 116 or y == 51) else (120, 120, 120, 255)
     # flèche vide 20x15
     small = scale_mask(ARROW, 20 / 24, 15 / 17, 20, 15)
     draw_arrow(img, 118, 34, GUI_SLOT, small, 20)
@@ -835,17 +842,20 @@ def main():
         save(bar(pal), "item", f"{name}_bar.png")
     save(mold(), "item", "mold.png")
     save(saw_blade(), "item", "saw_blade.png")
-    save(blank_key(), "item", "blank_key.png")
-    save(key(COPPER, True), "item", "copper_key.png")
-    save(door_item(), "item", "armored_copper_door.png")
+    for name, pal in DOOR_METALS.items():
+        save(blank_key(pal), "item", f"{name}_blank_key.png")
+        save(key(pal, True), "item", f"{name}_key.png")
+        save(door_item(pal), "item", f"armored_{name}_door.png")
 
-    # Porte (4 niveaux d'oxydation)
-    for stage, pal in COPPER_STAGES.items():
-        prefix = f"{stage}_" if stage else ""
-        save(door_half(pal, False), "block", f"{prefix}armored_copper_door_bottom.png")
-        save(door_half(pal, True), "block", f"{prefix}armored_copper_door_top.png")
-        save(door_half(pal, False, True), "block", f"{prefix}armored_copper_door_bottom_tapestry.png")
-        save(door_half(pal, True, True), "block", f"{prefix}armored_copper_door_top_tapestry.png")
+    # Portes : cuivre (4 niveaux d'oxydation), fer, zinc, or
+    door_palettes = [(f"{stage}_armored_copper_door" if stage else "armored_copper_door", pal)
+                     for stage, pal in COPPER_STAGES.items()]
+    door_palettes += [(f"armored_{name}_door", pal) for name, pal in DOOR_METALS.items() if name != "copper"]
+    for name, pal in door_palettes:
+        save(door_half(pal, False), "block", f"{name}_bottom.png")
+        save(door_half(pal, True), "block", f"{name}_top.png")
+        save(door_half(pal, False, True), "block", f"{name}_bottom_tapestry.png")
+        save(door_half(pal, True, True), "block", f"{name}_top_tapestry.png")
 
     # Four à moufle (par-dessus le boîtier en cuivre de Create)
     save(furnace_front_overlay(False), "block", "muffle_furnace_front.png")

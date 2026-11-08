@@ -100,6 +100,8 @@ public class ScreenshotTour {
 	}
 
 	private static void createWorld(Minecraft mc) {
+		// Toujours un monde neuf (sinon les blocs d'une ancienne visite restent là)
+		org.apache.commons.io.FileUtils.deleteQuietly(new java.io.File(mc.gameDirectory, "saves/screenshots"));
 		GameRules rules = new GameRules();
 		rules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
 		rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, null);
@@ -147,6 +149,18 @@ public class ScreenshotTour {
 			ui.seekToTime(ui.getActiveScene().getTotalTime() - ticks);
 	}
 
+	/** Une tapisserie collée au mur (moitié basse + moitié haute), tournée vers le sud. */
+	private static void placeTapestry(ServerLevel level, BlockPos pos, ItemStack stack) {
+		BlockState state = ModBlocks.TAPESTRY.getDefaultState()
+			.setValue(io.github.evan684900star.locksmithing.content.tapestry.TapestryBlock.FACING, Direction.SOUTH);
+		level.setBlock(pos, state, 2);
+		level.setBlock(pos.above(), state.setValue(io.github.evan684900star.locksmithing.content.tapestry.TapestryBlock.HALF,
+			DoubleBlockHalf.UPPER), 2);
+		if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.BlockEntity be)
+			be.applyComponentsFromItemStack(stack);
+		level.sendBlockUpdated(pos, state, state, 3);
+	}
+
 	private static void shot(Minecraft mc, String name) {
 		Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), msg -> {});
 	}
@@ -179,7 +193,10 @@ public class ScreenshotTour {
 			level.setBlockAndUpdate(cutter.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState()
 				.setValue(CreativeMotorBlock.FACING, Direction.EAST));
 			if (level.getBlockEntity(cutter) instanceof KeyCutterBlockEntity be)
-				be.getItemCapability().insertItem(0, ModItems.BLANK_KEY.asStack(4), false);
+				be.getItemCapability().insertItem(0, ModItems.COPPER_BLANK_KEY.asStack(4), false);
+			// Une deuxième machine sans moteur (pour l'interface "rotation nécessaire")
+			level.setBlockAndUpdate(p.offset(4, 0, 4), ModBlocks.KEY_CUTTER.getDefaultState()
+				.setValue(HorizontalKineticBlock.HORIZONTAL_FACING, Direction.SOUTH));
 			// Les 4 niveaux d'oxydation de la porte
 			WeatherState[] stages = WeatherState.values();
 			for (int i = 0; i < stages.length; i++) {
@@ -195,19 +212,14 @@ public class ScreenshotTour {
 			level.setBlock(p.east(5).above(), Blocks.STONE_BRICKS.defaultBlockState(), 2);
 			level.setBlock(p.east(10), Blocks.STONE_BRICKS.defaultBlockState(), 2);
 			level.setBlock(p.east(10).above(), Blocks.STONE_BRICKS.defaultBlockState(), 2);
-			// Mur de tapisseries
-			for (int x = 12; x <= 16; x++)
+			// Mur tapissé : les tapisseries collées côte à côte, comme du papier peint
+			for (int x = 11; x <= 17; x++)
 				for (int y = 0; y <= 2; y++)
 					level.setBlock(p.offset(x, y, 0), Blocks.STONE_BRICKS.defaultBlockState(), 2);
 			ItemStack[] tapestries = { ModBlocks.TAPESTRY.asStack(), patterned(level, 0), patterned(level, 1) };
-			for (int i = 0; i < tapestries.length; i++) {
-				BlockPos t = p.offset(12 + i * 2, 2, 1);
-				level.setBlock(t, ModBlocks.TAPESTRY.getDefaultState()
-					.setValue(net.minecraft.world.level.block.WallBannerBlock.FACING, Direction.SOUTH), 2);
-				if (level.getBlockEntity(t) instanceof net.minecraft.world.level.block.entity.BlockEntity be)
-					be.applyComponentsFromItemStack(tapestries[i]);
-				level.sendBlockUpdated(t, level.getBlockState(t), level.getBlockState(t), 3);
-			}
+			ItemStack[] wall = { tapestries[1], tapestries[1], tapestries[1], tapestries[2], tapestries[0] };
+			for (int i = 0; i < wall.length; i++)
+				placeTapestry(level, p.offset(12 + i, 0, 1), wall[i]);
 			// Portes blindées avec une tapisserie (unie, puis décorées)
 			for (int x = 18; x <= 24; x++)
 				for (int y = 0; y <= 2; y++)
@@ -225,6 +237,17 @@ public class ScreenshotTour {
 				level.setBlock(door.above(), state.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 2);
 				if (level.getBlockEntity(door) instanceof io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlockEntity be)
 					be.setTapestry(tapestries[i]);
+			}
+			// Portes en fer, zinc et or
+			for (int x = 25; x <= 31; x++)
+				for (int y = 0; y <= 2; y++)
+					if (y == 2 || x % 2 == 1)
+						level.setBlock(p.offset(x, y, 0), Blocks.STONE_BRICKS.defaultBlockState(), 2);
+			for (int i = 1; i < ModBlocks.ARMORED_DOORS.length; i++) {
+				BlockPos door = p.offset(24 + i * 2, 0, 0);
+				BlockState state = ModBlocks.ARMORED_DOORS[i].getDefaultState().setValue(DoorBlock.FACING, Direction.NORTH);
+				level.setBlock(door, state.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER), 2);
+				level.setBlock(door.above(), state.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 2);
 			}
 		})));
 		STEPS.add(new Step(80, () -> {
@@ -254,11 +277,36 @@ public class ScreenshotTour {
 		STEPS.add(new Step(25, () -> shot(mc, "03c_door_swing_3")));
 		STEPS.add(new Step(60, () -> teleport(mc, 14.5, -59.0, 5.5, 180f, 8f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03b_tapestries")));
+		STEPS.add(new Step(60, () -> teleport(mc, 17.6, -59.0, 3.2, 125f, 8f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03b2_tapestries_side")));
+		STEPS.add(new Step(60, () -> teleport(mc, 28.5, -59.0, 4.2, 180f, 6f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03h_metal_doors")));
+		// Contour de la porte pendant l'ouverture (avec l'interface pour voir le contour)
+		STEPS.add(new Step(60, () -> {
+			mc.options.hideGui = false;
+			teleport(mc, 26.5, -59.0, 3.0, 180f, 25f);
+		}));
+		STEPS.add(new Step(1, () -> server(mc, level -> {
+			BlockPos door = BASE.offset(26, 0, 0);
+			BlockState state = level.getBlockState(door);
+			if (state.getBlock() instanceof ArmoredDoorBlock block)
+				block.swing(null, level, state, door, true);
+		})));
+		// Avec le rendu logiciel il y a peu d'images par seconde : plusieurs captures pour tomber en pleine ouverture
+		for (int i = 1; i <= 6; i++) {
+			String name = "03i_door_hitbox_swing_" + i;
+			STEPS.add(new Step(3, () -> shot(mc, name)));
+		}
+		STEPS.add(new Step(30, () -> shot(mc, "03j_door_hitbox_open")));
+		STEPS.add(new Step(1, () -> mc.options.hideGui = true));
 		// Portes avec tapisserie : devant, derrière, puis pendant l'ouverture et ouvertes
 		STEPS.add(new Step(60, () -> teleport(mc, 21.5, -59.0, 4.2, 180f, 6f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03d_tapestry_doors")));
 		STEPS.add(new Step(60, () -> teleport(mc, 21.5, -59.0, -3.2, 0f, 6f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03e_tapestry_doors_back")));
+		// De biais, tout près : la tranche de la porte reste pleine
+		STEPS.add(new Step(60, () -> teleport(mc, 18.6, -59.0, 1.3, 255f, 8f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03e2_tapestry_door_grazing")));
 		STEPS.add(new Step(60, () -> teleport(mc, 22.6, -59.0, 3.4, 160f, 10f)));
 		STEPS.add(new Step(1, () -> server(mc, level -> {
 			for (int i = 0; i < 3; i++) {
@@ -293,24 +341,50 @@ public class ScreenshotTour {
 				player.openMenu(be, BASE.east(4));
 		})));
 		STEPS.add(new Step(10, () -> shot(mc, "06_gui_key_cutter")));
+		STEPS.add(new Step(30, () -> server(mc, level -> {
+			ServerPlayer player = level.getServer().getPlayerList().getPlayers().get(0);
+			player.closeContainer();
+			if (level.getBlockEntity(BASE.offset(4, 0, 4)) instanceof KeyCutterBlockEntity be)
+				player.openMenu(be, BASE.offset(4, 0, 4));
+		})));
+		STEPS.add(new Step(10, () -> shot(mc, "06b_gui_key_cutter_no_rotation")));
 		STEPS.add(new Step(20, () -> server(mc, level -> {
 			ServerPlayer player = level.getServer().getPlayerList().getPlayers().get(0);
 			player.closeContainer();
 			player.setGameMode(GameType.SURVIVAL);
 			player.getInventory().clearContent();
-			ItemStack[] stacks = { ModBlocks.ARMORED_COPPER_DOOR.asStack(), ModBlocks.MUFFLE_FURNACE.asStack(),
-				ModBlocks.CASTING_ANVIL.asStack(), ModBlocks.KEY_CUTTER.asStack(), ModItems.PRESSED_PLANK.asStack(),
-				ModItems.COMPRESSED_WOOD.asStack(), ModItems.IRON_BAR.asStack(), ModItems.GOLD_BAR.asStack(),
-				ModItems.COPPER_BAR.asStack(), ModItems.ZINC_BAR.asStack(), ModItems.MOLD.asStack(),
-				ModItems.SAW_BLADE.asStack(), ModItems.BLANK_KEY.asStack(), ModItems.COPPER_KEY.asStack(),
+			ItemStack[] stacks = { ModItems.COPPER_KEY.asStack(), ModItems.SAW_BLADE.asStack(), patterned(level, 0),
+				ModBlocks.ARMORED_COPPER_DOOR.asStack(), ModBlocks.ARMORED_IRON_DOOR.asStack(),
+				ModBlocks.ARMORED_ZINC_DOOR.asStack(), ModBlocks.ARMORED_GOLD_DOOR.asStack(), ModBlocks.TAPESTRY.asStack(),
+				patterned(level, 1),
+				ModBlocks.MUFFLE_FURNACE.asStack(), ModBlocks.CASTING_ANVIL.asStack(), ModBlocks.KEY_CUTTER.asStack(),
+				ModItems.PRESSED_PLANK.asStack(), ModItems.COMPRESSED_WOOD.asStack(), ModItems.MOLD.asStack(),
+				ModItems.IRON_BAR.asStack(), ModItems.GOLD_BAR.asStack(), ModItems.COPPER_BAR.asStack(),
+				ModItems.ZINC_BAR.asStack(), ModItems.COPPER_BLANK_KEY.asStack(), ModItems.IRON_BLANK_KEY.asStack(),
+				ModItems.ZINC_BLANK_KEY.asStack(), ModItems.GOLD_BLANK_KEY.asStack(), ModItems.IRON_KEY.asStack(),
+				ModItems.ZINC_KEY.asStack(), ModItems.GOLD_KEY.asStack(),
 				new ItemStack(ModFluids.MOLTEN_IRON.get().getBucket()), new ItemStack(ModFluids.MOLTEN_GOLD.get().getBucket()),
-				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()),
-				ModBlocks.TAPESTRY.asStack(), patterned(level, 0), patterned(level, 1) };
+				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()) };
+			// Les 9 premiers dans la barre (pour les vues "en main"), le reste dans l'inventaire
 			for (int i = 0; i < stacks.length; i++)
-				player.getInventory().setItem(9 + i, stacks[i]);
+				player.getInventory().setItem(i, stacks[i]);
+			player.getInventory().selected = 0;
 		})));
 		STEPS.add(new Step(20, () -> mc.setScreen(new InventoryScreen(mc.player))));
 		STEPS.add(new Step(10, () -> shot(mc, "07_items")));
+		// En main, à la première personne : clé (l'anneau vers le joueur), lame de scie, tapisserie
+		String[] inHand = { "07d_key_in_hand", "07e_saw_in_hand", "07f_tapestry_in_hand" };
+		for (int i = 0; i < inHand.length; i++) {
+			int slot = i;
+			STEPS.add(new Step(20, () -> {
+				mc.setScreen(null);
+				mc.options.hideGui = false;
+				mc.player.getInventory().selected = slot;
+				teleport(mc, 8.0, -59.0, 6.5, 200f, 15f);
+			}));
+			STEPS.add(new Step(25, () -> shot(mc, inHand[slot])));
+		}
+		STEPS.add(new Step(1, () -> mc.options.hideGui = true));
 
 		// Métier à tisser de Minecraft avec une tapisserie et un colorant
 		STEPS.add(new Step(30, () -> server(mc, level -> {

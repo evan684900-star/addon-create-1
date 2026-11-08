@@ -1,7 +1,7 @@
 {
   "type": "create_locksmithing:key_cutting",
   "ingredient": {
-    "item": "create_locksmithing:blank_key"
+    "item": "create_locksmithing:copper_blank_key"
   },
   "result": {
     "id": "create_locksmithing:copper_key",

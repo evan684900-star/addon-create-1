@@ -15,7 +15,10 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 /** Interface façon tailleur de pierre : on choisit la clé à tailler dans la liste. */
 public class KeyCutterScreen extends AbstractContainerScreen<KeyCutterMenu> {
 	private static final ResourceLocation TEXTURE = Locksmithing.asResource("textures/gui/key_cutter.png");
-	private static final int GRID_X = 52, GRID_Y = 15, COLUMNS = 4, ROWS = 3, BUTTON_W = 16, BUTTON_H = 18;
+	private static final int GRID_X = 52, GRID_Y = 15, COLUMNS = 4, ROWS = 2, BUTTON_W = 16, BUTTON_H = 18;
+	/** Le titre est un peu plus haut et plus petit que d'habitude (il est long). */
+	private static final int TITLE_Y = 4;
+	private static final float TITLE_SCALE = 0.8f;
 	private static final int ARROW_X = 118, ARROW_Y = 34, ARROW_W = 20, ARROW_H = 15;
 
 	public KeyCutterScreen(KeyCutterMenu menu, Inventory playerInventory, Component title) {
@@ -57,10 +60,16 @@ public class KeyCutterScreen extends AbstractContainerScreen<KeyCutterMenu> {
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-		super.renderLabels(graphics, mouseX, mouseY);
+		graphics.pose().pushPose();
+		graphics.pose().translate(titleLabelX, TITLE_Y, 0);
+		graphics.pose().scale(TITLE_SCALE, TITLE_SCALE, 1);
+		graphics.drawString(font, title, 0, 0, 0x404040, false);
+		graphics.pose().popPose();
+		graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
+		// Sous la liste des clés, loin du titre "Inventaire"
 		if (!menu.isPowered())
 			graphics.drawString(font, Component.translatable("gui.create_locksmithing.key_cutter.no_rotation"),
-				GRID_X, GRID_Y + ROWS * BUTTON_H + 2, 0xB02E26, false);
+				GRID_X, GRID_Y + ROWS * BUTTON_H + 4, 0xB02E26, false);
 	}
 
 	private void renderRecipeTooltip(GuiGraphics graphics, int mouseX, int mouseY) {

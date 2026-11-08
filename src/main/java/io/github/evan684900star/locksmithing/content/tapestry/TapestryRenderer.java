@@ -1,77 +1,87 @@
 package io.github.evan684900star.locksmithing.content.tapestry;
 
+import static io.github.evan684900star.locksmithing.content.tapestry.TapestryPaint.U_LEFT;
+import static io.github.evan684900star.locksmithing.content.tapestry.TapestryPaint.U_RIGHT;
+import static io.github.evan684900star.locksmithing.content.tapestry.TapestryPaint.V_BOTTOM;
+import static io.github.evan684900star.locksmithing.content.tapestry.TapestryPaint.V_MIDDLE;
+import static io.github.evan684900star.locksmithing.content.tapestry.TapestryPaint.V_TOP;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
-import io.github.evan684900star.locksmithing.Locksmithing;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.WallBannerBlock;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Rendu de la tapisserie : la forme de la bannière murale de Minecraft, en cuir, avec les motifs du métier à tisser.
+ * Rendu de la tapisserie : un panneau de cuir de 1 x 2 blocs collé à plat contre le mur, comme du papier peint,
+ * avec les motifs du métier à tisser.
  */
 public class TapestryRenderer implements BlockEntityRenderer<TapestryBlockEntity> {
-	/** Texture du cuir, dans l'atlas des bannières (textures/entity/banner/tapestry_leather.png). */
-	public static final Material LEATHER = new Material(Sheets.BANNER_SHEET, Locksmithing.asResource("entity/banner/tapestry_leather"));
+	/** Épaisseur du cuir (1 pixel). */
+	public static final float THICKNESS = 1 / 16f;
 
-	private final ModelPart flag;
-	private final ModelPart bar;
-
-	public TapestryRenderer(BlockEntityRendererProvider.Context context) {
-		ModelPart root = context.bakeLayer(ModelLayers.BANNER);
-		flag = root.getChild("flag");
-		bar = root.getChild("bar");
-	}
+	public TapestryRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
 	public void render(TapestryBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light,
 		int overlay) {
+		BlockState state = be.getBlockState();
+		if (!(state.getBlock() instanceof TapestryBlock) || state.getValue(TapestryBlock.HALF) != DoubleBlockHalf.LOWER)
+			return;
+		int upperLight = be.getLevel() == null ? light : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().above());
 		ms.pushPose();
-		ms.translate(0.5f, -1 / 6f, 0.5f);
-		ms.mulPose(Axis.YP.rotationDegrees(-be.getBlockState().getValue(WallBannerBlock.FACING).toYRot()));
-		ms.translate(0f, -0.3125f, -0.4375f);
-		// Le cuir est lourd : elle bouge à peine.
-		long time = be.getLevel() == null ? 0 : be.getLevel().getGameTime();
-		BlockPos pos = be.getBlockPos();
-		float phase = (Math.floorMod(pos.getX() * 7L + pos.getY() * 9L + pos.getZ() * 13L + time, 100L) + partialTick) / 100f;
-		float sway = (-0.0125f + 0.004f * Mth.cos(Mth.TWO_PI * phase)) * Mth.PI;
-		render(ms, buffer, light, overlay, flag, bar, sway, be.getPatterns());
+		ms.translate(0.5f, 0, 0.5f);
+		ms.mulPose(Axis.YP.rotationDegrees(-state.getValue(TapestryBlock.FACING).toYRot()));
+		ms.translate(-0.5f, 0, -0.5f);
+		renderPanel(ms.last(), buffer, be.getPatterns(), light, upperLight, overlay);
 		ms.popPose();
 	}
 
-	/** Dessine la barre et le cuir, puis chaque motif teint par-dessus (comme une bannière). */
-	public static void render(PoseStack ms, MultiBufferSource buffer, int light, int overlay, ModelPart flag, ModelPart bar,
-		float sway, BannerPatternLayers patterns) {
-		ms.pushPose();
-		ms.scale(2 / 3f, -2 / 3f, -2 / 3f);
-		VertexConsumer leather = LEATHER.buffer(buffer, RenderType::entitySolid);
-		bar.render(ms, leather, light, overlay);
-		flag.xRot = sway;
-		flag.y = -32f;
-		flag.render(ms, leather, light, overlay);
-		for (int i = 0; i < 16 && i < patterns.layers().size(); i++) {
-			BannerPatternLayers.Layer layer = patterns.layers().get(i);
-			Material material = Sheets.getBannerMaterial(layer.pattern());
-			flag.render(ms, material.buffer(buffer, RenderType::entityNoOutline), light, overlay,
-				layer.color().getTextureDiffuseColor());
+	/**
+	 * Le panneau : x de 0 à 1 (de gauche à droite vu de devant), y de 0 à 2, collé contre z = 0, face avant vers +z.
+	 * Chaque moitié prend la lumière de son bloc.
+	 */
+	public static void renderPanel(PoseStack.Pose pose, MultiBufferSource buffer, BannerPatternLayers patterns,
+		int lowerLight, int upperLight, int overlay) {
+		float t = THICKNESS;
+		TapestryPaint.paint(buffer, patterns, (c, color) -> {
+			for (int half = 0; half < 2; half++) {
+				float y0 = half, y1 = half + 1;
+				int light = half == 0 ? lowerLight : upperLight;
+				float vb = half == 0 ? V_BOTTOM : V_MIDDLE, vt = half == 0 ? V_MIDDLE : V_TOP;
+				Quad q = new Quad(c, pose, color, light, overlay);
+				q.draw(0, 0, 1, new float[] { 0, y0, t, U_LEFT, vb, 1, y0, t, U_RIGHT, vb, 1, y1, t, U_RIGHT, vt, 0, y1, t, U_LEFT, vt });
+				q.draw(-1, 0, 0, new float[] { 0, y0, 0, 0, vb, 0, y0, t, U_LEFT, vb, 0, y1, t, U_LEFT, vt, 0, y1, 0, 0, vt });
+				q.draw(1, 0, 0, new float[] { 1, y0, t, U_RIGHT, vb, 1, y0, 0, 22 / 64f, vb, 1, y1, 0, 22 / 64f, vt, 1, y1, t, U_RIGHT, vt });
+			}
+			float top = 1 / 64f;
+			new Quad(c, pose, color, upperLight, overlay)
+				.draw(0, 1, 0, new float[] { 0, 2, t, U_LEFT, top, 1, 2, t, U_RIGHT, top, 1, 2, 0, U_RIGHT, 0, 0, 2, 0, U_LEFT, 0 });
+			new Quad(c, pose, color, lowerLight, overlay)
+				.draw(0, -1, 0, new float[] { 0, 0, 0, 21 / 64f, 0, 1, 0, 0, 41 / 64f, 0, 1, 0, t, 41 / 64f, top, 0, 0, t, 21 / 64f, top });
+		});
+	}
+
+	/** Quatre sommets (x, y, z, u, v) dans le sens inverse des aiguilles d'une montre vus de l'extérieur. */
+	private record Quad(VertexConsumer consumer, PoseStack.Pose pose, int color, int light, int overlay) {
+		void draw(float nx, float ny, float nz, float[] v) {
+			for (int i = 0; i < 4; i++) {
+				int k = i * 5;
+				TapestryPaint.vertex(consumer, pose, v[k], v[k + 1], v[k + 2], v[k + 3], v[k + 4], color, light, overlay,
+					nx, ny, nz);
+			}
 		}
-		ms.popPose();
 	}
 
 	@Override
 	public AABB getRenderBoundingBox(TapestryBlockEntity be) {
-		return AABB.encapsulatingFullBlocks(be.getBlockPos(), be.getBlockPos().below());
+		return new AABB(be.getBlockPos()).expandTowards(0, 1, 0);
 	}
 }

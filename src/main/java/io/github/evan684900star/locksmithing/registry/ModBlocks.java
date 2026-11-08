@@ -8,6 +8,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import io.github.evan684900star.locksmithing.content.casting.CastingAnvilBlock;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlock;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorItem;
+import io.github.evan684900star.locksmithing.content.door.DoorMetal;
 import io.github.evan684900star.locksmithing.content.furnace.MuffleFurnaceBlock;
 import io.github.evan684900star.locksmithing.content.keycutter.KeyCutterBlock;
 import io.github.evan684900star.locksmithing.content.tapestry.TapestryBlock;
@@ -19,21 +20,33 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class ModBlocks {
 	/**
-	 * Porte en cuivre blindée. Dureté 168 : 42 s avec une hache en fer (minimum pour la récupérer),
-	 * plus rapide avec une meilleure hache ou Efficacité. Résiste aux explosions comme l'obsidienne.
+	 * Portes blindées : une par métal. Le temps pour les casser à la hache en fer (le minimum pour les récupérer)
+	 * dépend de la rareté du minerai (voir {@link DoorMetal}). Résistent aux explosions comme l'obsidienne.
 	 */
-	public static final BlockEntry<ArmoredDoorBlock> ARMORED_COPPER_DOOR =
-		REGISTRATE.block("armored_copper_door", p -> new ArmoredDoorBlock(p, ModItems.COPPER_KEY))
+	public static final BlockEntry<ArmoredDoorBlock> ARMORED_COPPER_DOOR = door(DoorMetal.COPPER);
+	public static final BlockEntry<ArmoredDoorBlock> ARMORED_IRON_DOOR = door(DoorMetal.IRON);
+	public static final BlockEntry<ArmoredDoorBlock> ARMORED_ZINC_DOOR = door(DoorMetal.ZINC);
+	public static final BlockEntry<ArmoredDoorBlock> ARMORED_GOLD_DOOR = door(DoorMetal.GOLD);
+
+	@SuppressWarnings("unchecked")
+	public static final BlockEntry<ArmoredDoorBlock>[] ARMORED_DOORS = new BlockEntry[] {
+		ARMORED_COPPER_DOOR, ARMORED_IRON_DOOR, ARMORED_ZINC_DOOR, ARMORED_GOLD_DOOR };
+
+	private static BlockEntry<ArmoredDoorBlock> door(DoorMetal metal) {
+		return REGISTRATE.block("armored_" + metal.id() + "_door",
+				p -> new ArmoredDoorBlock(p, metal, () -> ModItems.keyFor(metal).get()))
 			.initialProperties(() -> Blocks.COPPER_DOOR)
-			.properties(p -> p.mapColor(MapColor.COLOR_ORANGE)
-				.strength(168f, 1200f)
+			.properties(p -> p.mapColor(metal.mapColor())
+				.strength(metal.hardness(), 1200f)
 				.requiresCorrectToolForDrops()
-				.sound(SoundType.COPPER)
+				.sound(metal.sound())
 				.noOcclusion()
+				.dynamicShape()
 				.pushReaction(PushReaction.BLOCK))
 			.item(ArmoredDoorItem::new)
 			.build()
 			.register();
+	}
 
 	public static final BlockEntry<MuffleFurnaceBlock> MUFFLE_FURNACE =
 		REGISTRATE.block("muffle_furnace", MuffleFurnaceBlock::new)
@@ -76,7 +89,8 @@ public class ModBlocks {
 				.noCollission()
 				.strength(1f)
 				.sound(SoundType.WOOL)
-				.ignitedByLava())
+				.ignitedByLava()
+				.pushReaction(PushReaction.DESTROY))
 			.item(TapestryItem::new)
 			.properties(p -> p.stacksTo(16))
 			.build()
