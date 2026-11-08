@@ -8,17 +8,23 @@ import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Serrure d'une porte blindée (stockée dans la moitié basse).
  * Vide tant qu'aucune clé n'a été insérée ; disparaît quand la porte est cassée.
+ * Garde aussi la tapisserie posée sur la porte (l'objet entier, pour la rendre telle quelle).
  */
 public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 	@Nullable
 	private UUID lockId;
+
+	private ItemStack tapestry = ItemStack.EMPTY;
 
 	/** Serveur : moment où le modèle fixe doit revenir (fin de l'animation), -1 si rien en cours. */
 	private long visibleAt = -1;
@@ -45,6 +51,29 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 		lockId = keyId;
 		setChanged();
 		sendData();
+	}
+
+	/** La tapisserie posée sur la porte (vide s'il n'y en a pas). */
+	public ItemStack getTapestry() {
+		return tapestry;
+	}
+
+	/** Motifs de la tapisserie posée (ceux du métier à tisser). */
+	public BannerPatternLayers getTapestryPatterns() {
+		return tapestry.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+	}
+
+	public void setTapestry(ItemStack stack) {
+		tapestry = stack.copy();
+		setChanged();
+		sendData();
+	}
+
+	/** Retire la tapisserie et la renvoie. */
+	public ItemStack removeTapestry() {
+		ItemStack removed = tapestry;
+		setTapestry(ItemStack.EMPTY);
+		return removed;
 	}
 
 	public void startSwing(long visibleAt) {
@@ -100,11 +129,15 @@ public class ArmoredDoorBlockEntity extends SyncedBlockEntity {
 		super.saveAdditional(tag, registries);
 		if (lockId != null)
 			tag.putUUID("LockId", lockId);
+		if (!tapestry.isEmpty())
+			tag.put("Tapestry", tapestry.save(registries));
 	}
 
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		lockId = tag.hasUUID("LockId") ? tag.getUUID("LockId") : null;
+		tapestry = tag.contains("Tapestry") ? ItemStack.parseOptional(registries, tag.getCompound("Tapestry"))
+			: ItemStack.EMPTY;
 	}
 }

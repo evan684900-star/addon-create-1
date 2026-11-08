@@ -14,8 +14,8 @@ et toute la chaîne pour les fabriquer (bois compressé, métal en fusion, moule
 | **Enclume de moulage** | L'enclume de Minecraft avec un **moule incrusté** au milieu. Clic droit = interface : seau de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
 | **Barres** de fer, or, cuivre, zinc | Sortent de l'enclume de moulage. |
 | **Machine à tailler les clés** | L'enclume de Minecraft avec une **lame de scie sur le dessus**. A besoin de **rotation** (l'axe traverse le pied). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
-| **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. S'ouvre avec une **animation** : elle pivote sur ses gonds en 1 s. |
-| **Tapisserie en cuir** | Se pose au mur comme une bannière murale. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. |
+| **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. S'ouvre avec une **animation** : elle pivote sur ses gonds en 1 s. Clic droit avec une **tapisserie** : elle remplace le bois de la porte (des deux côtés, avec ses motifs) ; des **cisailles** la reprennent, et elle revient aussi quand on casse la porte. |
+| **Tapisserie en cuir** | Se pose au mur comme une bannière murale. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. Se pose aussi **sur une porte blindée** à la place du bois. |
 
 Chaque machine a un **tuto Ponder** (touche **W** au-dessus de l'objet), en français et en anglais.
 
@@ -71,7 +71,8 @@ Autres commandes utiles :
 
 ```
 src/main/java/.../locksmithing/
-  content/door        porte blindée (serrure, oxydation)
+  content/door        porte blindée (serrure, oxydation, animation, tapisserie posée dessus)
+  content/tapestry    tapisserie en cuir (métier à tisser, rendu des motifs)
   content/furnace     four à moufle
   content/casting     enclume de moulage (bloc, interface, rendu du métal)
   content/keycutter   machine à tailler les clés (bloc, interface, rendu de la lame)

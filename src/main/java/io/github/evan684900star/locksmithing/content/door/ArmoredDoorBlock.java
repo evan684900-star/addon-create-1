@@ -1,5 +1,7 @@
 package io.github.evan684900star.locksmithing.content.door;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -9,6 +11,7 @@ import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.block.IBE;
 
 import io.github.evan684900star.locksmithing.content.key.KeyItem;
+import io.github.evan684900star.locksmithing.content.tapestry.TapestryItem;
 import io.github.evan684900star.locksmithing.registry.ModBlockEntities;
 import io.github.evan684900star.locksmithing.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -21,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +45,12 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.Tags;
 
 /**
  * Porte blindée :
@@ -56,6 +63,8 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	public static final BooleanProperty WAXED = BooleanProperty.create("waxed");
 	/** Faux pendant l'animation d'ouverture/fermeture : le modèle fixe est caché, le rendu animé prend le relais. */
 	public static final BooleanProperty VISIBLE = BooleanProperty.create("visible");
+	/** Une tapisserie remplace le bois de la porte (elle est gardée dans la moitié basse). */
+	public static final BooleanProperty TAPESTRY = BooleanProperty.create("tapestry");
 
 	public static final BlockSetType ARMORED_COPPER = BlockSetType.register(new BlockSetType(
 		"create_locksmithing:armored_copper", false, false, false, BlockSetType.PressurePlateSensitivity.MOBS,
@@ -72,6 +81,7 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 		this.key = key;
 		registerDefaultState(defaultBlockState().setValue(OXIDATION, WeatherState.UNAFFECTED)
 			.setValue(WAXED, false)
+			.setValue(TAPESTRY, false)
 			.setValue(VISIBLE, true));
 	}
 
@@ -89,14 +99,15 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);
-		builder.add(OXIDATION, WAXED, VISIBLE);
+		builder.add(OXIDATION, WAXED, TAPESTRY, VISIBLE);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockState state = super.getStateForPlacement(context);
 		// Une porte blindée posée près de la redstone reste fermée.
-		return state == null ? null : state.setValue(OPEN, false).setValue(POWERED, false).setValue(VISIBLE, true);
+		return state == null ? null
+			: state.setValue(OPEN, false).setValue(POWERED, false).setValue(TAPESTRY, false).setValue(VISIBLE, true);
 	}
 
 	@Override
@@ -126,7 +137,66 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 			return wax(stack, state, level, pos, player);
 		if (stack.getItem() instanceof KeyItem)
 			return useKey(stack, state, level, pos, player);
+		if (stack.getItem() instanceof TapestryItem)
+			return putTapestry(stack, state, level, pos, player);
+		if (stack.is(Tags.Items.TOOLS_SHEAR) && state.getValue(TAPESTRY))
+			return takeTapestry(stack, state, level, pos, player, hand, hitResult);
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	/* Tapisserie */
+
+	/** Clic droit avec une tapisserie : elle remplace le bois de la porte, des deux côtés. */
+	private ItemInteractionResult putTapestry(ItemStack stack, BlockState state, Level level, BlockPos pos,
+		Player player) {
+		ArmoredDoorBlockEntity door = getLock(level, pos, state);
+		if (door == null)
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		if (state.getValue(TAPESTRY)) {
+			if (!level.isClientSide)
+				player.displayClientMessage(Component.translatable("message.create_locksmithing.door.has_tapestry"), true);
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
+		}
+		if (!level.isClientSide) {
+			door.setTapestry(stack.copyWithCount(1));
+			// La moitié du dessus recopie l'état (DoorBlock.updateShape).
+			level.setBlock(pos, state.setValue(TAPESTRY, true), 3);
+			level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1f, 0.9f);
+			level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+			stack.consume(1, player);
+		}
+		return ItemInteractionResult.sidedSuccess(level.isClientSide);
+	}
+
+	/** Clic droit avec des cisailles : la tapisserie est rendue (avec ses motifs), le bois revient. */
+	private ItemInteractionResult takeTapestry(ItemStack stack, BlockState state, Level level, BlockPos pos,
+		Player player, InteractionHand hand, BlockHitResult hitResult) {
+		ArmoredDoorBlockEntity door = getLock(level, pos, state);
+		if (door == null)
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		if (!level.isClientSide) {
+			ItemStack tapestry = door.removeTapestry();
+			level.setBlock(pos, state.setValue(TAPESTRY, false), 3);
+			if (!tapestry.isEmpty())
+				popResourceFromFace(level, pos, hitResult.getDirection(), tapestry);
+			level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1f, 1f);
+			level.gameEvent(player, GameEvent.SHEAR, pos);
+			stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+		}
+		return ItemInteractionResult.sidedSuccess(level.isClientSide);
+	}
+
+	/** Casser la porte rend aussi la tapisserie (la moitié basse garde la tapisserie et la serrure). */
+	@Override
+	protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+		List<ItemStack> drops = super.getDrops(state, params);
+		if (state.getValue(TAPESTRY)
+			&& params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof ArmoredDoorBlockEntity door
+			&& !door.getTapestry().isEmpty()) {
+			drops = new ArrayList<>(drops);
+			drops.add(door.getTapestry().copy());
+		}
+		return drops;
 	}
 
 	private ItemInteractionResult useKey(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {

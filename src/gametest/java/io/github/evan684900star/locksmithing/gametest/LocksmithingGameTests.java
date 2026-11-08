@@ -288,7 +288,68 @@ public class LocksmithingGameTests {
 		helper.succeed();
 	}
 
+	@GameTest(template = "empty")
+	public static void tapestryCoversDoorAndComesBack(GameTestHelper helper) {
+		BlockPos lower = new BlockPos(2, 1, 2);
+		placeDoor(helper, lower);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var registry = helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN);
+		var patterns = new net.minecraft.world.level.block.entity.BannerPatternLayers.Builder()
+			.add(registry.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.CROSS),
+				net.minecraft.world.item.DyeColor.BLUE)
+			.build();
+		ItemStack tapestries = ModBlocks.TAPESTRY.asStack(2);
+		tapestries.set(net.minecraft.core.component.DataComponents.BANNER_PATTERNS, patterns);
+
+		// Clic droit (sur la moitié haute) : les deux moitiés passent en tapisserie, une seule est utilisée
+		use(helper, player, lower.above(), tapestries);
+		helper.assertTrue(hasTapestry(helper, lower) && hasTapestry(helper, lower.above()),
+			"Both halves should show the tapestry");
+		helper.assertTrue(tapestries.getCount() == 1, "One tapestry should be used, got " + tapestries.getCount());
+		ArmoredDoorBlockEntity door = helper.getBlockEntity(lower);
+		helper.assertTrue(door.getTapestryPatterns().equals(patterns), "The door should keep the tapestry's patterns");
+		use(helper, player, lower, tapestries);
+		helper.assertTrue(tapestries.getCount() == 1, "Only one tapestry per door");
+
+		// La clé marche toujours et la tapisserie reste
+		use(helper, player, lower, keyWithId(UUID.randomUUID()));
+		helper.assertTrue(isOpen(helper, lower) && hasTapestry(helper, lower), "The door should open with its tapestry");
+
+		// Cisailles : la tapisserie revient, avec ses motifs
+		ItemStack shears = new ItemStack(Items.SHEARS);
+		use(helper, player, lower.above(), shears);
+		helper.assertFalse(hasTapestry(helper, lower) || hasTapestry(helper, lower.above()), "Shears should remove it");
+		helper.assertTrue(shears.getDamageValue() == 1, "Shears should take damage");
+		helper.assertTrue(droppedTapestryMatches(helper, lower, patterns), "Shears should give the tapestry back");
+
+		// Casser la porte rend la porte et la tapisserie
+		use(helper, player, lower, tapestries);
+		helper.assertTrue(tapestries.isEmpty(), "The last tapestry should be used");
+		helper.getLevel().destroyBlock(helper.absolutePos(lower), true);
+		helper.assertBlockNotPresent(ModBlocks.ARMORED_COPPER_DOOR.get(), lower.above());
+		helper.assertItemEntityCountIs(ModBlocks.ARMORED_COPPER_DOOR.asItem(), lower, 3, 1);
+		helper.assertTrue(droppedTapestryMatches(helper, lower, patterns), "Breaking the door should drop the tapestry");
+		helper.succeed();
+	}
+
 	/* Outils */
+
+	private static boolean hasTapestry(GameTestHelper helper, BlockPos pos) {
+		BlockState state = helper.getBlockState(pos);
+		return state.getBlock() instanceof ArmoredDoorBlock && state.getValue(ArmoredDoorBlock.TAPESTRY);
+	}
+
+	/** Une seule tapisserie par terre, avec les bons motifs (elle est ramassée pour la suite). */
+	private static boolean droppedTapestryMatches(GameTestHelper helper, BlockPos pos,
+		net.minecraft.world.level.block.entity.BannerPatternLayers patterns) {
+		var items = helper.getEntities(net.minecraft.world.entity.EntityType.ITEM, pos, 3).stream()
+			.filter(e -> e.getItem().is(ModBlocks.TAPESTRY.asItem()))
+			.toList();
+		boolean ok = items.size() == 1 && items.get(0).getItem().getCount() == 1
+			&& patterns.equals(items.get(0).getItem().get(net.minecraft.core.component.DataComponents.BANNER_PATTERNS));
+		items.forEach(net.minecraft.world.entity.Entity::discard);
+		return ok;
+	}
 
 	private static void placeDoor(GameTestHelper helper, BlockPos lower) {
 		BlockState state = ModBlocks.ARMORED_COPPER_DOOR.getDefaultState().setValue(DoorBlock.FACING, Direction.NORTH);

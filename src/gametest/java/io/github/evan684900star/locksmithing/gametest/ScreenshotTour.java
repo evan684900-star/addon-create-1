@@ -142,6 +142,11 @@ public class ScreenshotTour {
 		return stack;
 	}
 
+	private static void seekPonderFromEnd(Minecraft mc, int ticks) {
+		if (mc.screen instanceof net.createmod.ponder.foundation.ui.PonderUI ui)
+			ui.seekToTime(ui.getActiveScene().getTotalTime() - ticks);
+	}
+
 	private static void shot(Minecraft mc, String name) {
 		Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), msg -> {});
 	}
@@ -203,6 +208,24 @@ public class ScreenshotTour {
 					be.applyComponentsFromItemStack(tapestries[i]);
 				level.sendBlockUpdated(t, level.getBlockState(t), level.getBlockState(t), 3);
 			}
+			// Portes blindées avec une tapisserie (unie, puis décorées)
+			for (int x = 18; x <= 24; x++)
+				for (int y = 0; y <= 2; y++)
+					if (y == 2 || x % 2 == 0)
+						level.setBlock(p.offset(x, y, 0), Blocks.STONE_BRICKS.defaultBlockState(), 2);
+			for (int i = 0; i < tapestries.length; i++) {
+				BlockPos door = p.offset(19 + i * 2, 0, 0);
+				BlockState state = ModBlocks.ARMORED_COPPER_DOOR.getDefaultState()
+					.setValue(DoorBlock.FACING, Direction.NORTH)
+					.setValue(DoorBlock.HINGE, i == 2 ? net.minecraft.world.level.block.state.properties.DoorHingeSide.RIGHT
+						: net.minecraft.world.level.block.state.properties.DoorHingeSide.LEFT)
+					.setValue(ArmoredDoorBlock.OXIDATION, i == 1 ? WeatherState.WEATHERED : WeatherState.UNAFFECTED)
+					.setValue(ArmoredDoorBlock.TAPESTRY, true);
+				level.setBlock(door, state.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER), 2);
+				level.setBlock(door.above(), state.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 2);
+				if (level.getBlockEntity(door) instanceof io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlockEntity be)
+					be.setTapestry(tapestries[i]);
+			}
 		})));
 		STEPS.add(new Step(80, () -> {
 			mc.options.hideGui = true;
@@ -231,6 +254,22 @@ public class ScreenshotTour {
 		STEPS.add(new Step(25, () -> shot(mc, "03c_door_swing_3")));
 		STEPS.add(new Step(60, () -> teleport(mc, 14.5, -59.0, 5.5, 180f, 8f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03b_tapestries")));
+		// Portes avec tapisserie : devant, derrière, puis pendant l'ouverture et ouvertes
+		STEPS.add(new Step(60, () -> teleport(mc, 21.5, -59.0, 4.2, 180f, 6f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03d_tapestry_doors")));
+		STEPS.add(new Step(60, () -> teleport(mc, 21.5, -59.0, -3.2, 0f, 6f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03e_tapestry_doors_back")));
+		STEPS.add(new Step(60, () -> teleport(mc, 22.6, -59.0, 3.4, 160f, 10f)));
+		STEPS.add(new Step(1, () -> server(mc, level -> {
+			for (int i = 0; i < 3; i++) {
+				BlockPos door = BASE.offset(19 + i * 2, 0, 0);
+				BlockState state = level.getBlockState(door);
+				if (state.getBlock() instanceof ArmoredDoorBlock block)
+					block.swing(null, level, state, door, true);
+			}
+		})));
+		STEPS.add(new Step(9, () -> shot(mc, "03f_tapestry_doors_swing")));
+		STEPS.add(new Step(40, () -> shot(mc, "03g_tapestry_doors_open")));
 
 		if (Boolean.getBoolean("locksmithing.screenshots.quick")) {
 			STEPS.add(new Step(10, () -> mc.setScreen(null)));
@@ -327,6 +366,12 @@ public class ScreenshotTour {
 			STEPS.add(new Step(120, () -> shot(mc, ponder[1] + "_a")));
 			STEPS.add(new Step(10, () -> shot(mc, ponder[1] + "_b")));
 		}
+		// Fin du tuto de la porte : la tapisserie posée, porte fermée puis ouverte
+		STEPS.add(new Step(1, () -> seekPonderFromEnd(mc, 150)));
+		STEPS.add(new Step(20, () -> shot(mc, "12_ponder_armored_door_c")));
+		// (le tuto avance plus vite que ce compteur avec le rendu logiciel : on vise le milieu des 15 ticks où elle est ouverte)
+		STEPS.add(new Step(1, () -> seekPonderFromEnd(mc, 92)));
+		STEPS.add(new Step(2, () -> shot(mc, "12_ponder_armored_door_d")));
 		STEPS.add(new Step(10, () -> mc.setScreen(null)));
 	}
 }

@@ -10,7 +10,9 @@ import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
 import io.github.evan684900star.locksmithing.content.casting.CastingAnvilBlockEntity;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlock;
+import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlockEntity;
 import io.github.evan684900star.locksmithing.content.furnace.MuffleFurnaceBlock;
+import io.github.evan684900star.locksmithing.registry.ModBlocks;
 import io.github.evan684900star.locksmithing.registry.ModFluids;
 import io.github.evan684900star.locksmithing.registry.ModItems;
 import net.createmod.catnip.math.Pointing;
@@ -20,10 +22,15 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -339,6 +346,42 @@ public class LocksmithingScenes {
 		scene.overlay().showControls(front, Pointing.RIGHT, 25).rightClick().withItem(new ItemStack(Items.IRON_AXE));
 		scene.idle(10);
 		scene.world().modifyBlocks(door, s -> s.setValue(ArmoredDoorBlock.OXIDATION, WeatherState.UNAFFECTED), false);
+		scene.idle(40);
+
+		// Tapisserie : elle remplace le bois et suit l'ouverture
+		scene.overlay().showText(50)
+			.pointAt(front)
+			.placeNearTarget()
+			.attachKeyFrame()
+			.text("A Tapestry replaces the wood");
+		scene.overlay().showControls(front, Pointing.RIGHT, 30).rightClick().withItem(ModBlocks.TAPESTRY.asStack());
+		scene.idle(10);
+		scene.world().modifyBlockEntity(lower, ArmoredDoorBlockEntity.class, be -> {
+			ItemStack tapestry = ModBlocks.TAPESTRY.asStack();
+			var patterns = be.getLevel().registryAccess().lookupOrThrow(Registries.BANNER_PATTERN);
+			tapestry.set(DataComponents.BANNER_PATTERNS, new BannerPatternLayers.Builder()
+				.addIfRegistered(patterns, BannerPatterns.RHOMBUS_MIDDLE, DyeColor.ORANGE)
+				.addIfRegistered(patterns, BannerPatterns.CIRCLE_MIDDLE, DyeColor.YELLOW)
+				.addIfRegistered(patterns, BannerPatterns.STRIPE_TOP, DyeColor.BLACK)
+				.addIfRegistered(patterns, BannerPatterns.STRIPE_BOTTOM, DyeColor.BLACK)
+				.build());
+			be.setTapestry(tapestry);
+		});
+		scene.world().modifyBlocks(door, s -> s.setValue(ArmoredDoorBlock.TAPESTRY, true), false);
+		scene.idle(45);
+		swing(scene, door, true);
+		scene.idle(15);
+		swing(scene, door, false);
+		scene.idle(10);
+
+		scene.overlay().showText(40)
+			.pointAt(front)
+			.placeNearTarget()
+			.attachKeyFrame()
+			.text("Shears take it back");
+		scene.overlay().showControls(front, Pointing.RIGHT, 25).rightClick().withItem(new ItemStack(Items.SHEARS));
+		scene.idle(10);
+		scene.world().modifyBlocks(door, s -> s.setValue(ArmoredDoorBlock.TAPESTRY, false), false);
 		scene.idle(40);
 	}
 }

@@ -23,6 +23,35 @@ STAGES = ["", "exposed", "weathered", "oxidized"]
 FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
 
 
+# Faces des modèles de porte de Minecraft (block/door_*), recopiées pour les portes avec tapisserie
+VANILLA_DOOR_FACES = {
+    "bottom_left": {"down": {"uv": [16, 13, 0, 16], "cullface": "down", "rotation": 90},
+                    "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                    "west": {"uv": [0, 0, 16, 16], "cullface": "west"}, "east": {"uv": [16, 0, 0, 16]}},
+    "bottom_left_open": {"down": {"uv": [0, 16, 16, 13], "cullface": "down", "rotation": 90},
+                         "north": {"uv": [0, 0, 3, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                         "west": {"uv": [16, 0, 0, 16], "cullface": "west"}, "east": {"uv": [0, 0, 16, 16]}},
+    "bottom_right": {"down": {"uv": [0, 13, 16, 16], "cullface": "down", "rotation": 90},
+                     "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                     "west": {"uv": [16, 0, 0, 16], "cullface": "west"}, "east": {"uv": [0, 0, 16, 16]}},
+    "bottom_right_open": {"down": {"uv": [16, 16, 0, 13], "cullface": "down", "rotation": 90},
+                          "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [3, 0, 0, 16], "cullface": "south"},
+                          "west": {"uv": [0, 0, 16, 16], "cullface": "west"}, "east": {"uv": [16, 0, 0, 16]}},
+    "top_left": {"up": {"uv": [0, 3, 16, 0], "cullface": "up", "rotation": 90},
+                 "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                 "west": {"uv": [0, 0, 16, 16], "cullface": "west"}, "east": {"uv": [16, 0, 0, 16]}},
+    "top_left_open": {"up": {"uv": [0, 3, 16, 0], "cullface": "up", "rotation": 270},
+                      "north": {"uv": [0, 0, 3, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                      "west": {"uv": [16, 0, 0, 16], "cullface": "west"}, "east": {"uv": [0, 0, 16, 16]}},
+    "top_right": {"up": {"uv": [0, 0, 16, 3], "cullface": "up", "rotation": 270},
+                  "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [0, 0, 3, 16], "cullface": "south"},
+                  "west": {"uv": [16, 0, 0, 16], "cullface": "west"}, "east": {"uv": [0, 0, 16, 16]}},
+    "top_right_open": {"up": {"uv": [0, 0, 16, 3], "cullface": "up", "rotation": 90},
+                       "north": {"uv": [3, 0, 0, 16], "cullface": "north"}, "south": {"uv": [3, 0, 0, 16], "cullface": "south"},
+                       "west": {"uv": [0, 0, 16, 16], "cullface": "west"}, "east": {"uv": [16, 0, 0, 16]}},
+}
+
+
 def write_json(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -231,6 +260,31 @@ def models():
                     "top": ml(f"block/{prefix}armored_copper_door_top"),
                 },
             })
+    # Avec une tapisserie : le bois de la texture est transparent, un fond en cuir est caché au milieu de
+    # l'épaisseur (au cas où le rendu de la tapisserie n'est pas dessiné, de très loin), et le code dessine la
+    # tapisserie avec ses motifs juste derrière chaque face.
+    for stage in STAGES:
+        prefix = f"{stage}_" if stage else ""
+        for part in parts:
+            half = "bottom" if part.startswith("bottom") else "top"
+            tex = "#" + half
+            faces = {f: dict(v, texture=tex) for f, v in VANILLA_DOOR_FACES[part].items()}
+            write_json(os.path.join(m, "block", f"{prefix}armored_copper_door_{part}_tapestry.json"), {
+                "ambientocclusion": False,
+                "render_type": "minecraft:cutout",
+                "textures": {
+                    "particle": ml(f"block/{prefix}armored_copper_door_{half}"),
+                    half: ml(f"block/{prefix}armored_copper_door_{half}_tapestry"),
+                    "leather": ml("block/tapestry"),
+                },
+                "elements": [
+                    {"from": [0, 0, 0], "to": [3, 16, 16], "faces": faces},
+                    {"from": [1.5, 0, 0.5], "to": [1.5, 16, 15.5], "faces": {
+                        "west": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
+                        "east": {"uv": [0.5, 0, 15.5, 16], "texture": "#leather"},
+                    }},
+                ],
+            })
     # Rotations identiques aux portes de Minecraft
     rot = {
         ("east", "left", False): 0, ("east", "left", True): 90, ("east", "right", False): 0, ("east", "right", True): 270,
@@ -245,11 +299,13 @@ def models():
         for (facing, hinge, opened), y in rot.items():
             for half, part in (("lower", "bottom"), ("upper", "top")):
                 model = ml(f"block/{prefix}armored_copper_door_{part}_{hinge}" + ("_open" if opened else ""))
-                key = f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},oxidation={oxidation},visible=true"
-                v = {"model": model}
-                if y:
-                    v["y"] = y
-                variants[key] = v
+                for tapestry in (False, True):
+                    key = (f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},"
+                           f"oxidation={oxidation},tapestry={str(tapestry).lower()},visible=true")
+                    v = {"model": model + ("_tapestry" if tapestry else "")}
+                    if y:
+                        v["y"] = y
+                    variants[key] = v
     # Pendant l'animation d'ouverture, le modèle fixe est caché (le rendu animé dessine la porte)
     variants["visible=false"] = {"model": ml("block/armored_door_hidden")}
     write_json(os.path.join(m, "block", "armored_door_hidden.json"),
@@ -349,6 +405,8 @@ PONDER = {
              "La casser remet la serrure à zéro (42 s à la hache en fer)"),
             ("It oxidizes like copper", "Elle s'oxyde comme le cuivre"),
             ("Honeycomb waxes it, an Axe scrapes it", "Le miel la cire, la hache la gratte"),
+            ("A Tapestry replaces the wood", "Une tapisserie remplace le bois"),
+            ("Shears take it back", "Des cisailles la reprennent"),
         ],
     ),
 }
@@ -421,6 +479,8 @@ def lang():
     add(f"message.{MOD}.door.bound", "The lock now belongs to key #%s",
         "La serrure appartient maintenant à la clé n°%s")
     add(f"message.{MOD}.door.wrong_key", "This is not the right key", "Ce n'est pas la bonne clé")
+    add(f"message.{MOD}.door.has_tapestry", "This door already has a tapestry: Shears take it off",
+        "Cette porte a déjà une tapisserie : des cisailles la retirent")
 
     # Interfaces et lunettes d'ingénieur
     add(f"gui.{MOD}.casting_anvil.empty", "The mold is empty", "Le moule est vide")
@@ -445,7 +505,10 @@ def lang():
            "La _première clé_ utilisée devient la _seule clé_ qui l'ouvre. _Casser_ la porte remet la serrure à zéro.")),
          (("Over time", "Avec le temps"),
           ("_Oxidizes_ like copper. Use a _Honeycomb_ to keep its look, an _Axe_ to scrape it.",
-           "_S'oxyde_ comme le cuivre. Un _rayon de miel_ garde son apparence, une _hache_ la gratte."))])
+           "_S'oxyde_ comme le cuivre. Un _rayon de miel_ garde son apparence, une _hache_ la gratte.")),
+         (("When R-Clicked with a Tapestry", "Clic droit avec une tapisserie"),
+          ("The _tapestry_ replaces the _wood_, on both sides. _Shears_ take it back.",
+           "La _tapisserie_ remplace le _bois_, des deux côtés. Des _cisailles_ la reprennent."))])
     tip(f"block.{MOD}.muffle_furnace",
         ("_Melts ingots_ into _molten metal_ when placed on a _lit Blaze Burner_.",
          "_Fait fondre les lingots_ en _métal en fusion_ quand il est posé sur un _Brûleur à Blaze allumé_."),
@@ -466,7 +529,10 @@ def lang():
            "Ouvre l'_interface_ où l'on _choisit_ la clé à tailler."))])
     tip(f"block.{MOD}.tapestry",
         ("A _leather_ wall hanging. Decorate it in a _Loom_, just like a banner.",
-         "Une tenture en _cuir_ à accrocher au mur. Se décore dans un _métier à tisser_, comme une bannière."), [])
+         "Une tenture en _cuir_ à accrocher au mur. Se décore dans un _métier à tisser_, comme une bannière."),
+        [(("When used on an Armored Door", "Sur une porte blindée"),
+          ("Replaces the door's _wood_, with its patterns. _Shears_ take it back.",
+           "Remplace le _bois_ de la porte, avec ses motifs. Des _cisailles_ la reprennent."))])
     tip(f"item.{MOD}.copper_key",
         ("Opens _Armored Copper Doors_. Every cut key is _unique_.",
          "Ouvre les _portes en cuivre blindées_. Chaque clé taillée est _unique_."), [])
@@ -487,9 +553,11 @@ def lang():
     add(f"jei.{MOD}.seconds", "%s s", "%s s")
     add(f"jei.{MOD}.info.armored_door",
         "Opens only with a cut key. The first key used on the door becomes its only key; breaking the door resets the lock. "
-        "Takes 42 seconds to break with an Iron Axe. Oxidizes like copper: wax it with a Honeycomb.",
+        "Takes 42 seconds to break with an Iron Axe. Oxidizes like copper: wax it with a Honeycomb. "
+        "Right-click it with a Tapestry to replace its wood; Shears take the tapestry back.",
         "S'ouvre seulement avec une clé taillée. La première clé utilisée devient sa seule clé ; casser la porte remet "
-        "la serrure à zéro. 42 secondes pour la casser à la hache en fer. S'oxyde comme le cuivre : un rayon de miel la cire.")
+        "la serrure à zéro. 42 secondes pour la casser à la hache en fer. S'oxyde comme le cuivre : un rayon de miel la cire. "
+        "Clic droit avec une tapisserie pour remplacer son bois ; des cisailles reprennent la tapisserie.")
     add(f"jei.{MOD}.info.key",
         "Cut in a Key Cutter. Every cut key is unique: the first one used on an Armored Door becomes its key.",
         "Se taille dans la machine à tailler les clés. Chaque clé est unique : la première utilisée sur une porte "
@@ -768,7 +836,7 @@ def schematics():
     for pos in [(1, 1, 2), (1, 2, 2), (3, 1, 2), (3, 2, 2), (1, 3, 2), (2, 3, 2), (3, 3, 2)]:
         b[pos] = ("minecraft:stone_bricks", {})
     door = {"facing": "south", "hinge": "left", "open": "false", "powered": "false",
-            "oxidation": "unaffected", "waxed": "false", "visible": "true"}
+            "oxidation": "unaffected", "waxed": "false", "tapestry": "false", "visible": "true"}
     b[(2, 1, 2)] = (ml("armored_copper_door"), dict(door, half="lower"))
     b[(2, 2, 2)] = (ml("armored_copper_door"), dict(door, half="upper"))
     write_structure("armored_door", (5, 4, 5), b)

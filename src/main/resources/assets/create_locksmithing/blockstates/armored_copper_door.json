@@ -1,483 +1,963 @@
 {
   "variants": {
-    "facing=east,half=lower,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=east,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left"
     },
-    "facing=east,half=upper,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=east,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_tapestry"
+    },
+    "facing=east,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left"
     },
-    "facing=east,half=lower,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=east,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_tapestry"
+    },
+    "facing=east,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left_open",
       "y": 90
     },
-    "facing=east,half=upper,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=east,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=east,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right"
     },
-    "facing=east,half=upper,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=east,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_tapestry"
+    },
+    "facing=east,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right"
     },
-    "facing=east,half=lower,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=east,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_tapestry"
+    },
+    "facing=east,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right_open",
       "y": 270
     },
-    "facing=east,half=upper,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=east,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_open_tapestry",
+      "y": 270
+    },
+    "facing=east,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right_open",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=east,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_open_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left",
       "y": 270
     },
-    "facing=north,half=upper,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=north,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=north,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left_open"
     },
-    "facing=north,half=upper,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=north,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_open_tapestry"
+    },
+    "facing=north,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left_open"
     },
-    "facing=north,half=lower,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=north,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_open_tapestry"
+    },
+    "facing=north,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right",
       "y": 270
     },
-    "facing=north,half=upper,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=north,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right",
       "y": 270
     },
-    "facing=north,half=lower,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=north,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right_open",
       "y": 180
     },
-    "facing=north,half=upper,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=north,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_open_tapestry",
+      "y": 180
+    },
+    "facing=north,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=north,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left",
       "y": 90
     },
-    "facing=south,half=upper,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=south,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left",
       "y": 90
     },
-    "facing=south,half=lower,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=south,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left_open",
       "y": 180
     },
-    "facing=south,half=upper,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=south,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=south,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right",
       "y": 90
     },
-    "facing=south,half=upper,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=south,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right",
       "y": 90
     },
-    "facing=south,half=lower,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=south,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right_open"
     },
-    "facing=south,half=upper,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=south,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_open_tapestry"
+    },
+    "facing=south,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right_open"
     },
-    "facing=west,half=lower,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=south,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_open_tapestry"
+    },
+    "facing=west,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left",
       "y": 180
     },
-    "facing=west,half=upper,hinge=left,open=false,oxidation=unaffected,visible=true": {
+    "facing=west,half=lower,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left",
       "y": 180
     },
-    "facing=west,half=lower,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=west,half=upper,hinge=left,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_left_open",
       "y": 270
     },
-    "facing=west,half=upper,hinge=left,open=true,oxidation=unaffected,visible=true": {
+    "facing=west,half=lower,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_left_open",
       "y": 270
     },
-    "facing=west,half=lower,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=west,half=upper,hinge=left,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right",
       "y": 180
     },
-    "facing=west,half=upper,hinge=right,open=false,oxidation=unaffected,visible=true": {
+    "facing=west,half=lower,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right",
       "y": 180
     },
-    "facing=west,half=lower,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=west,half=upper,hinge=right,open=false,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_bottom_right_open",
       "y": 90
     },
-    "facing=west,half=upper,hinge=right,open=true,oxidation=unaffected,visible=true": {
+    "facing=west,half=lower,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_bottom_right_open_tapestry",
+      "y": 90
+    },
+    "facing=west,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/armored_copper_door_top_right_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=west,half=upper,hinge=right,open=true,oxidation=unaffected,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/armored_copper_door_top_right_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left"
     },
-    "facing=east,half=upper,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=east,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_tapestry"
+    },
+    "facing=east,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left"
     },
-    "facing=east,half=lower,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=east,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_tapestry"
+    },
+    "facing=east,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open",
       "y": 90
     },
-    "facing=east,half=upper,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=east,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=east,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right"
     },
-    "facing=east,half=upper,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=east,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_tapestry"
+    },
+    "facing=east,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right"
     },
-    "facing=east,half=lower,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=east,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_tapestry"
+    },
+    "facing=east,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open",
       "y": 270
     },
-    "facing=east,half=upper,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=east,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open_tapestry",
+      "y": 270
+    },
+    "facing=east,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=east,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left",
       "y": 270
     },
-    "facing=north,half=upper,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=north,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=north,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open"
     },
-    "facing=north,half=upper,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=north,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open_tapestry"
+    },
+    "facing=north,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open"
     },
-    "facing=north,half=lower,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=north,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open_tapestry"
+    },
+    "facing=north,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right",
       "y": 270
     },
-    "facing=north,half=upper,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=north,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right",
       "y": 270
     },
-    "facing=north,half=lower,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=north,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open",
       "y": 180
     },
-    "facing=north,half=upper,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=north,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open_tapestry",
+      "y": 180
+    },
+    "facing=north,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=north,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left",
       "y": 90
     },
-    "facing=south,half=upper,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=south,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left",
       "y": 90
     },
-    "facing=south,half=lower,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=south,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open",
       "y": 180
     },
-    "facing=south,half=upper,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=south,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=south,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right",
       "y": 90
     },
-    "facing=south,half=upper,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=south,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right",
       "y": 90
     },
-    "facing=south,half=lower,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=south,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open"
     },
-    "facing=south,half=upper,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=south,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open_tapestry"
+    },
+    "facing=south,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open"
     },
-    "facing=west,half=lower,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=south,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open_tapestry"
+    },
+    "facing=west,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left",
       "y": 180
     },
-    "facing=west,half=upper,hinge=left,open=false,oxidation=exposed,visible=true": {
+    "facing=west,half=lower,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left",
       "y": 180
     },
-    "facing=west,half=lower,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=west,half=upper,hinge=left,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open",
       "y": 270
     },
-    "facing=west,half=upper,hinge=left,open=true,oxidation=exposed,visible=true": {
+    "facing=west,half=lower,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open",
       "y": 270
     },
-    "facing=west,half=lower,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=west,half=upper,hinge=left,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right",
       "y": 180
     },
-    "facing=west,half=upper,hinge=right,open=false,oxidation=exposed,visible=true": {
+    "facing=west,half=lower,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right",
       "y": 180
     },
-    "facing=west,half=lower,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=west,half=upper,hinge=right,open=false,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open",
       "y": 90
     },
-    "facing=west,half=upper,hinge=right,open=true,oxidation=exposed,visible=true": {
+    "facing=west,half=lower,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_bottom_right_open_tapestry",
+      "y": 90
+    },
+    "facing=west,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=west,half=upper,hinge=right,open=true,oxidation=exposed,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/exposed_armored_copper_door_top_right_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left"
     },
-    "facing=east,half=upper,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=east,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_tapestry"
+    },
+    "facing=east,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left"
     },
-    "facing=east,half=lower,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=east,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_tapestry"
+    },
+    "facing=east,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open",
       "y": 90
     },
-    "facing=east,half=upper,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=east,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=east,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right"
     },
-    "facing=east,half=upper,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=east,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_tapestry"
+    },
+    "facing=east,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right"
     },
-    "facing=east,half=lower,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=east,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_tapestry"
+    },
+    "facing=east,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open",
       "y": 270
     },
-    "facing=east,half=upper,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=east,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open_tapestry",
+      "y": 270
+    },
+    "facing=east,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=east,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left",
       "y": 270
     },
-    "facing=north,half=upper,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=north,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=north,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open"
     },
-    "facing=north,half=upper,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=north,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open_tapestry"
+    },
+    "facing=north,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open"
     },
-    "facing=north,half=lower,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=north,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open_tapestry"
+    },
+    "facing=north,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right",
       "y": 270
     },
-    "facing=north,half=upper,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=north,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right",
       "y": 270
     },
-    "facing=north,half=lower,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=north,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open",
       "y": 180
     },
-    "facing=north,half=upper,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=north,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open_tapestry",
+      "y": 180
+    },
+    "facing=north,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=north,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left",
       "y": 90
     },
-    "facing=south,half=upper,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=south,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left",
       "y": 90
     },
-    "facing=south,half=lower,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=south,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open",
       "y": 180
     },
-    "facing=south,half=upper,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=south,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=south,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right",
       "y": 90
     },
-    "facing=south,half=upper,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=south,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right",
       "y": 90
     },
-    "facing=south,half=lower,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=south,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open"
     },
-    "facing=south,half=upper,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=south,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open_tapestry"
+    },
+    "facing=south,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open"
     },
-    "facing=west,half=lower,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=south,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open_tapestry"
+    },
+    "facing=west,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left",
       "y": 180
     },
-    "facing=west,half=upper,hinge=left,open=false,oxidation=weathered,visible=true": {
+    "facing=west,half=lower,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left",
       "y": 180
     },
-    "facing=west,half=lower,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=west,half=upper,hinge=left,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open",
       "y": 270
     },
-    "facing=west,half=upper,hinge=left,open=true,oxidation=weathered,visible=true": {
+    "facing=west,half=lower,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open",
       "y": 270
     },
-    "facing=west,half=lower,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=west,half=upper,hinge=left,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right",
       "y": 180
     },
-    "facing=west,half=upper,hinge=right,open=false,oxidation=weathered,visible=true": {
+    "facing=west,half=lower,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right",
       "y": 180
     },
-    "facing=west,half=lower,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=west,half=upper,hinge=right,open=false,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open",
       "y": 90
     },
-    "facing=west,half=upper,hinge=right,open=true,oxidation=weathered,visible=true": {
+    "facing=west,half=lower,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_bottom_right_open_tapestry",
+      "y": 90
+    },
+    "facing=west,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=west,half=upper,hinge=right,open=true,oxidation=weathered,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/weathered_armored_copper_door_top_right_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left"
     },
-    "facing=east,half=upper,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=east,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_tapestry"
+    },
+    "facing=east,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left"
     },
-    "facing=east,half=lower,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=east,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_tapestry"
+    },
+    "facing=east,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open",
       "y": 90
     },
-    "facing=east,half=upper,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=east,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open",
       "y": 90
     },
-    "facing=east,half=lower,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=east,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open_tapestry",
+      "y": 90
+    },
+    "facing=east,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right"
     },
-    "facing=east,half=upper,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=east,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_tapestry"
+    },
+    "facing=east,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right"
     },
-    "facing=east,half=lower,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=east,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_tapestry"
+    },
+    "facing=east,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open",
       "y": 270
     },
-    "facing=east,half=upper,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=east,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open_tapestry",
+      "y": 270
+    },
+    "facing=east,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=east,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left",
       "y": 270
     },
-    "facing=north,half=upper,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=north,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left",
       "y": 270
     },
-    "facing=north,half=lower,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=north,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open"
     },
-    "facing=north,half=upper,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=north,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open_tapestry"
+    },
+    "facing=north,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open"
     },
-    "facing=north,half=lower,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=north,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open_tapestry"
+    },
+    "facing=north,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right",
       "y": 270
     },
-    "facing=north,half=upper,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=north,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right",
       "y": 270
     },
-    "facing=north,half=lower,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=north,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_tapestry",
+      "y": 270
+    },
+    "facing=north,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open",
       "y": 180
     },
-    "facing=north,half=upper,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=north,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open_tapestry",
+      "y": 180
+    },
+    "facing=north,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=north,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left",
       "y": 90
     },
-    "facing=south,half=upper,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=south,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left",
       "y": 90
     },
-    "facing=south,half=lower,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=south,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open",
       "y": 180
     },
-    "facing=south,half=upper,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=south,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open",
       "y": 180
     },
-    "facing=south,half=lower,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=south,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open_tapestry",
+      "y": 180
+    },
+    "facing=south,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right",
       "y": 90
     },
-    "facing=south,half=upper,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=south,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right",
       "y": 90
     },
-    "facing=south,half=lower,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=south,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_tapestry",
+      "y": 90
+    },
+    "facing=south,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open"
     },
-    "facing=south,half=upper,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=south,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open_tapestry"
+    },
+    "facing=south,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open"
     },
-    "facing=west,half=lower,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=south,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open_tapestry"
+    },
+    "facing=west,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left",
       "y": 180
     },
-    "facing=west,half=upper,hinge=left,open=false,oxidation=oxidized,visible=true": {
+    "facing=west,half=lower,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left",
       "y": 180
     },
-    "facing=west,half=lower,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=west,half=upper,hinge=left,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open",
       "y": 270
     },
-    "facing=west,half=upper,hinge=left,open=true,oxidation=oxidized,visible=true": {
+    "facing=west,half=lower,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open",
       "y": 270
     },
-    "facing=west,half=lower,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=west,half=upper,hinge=left,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_left_open_tapestry",
+      "y": 270
+    },
+    "facing=west,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right",
       "y": 180
     },
-    "facing=west,half=upper,hinge=right,open=false,oxidation=oxidized,visible=true": {
+    "facing=west,half=lower,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right",
       "y": 180
     },
-    "facing=west,half=lower,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=west,half=upper,hinge=right,open=false,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_tapestry",
+      "y": 180
+    },
+    "facing=west,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open",
       "y": 90
     },
-    "facing=west,half=upper,hinge=right,open=true,oxidation=oxidized,visible=true": {
+    "facing=west,half=lower,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_bottom_right_open_tapestry",
+      "y": 90
+    },
+    "facing=west,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=false,visible=true": {
       "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open",
+      "y": 90
+    },
+    "facing=west,half=upper,hinge=right,open=true,oxidation=oxidized,tapestry=true,visible=true": {
+      "model": "create_locksmithing:block/oxidized_armored_copper_door_top_right_open_tapestry",
       "y": 90
     },
     "visible=false": {

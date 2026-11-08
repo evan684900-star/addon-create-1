@@ -288,7 +288,9 @@ def door_panel(px, region, seed):
         px[x, y] = rnd.choice(CHIP[:5])
 
 
-def door_half(pal, top):
+def door_half(pal, top, tapestry=False):
+    """Une moitié de porte. Avec tapestry=True, le bois devient transparent : la tapisserie posée sur la porte
+    est dessinée dans l'épaisseur de la porte et se voit à travers (le cuivre reste par-dessus)."""
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 255))
     px = img.load()
     door_panel(px, rect(0, 0, 15, 15), 21 if top else 22)
@@ -321,6 +323,11 @@ def door_half(pal, top):
         px[12, 1] = rgb("0e0e10")
         px[11, 2] = rgb("0e0e10")
         px[10, 1] = pal[4]
+    if tapestry:
+        wood = set(CHIP[:5]) | {WOOD[0]}
+        for (x, y) in rect(0, 0, 15, 15):
+            if px[x, y] in wood:
+                px[x, y] = (0, 0, 0, 0)
     return img
 
 
@@ -837,6 +844,8 @@ def main():
         prefix = f"{stage}_" if stage else ""
         save(door_half(pal, False), "block", f"{prefix}armored_copper_door_bottom.png")
         save(door_half(pal, True), "block", f"{prefix}armored_copper_door_top.png")
+        save(door_half(pal, False, True), "block", f"{prefix}armored_copper_door_bottom_tapestry.png")
+        save(door_half(pal, True, True), "block", f"{prefix}armored_copper_door_top_tapestry.png")
 
     # Four à moufle (par-dessus le boîtier en cuivre de Create)
     save(furnace_front_overlay(False), "block", "muffle_furnace_front.png")
