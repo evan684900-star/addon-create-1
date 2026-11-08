@@ -24,6 +24,7 @@ public class ModCreativeTabs {
 				output.accept(ModBlocks.MUFFLE_FURNACE);
 				output.accept(ModBlocks.CASTING_ANVIL);
 				output.accept(ModBlocks.KEY_CUTTER);
+				output.accept(ModBlocks.TAPESTRY);
 				output.accept(ModItems.PRESSED_PLANK);
 				output.accept(ModItems.COMPRESSED_WOOD);
 				output.accept(ModItems.IRON_BAR);

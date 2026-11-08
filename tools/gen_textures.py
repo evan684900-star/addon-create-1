@@ -485,6 +485,76 @@ def hub():
     return img
 
 
+
+# --------------------------------------------------------------------------------------------
+# Tapisserie en cuir
+# --------------------------------------------------------------------------------------------
+LEATHER = [rgb("3b2010"), rgb("5e3519"), rgb("7d4a24"), rgb("965c30"), rgb("b0763f"), rgb("c99257")]
+STITCH = rgb("d8b98a")
+DARK_WOOD = [rgb("2a1b0e"), rgb("3e2814"), rgb("54371c"), rgb("6b4826")]
+
+
+def leather_fill(px, x0, y0, x1, y1, seed):
+    """Grain du cuir : fond brun avec de petites marbrures."""
+    n1 = value_noise(seed, size=64, cells=8)
+    rnd = random.Random(seed)
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            v = n1(x % 64, y % 64)
+            idx = 2 + (1 if v > 0.55 else 0) + (1 if v > 0.75 else 0) - (1 if v < 0.25 else 0)
+            if rnd.random() < 0.06:
+                idx = max(1, idx - 1)
+            px[x, y] = LEATHER[idx]
+
+
+def stitches(px, x0, y0, x1, y1):
+    """Couture tout autour, un point sur deux, à 1 px du bord."""
+    for x in range(x0 + 1, x1):
+        if x % 2 == 0:
+            px[x, y0 + 1] = STITCH
+            px[x, y1 - 1] = STITCH
+    for y in range(y0 + 1, y1):
+        if y % 2 == 0:
+            px[x0 + 1, y] = STITCH
+            px[x1 - 1, y] = STITCH
+    for x in range(x0, x1 + 1):
+        px[x, y0] = LEATHER[0]
+        px[x, y1] = LEATHER[0]
+    for y in range(y0, y1 + 1):
+        px[x0, y] = LEATHER[0]
+        px[x1, y] = LEATHER[0]
+
+
+def tapestry_leather():
+    """Texture 64x64 au format de la bannière de Minecraft (cuir sur le drapeau, bois sur la barre)."""
+    img = Image.new("RGBA", (64, 64), T)
+    px = img.load()
+    # Drapeau 20x40x1 en (0,0) : dessus/dessous, côtés, face avant (1,1)-(20,40), face arrière (22,1)-(41,40)
+    leather_fill(px, 0, 0, 41, 40, 71)
+    stitches(px, 1, 1, 20, 40)
+    stitches(px, 22, 1, 41, 40)
+    # rangée d'œillets en haut (où le cuir est accroché)
+    for x in range(3, 20, 4):
+        px[x, 3] = DARK_WOOD[0]
+        px[x + 23 - 2, 3] = DARK_WOOD[0]
+    # Barre 20x2x2 en (0,42) : bois sombre avec des embouts en fer
+    for y in range(42, 46):
+        for x in range(0, 44):
+            px[x, y] = DARK_WOOD[1 + ((x * 3 + y) % 3 == 0)]
+    for x in range(0, 44):
+        px[x, 44] = DARK_WOOD[3]
+    for x in (2, 3, 20, 21, 24, 25, 42, 43):
+        for y in range(44, 46):
+            px[x, y] = IRON[2]
+    return img
+
+
+def tapestry_particle():
+    img = Image.new("RGBA", (16, 16), LEATHER[2])
+    px = img.load()
+    leather_fill(px, 0, 0, 15, 15, 72)
+    return img
+
 # --------------------------------------------------------------------------------------------
 # Fluides animés
 # --------------------------------------------------------------------------------------------
@@ -778,6 +848,10 @@ def main():
     save(mold_floor(), "block", "mold_floor.png")
     save(saw_disc(), "block", "key_cutter_saw.png")
     save(hub(), "block", "key_cutter_hub.png")
+
+    # Tapisserie
+    save(tapestry_leather(), "entity", "banner", "tapestry_leather.png")
+    save(tapestry_particle(), "block", "tapestry.png")
 
     # Fluides
     for name, ramp in MOLTEN.items():

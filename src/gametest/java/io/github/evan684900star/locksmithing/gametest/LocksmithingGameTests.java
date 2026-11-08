@@ -62,7 +62,7 @@ public class LocksmithingGameTests {
 			"The blank key should have exactly one key to cut");
 		for (String id : new String[] { "pressing/pressed_plank", "compacting/compressed_wood", "crafting/mold",
 			"crafting/casting_anvil", "crafting/saw_blade", "crafting/key_cutter", "crafting/blank_key",
-			"crafting/armored_copper_door", "crafting/muffle_furnace" })
+			"crafting/armored_copper_door", "crafting/muffle_furnace", "crafting/tapestry" })
 			helper.assertTrue(level.getRecipeManager().byKey(Locksmithing.asResource(id)).isPresent(), "Missing recipe " + id);
 		helper.succeed();
 	}
@@ -219,6 +219,22 @@ public class LocksmithingGameTests {
 		helper.succeed();
 	}
 
+	@GameTest(template = "empty", timeoutTicks = 100)
+	public static void doorSwingAnimationEnds(GameTestHelper helper) {
+		BlockPos lower = new BlockPos(2, 1, 2);
+		placeDoor(helper, lower);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		use(helper, player, lower, keyWithId(UUID.randomUUID()));
+		helper.assertTrue(isOpen(helper, lower), "The key should open the door");
+		helper.assertFalse(helper.getBlockState(lower).getValue(ArmoredDoorBlock.VISIBLE), "The door is animating");
+		helper.assertFalse(helper.getBlockState(lower.above()).getValue(ArmoredDoorBlock.VISIBLE), "Both halves animate");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(helper.getBlockState(lower).getValue(ArmoredDoorBlock.VISIBLE), "Lower half visible again");
+			helper.assertTrue(helper.getBlockState(lower.above()).getValue(ArmoredDoorBlock.VISIBLE), "Upper half visible again");
+			helper.assertTrue(isOpen(helper, lower), "Still open");
+		});
+	}
+
 	@GameTest(template = "empty")
 	public static void doorWaxAndOxidation(GameTestHelper helper) {
 		BlockPos lower = new BlockPos(2, 1, 2);
@@ -242,6 +258,31 @@ public class LocksmithingGameTests {
 		float perTick = ironAxe.getDestroySpeed(door) / hardness / 30f;
 		int ticks = (int) Math.ceil(1f / perTick);
 		helper.assertTrue(ticks == 840, "Expected 840 ticks (42 s) with an iron axe, got " + ticks);
+		helper.succeed();
+	}
+
+	@GameTest(template = "empty")
+	public static void tapestryWorksWithLoomAndKeepsPatterns(GameTestHelper helper) {
+		// Le métier à tisser accepte tout BannerItem
+		helper.assertTrue(ModBlocks.TAPESTRY.asStack().getItem() instanceof net.minecraft.world.item.BannerItem,
+			"The tapestry must be usable in a Loom");
+		BlockPos wall = new BlockPos(2, 1, 2);
+		BlockPos pos = wall.south();
+		helper.setBlock(wall, Blocks.STONE_BRICKS);
+		helper.setBlock(pos, ModBlocks.TAPESTRY.getDefaultState()
+			.setValue(net.minecraft.world.level.block.WallBannerBlock.FACING, Direction.SOUTH));
+		var registry = helper.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN);
+		var patterns = new net.minecraft.world.level.block.entity.BannerPatternLayers.Builder()
+			.add(registry.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.BORDER),
+				net.minecraft.world.item.DyeColor.RED)
+			.build();
+		ItemStack decorated = ModBlocks.TAPESTRY.asStack();
+		decorated.set(net.minecraft.core.component.DataComponents.BANNER_PATTERNS, patterns);
+		io.github.evan684900star.locksmithing.content.tapestry.TapestryBlockEntity be = helper.getBlockEntity(pos);
+		be.applyComponentsFromItemStack(decorated);
+		helper.assertTrue(be.getPatterns().equals(patterns), "The tapestry should take the item's patterns");
+		helper.assertTrue(patterns.equals(be.getItem().get(net.minecraft.core.component.DataComponents.BANNER_PATTERNS)),
+			"Picking or breaking it should give back the patterns");
 		helper.succeed();
 	}
 

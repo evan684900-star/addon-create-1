@@ -17,6 +17,8 @@
   "block.create_locksmithing.muffle_furnace.tooltip.behaviour1": "With _ingots_: loads them. With an empty _Bucket_: collects the molten metal.",
   "block.create_locksmithing.muffle_furnace.tooltip.condition1": "When R-Clicked",
   "block.create_locksmithing.muffle_furnace.tooltip.summary": "_Melts ingots_ into _molten metal_ when placed on a _lit Blaze Burner_.",
+  "block.create_locksmithing.tapestry": "Leather Tapestry",
+  "block.create_locksmithing.tapestry.tooltip.summary": "A _leather_ wall hanging. Decorate it in a _Loom_, just like a banner.",
   "create_locksmithing.gui.goggles.casting_anvil": "Casting Anvil:",
   "create_locksmithing.gui.goggles.heated": "Heated",
   "create_locksmithing.gui.goggles.muffle_furnace": "Muffle Furnace:",

@@ -20,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.WeatheringCopper.WeatherState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -38,6 +40,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
@@ -51,6 +54,8 @@ import net.neoforged.neoforge.common.ItemAbility;
 public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockEntity> {
 	public static final EnumProperty<WeatherState> OXIDATION = EnumProperty.create("oxidation", WeatherState.class);
 	public static final BooleanProperty WAXED = BooleanProperty.create("waxed");
+	/** Faux pendant l'animation d'ouverture/fermeture : le modèle fixe est caché, le rendu animé prend le relais. */
+	public static final BooleanProperty VISIBLE = BooleanProperty.create("visible");
 
 	public static final BlockSetType ARMORED_COPPER = BlockSetType.register(new BlockSetType(
 		"create_locksmithing:armored_copper", false, false, false, BlockSetType.PressurePlateSensitivity.MOBS,
@@ -66,7 +71,8 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 		super(ARMORED_COPPER, properties);
 		this.key = key;
 		registerDefaultState(defaultBlockState().setValue(OXIDATION, WeatherState.UNAFFECTED)
-			.setValue(WAXED, false));
+			.setValue(WAXED, false)
+			.setValue(VISIBLE, true));
 	}
 
 	@Override
@@ -83,14 +89,14 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);
-		builder.add(OXIDATION, WAXED);
+		builder.add(OXIDATION, WAXED, VISIBLE);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockState state = super.getStateForPlacement(context);
 		// Une porte blindée posée près de la redstone reste fermée.
-		return state == null ? null : state.setValue(OPEN, false).setValue(POWERED, false);
+		return state == null ? null : state.setValue(OPEN, false).setValue(POWERED, false).setValue(VISIBLE, true);
 	}
 
 	@Override
@@ -151,8 +157,40 @@ public class ArmoredDoorBlock extends DoorBlock implements IBE<ArmoredDoorBlockE
 
 		boolean opening = !isOpen(state);
 		level.playSound(null, pos, (opening ? ModSounds.DOOR_UNLOCK : ModSounds.DOOR_LOCK).get(), SoundSource.BLOCKS, 1f, 1f);
-		setOpen(player, level, state, pos, opening);
+		swing(player, level, state, pos, opening);
 		return ItemInteractionResult.CONSUME;
+	}
+
+	/* Animation */
+
+	/** Durée de l'ouverture / de la fermeture, en ticks (20 = 1 seconde). */
+	public static final int SWING_TICKS = 20;
+
+	@Override
+	public void setOpen(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean open) {
+		if (state.is(this) && state.getValue(OPEN) != open)
+			swing(entity, level, state, pos, open);
+	}
+
+	/** Ouvre ou ferme la porte avec l'animation : le modèle fixe revient quand la porte a fini de tourner. */
+	public void swing(@Nullable Entity entity, Level level, BlockState state, BlockPos pos, boolean open) {
+		if (state.getValue(OPEN) == open)
+			return;
+		level.setBlock(pos, state.setValue(OPEN, open).setValue(VISIBLE, false), 10);
+		level.playSound(null, pos, open ? type().doorOpen() : type().doorClose(), SoundSource.BLOCKS, 1f,
+			level.getRandom().nextFloat() * 0.1f + 0.9f);
+		level.gameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+		ArmoredDoorBlockEntity lock = getLock(level, pos, state);
+		if (lock != null)
+			lock.startSwing(level.getGameTime() + SWING_TICKS + 2);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <S extends BlockEntity> BlockEntityTicker<S> getTicker(Level level, BlockState state, BlockEntityType<S> type) {
+		if (level.isClientSide || type != getBlockEntityType())
+			return null;
+		return (lvl, pos, st, be) -> ((ArmoredDoorBlockEntity) be).serverTick();
 	}
 
 	/** La serrure est dans la moitié basse de la porte. */

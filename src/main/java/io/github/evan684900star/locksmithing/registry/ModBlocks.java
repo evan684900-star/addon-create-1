@@ -10,6 +10,8 @@ import io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlock;
 import io.github.evan684900star.locksmithing.content.door.ArmoredDoorItem;
 import io.github.evan684900star.locksmithing.content.furnace.MuffleFurnaceBlock;
 import io.github.evan684900star.locksmithing.content.keycutter.KeyCutterBlock;
+import io.github.evan684900star.locksmithing.content.tapestry.TapestryBlock;
+import io.github.evan684900star.locksmithing.content.tapestry.TapestryItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
@@ -64,6 +66,20 @@ public class ModBlocks {
 				.noOcclusion())
 			.onRegister(block -> BlockStressValues.IMPACTS.register(block, () -> 4.0))
 			.simpleItem()
+			.register();
+
+	/** Tapisserie en cuir : se pose au mur, se décore au métier à tisser comme une bannière. */
+	public static final BlockEntry<TapestryBlock> TAPESTRY =
+		REGISTRATE.block("tapestry", TapestryBlock::new)
+			.properties(p -> p.mapColor(MapColor.COLOR_BROWN)
+				.forceSolidOn()
+				.noCollission()
+				.strength(1f)
+				.sound(SoundType.WOOL)
+				.ignitedByLava())
+			.item(TapestryItem::new)
+			.properties(p -> p.stacksTo(16))
+			.build()
 			.register();
 
 	public static void register() {}

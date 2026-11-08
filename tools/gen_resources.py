@@ -245,12 +245,35 @@ def models():
         for (facing, hinge, opened), y in rot.items():
             for half, part in (("lower", "bottom"), ("upper", "top")):
                 model = ml(f"block/{prefix}armored_copper_door_{part}_{hinge}" + ("_open" if opened else ""))
-                key = f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},oxidation={oxidation}"
+                key = f"facing={facing},half={half},hinge={hinge},open={str(opened).lower()},oxidation={oxidation},visible=true"
                 v = {"model": model}
                 if y:
                     v["y"] = y
                 variants[key] = v
+    # Pendant l'animation d'ouverture, le modèle fixe est caché (le rendu animé dessine la porte)
+    variants["visible=false"] = {"model": ml("block/armored_door_hidden")}
+    write_json(os.path.join(m, "block", "armored_door_hidden.json"),
+               {"textures": {"particle": ml("block/armored_copper_door_bottom")}})
     write_json(os.path.join(bs, "armored_copper_door.json"), {"variants": variants})
+
+    # Tapisserie : rendu par le code (comme une bannière) ; le modèle sert aux particules et à l'icône dynamique
+    write_json(os.path.join(bs, "tapestry.json"), {"variants": {"": {"model": ml("block/tapestry")}}})
+    write_json(os.path.join(m, "block", "tapestry.json"), {"textures": {"particle": ml("block/tapestry")}})
+    write_json(os.path.join(m, "item", "tapestry.json"), {
+        "parent": "minecraft:builtin/entity",
+        "gui_light": "front",
+        "textures": {"particle": ml("block/tapestry")},
+        "display": {
+            "gui": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+            "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
+            "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+            "head": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+            "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [0, 2.5, 1], "scale": [0.5, 0.5, 0.5]},
+            "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [0, 2.5, 1], "scale": [0.5, 0.5, 0.5]},
+            "firstperson_righthand": {"rotation": [0, 70, 0], "translation": [1, 2, 0], "scale": [0.55, 0.55, 0.55]},
+            "firstperson_lefthand": {"rotation": [0, 70, 0], "translation": [1, 2, 0], "scale": [0.55, 0.55, 0.55]},
+        },
+    })
 
     # Objets "plats"
     flat = ["pressed_plank", "compressed_wood", "mold", "saw_blade", "blank_key", "copper_key", "armored_copper_door"]
@@ -368,6 +391,7 @@ def lang():
     add(f"block.{MOD}.muffle_furnace", "Muffle Furnace", "Four à moufle")
     add(f"block.{MOD}.casting_anvil", "Casting Anvil", "Enclume de moulage")
     add(f"block.{MOD}.key_cutter", "Key Cutter", "Machine à tailler les clés")
+    add(f"block.{MOD}.tapestry", "Leather Tapestry", "Tapisserie en cuir")
 
     # Objets
     add(f"item.{MOD}.pressed_plank", "Pressed Plank", "Planche pressée")
@@ -440,6 +464,9 @@ def lang():
         [(("When R-Clicked", "Clic droit"),
           ("Opens the _interface_ where you _choose_ which key to cut.",
            "Ouvre l'_interface_ où l'on _choisit_ la clé à tailler."))])
+    tip(f"block.{MOD}.tapestry",
+        ("A _leather_ wall hanging. Decorate it in a _Loom_, just like a banner.",
+         "Une tenture en _cuir_ à accrocher au mur. Se décore dans un _métier à tisser_, comme une bannière."), [])
     tip(f"item.{MOD}.copper_key",
         ("Opens _Armored Copper Doors_. Every cut key is _unique_.",
          "Ouvre les _portes en cuivre blindées_. Chaque clé taillée est _unique_."), [])
@@ -551,6 +578,7 @@ def recipes():
     shaped("blank_key", ["ABB"], {"A": alloy, "B": item(ml("iron_bar"))}, ml("blank_key"))
     shaped("armored_copper_door", ["BBB", "BCB", "BCB"],
            {"B": item(ml("copper_bar")), "C": item(ml("compressed_wood"))}, ml("armored_copper_door"))
+    shaped("tapestry", ["LLL", "LLL", "LLL"], {"L": item("minecraft:leather")}, ml("tapestry"))
     shaped("muffle_furnace", ["PPP", "PFP", "KKK"],
            {"P": iron_plate, "F": item("minecraft:furnace"), "K": item("minecraft:bricks")}, ml("muffle_furnace"))
 
@@ -568,6 +596,27 @@ def loot():
             }],
             "random_sequence": ml(f"blocks/{name}"),
         })
+    # Tapisserie : garde ses motifs et son nom, comme une bannière
+    write_json(os.path.join(lt, "tapestry.json"), {
+        "type": "minecraft:block",
+        "pools": [{
+            "rolls": 1.0,
+            "bonus_rolls": 0.0,
+            "entries": [{
+                "type": "minecraft:item",
+                "name": ml("tapestry"),
+                "functions": [{
+                    "function": "minecraft:copy_components",
+                    "source": "block_entity",
+                    "include": ["minecraft:custom_name", "minecraft:item_name", "minecraft:hide_additional_tooltip",
+                                "minecraft:banner_patterns", "minecraft:rarity"],
+                }],
+            }],
+            "conditions": [{"condition": "minecraft:survives_explosion"}],
+        }],
+        "random_sequence": ml("blocks/tapestry"),
+    })
+
     door = ml("armored_copper_door")
     write_json(os.path.join(lt, "armored_copper_door.json"), {
         "type": "minecraft:block",
@@ -719,7 +768,7 @@ def schematics():
     for pos in [(1, 1, 2), (1, 2, 2), (3, 1, 2), (3, 2, 2), (1, 3, 2), (2, 3, 2), (3, 3, 2)]:
         b[pos] = ("minecraft:stone_bricks", {})
     door = {"facing": "south", "hinge": "left", "open": "false", "powered": "false",
-            "oxidation": "unaffected", "waxed": "false"}
+            "oxidation": "unaffected", "waxed": "false", "visible": "true"}
     b[(2, 1, 2)] = (ml("armored_copper_door"), dict(door, half="lower"))
     b[(2, 2, 2)] = (ml("armored_copper_door"), dict(door, half="upper"))
     write_structure("armored_door", (5, 4, 5), b)

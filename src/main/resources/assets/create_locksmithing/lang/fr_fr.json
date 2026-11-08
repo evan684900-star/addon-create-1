@@ -17,6 +17,8 @@
   "block.create_locksmithing.muffle_furnace.tooltip.behaviour1": "Avec des _lingots_ : les charge. Avec un _seau vide_ : récupère le métal en fusion.",
   "block.create_locksmithing.muffle_furnace.tooltip.condition1": "Clic droit",
   "block.create_locksmithing.muffle_furnace.tooltip.summary": "_Fait fondre les lingots_ en _métal en fusion_ quand il est posé sur un _Brûleur à Blaze allumé_.",
+  "block.create_locksmithing.tapestry": "Tapisserie en cuir",
+  "block.create_locksmithing.tapestry.tooltip.summary": "Une tenture en _cuir_ à accrocher au mur. Se décore dans un _métier à tisser_, comme une bannière.",
   "create_locksmithing.gui.goggles.casting_anvil": "Enclume de moulage :",
   "create_locksmithing.gui.goggles.heated": "Chauffé",
   "create_locksmithing.gui.goggles.muffle_furnace": "Four à moufle :",

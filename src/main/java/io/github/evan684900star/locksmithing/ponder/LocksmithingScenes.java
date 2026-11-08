@@ -259,6 +259,13 @@ public class LocksmithingScenes {
 		scene.idle(60);
 	}
 
+	/** Ouvre/ferme la porte avec son animation (1 s), puis remet le modèle fixe. */
+	private static void swing(CreateSceneBuilder scene, Selection door, boolean open) {
+		scene.world().modifyBlocks(door, s -> s.setValue(DoorBlock.OPEN, open).setValue(ArmoredDoorBlock.VISIBLE, false), false);
+		scene.idle(ArmoredDoorBlock.SWING_TICKS + 2);
+		scene.world().modifyBlocks(door, s -> s.setValue(ArmoredDoorBlock.VISIBLE, true), false);
+	}
+
 	/* 5. Porte blindée */
 	public static void armoredDoor(SceneBuilder builder, SceneBuildingUtil util) {
 		CreateSceneBuilder scene = new CreateSceneBuilder(builder);
@@ -290,10 +297,10 @@ public class LocksmithingScenes {
 			.text("The first key used becomes its key");
 		scene.overlay().showControls(front, Pointing.RIGHT, 30).rightClick().withItem(key);
 		scene.idle(10);
-		scene.world().modifyBlocks(door, s -> s.setValue(DoorBlock.OPEN, true), false);
-		scene.idle(35);
-		scene.world().modifyBlocks(door, s -> s.setValue(DoorBlock.OPEN, false), false);
-		scene.idle(20);
+		swing(scene, door, true);
+		scene.idle(15);
+		swing(scene, door, false);
+		scene.idle(5);
 
 		scene.overlay().showText(50)
 			.pointAt(front)

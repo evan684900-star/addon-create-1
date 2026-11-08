@@ -124,6 +124,24 @@ public class ScreenshotTour {
 		});
 	}
 
+	/** Une tapisserie avec quelques motifs de bannière. */
+	private static ItemStack patterned(ServerLevel level, int variant) {
+		var patterns = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN);
+		var builder = new net.minecraft.world.level.block.entity.BannerPatternLayers.Builder();
+		if (variant == 0) {
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.BORDER), net.minecraft.world.item.DyeColor.YELLOW);
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.RHOMBUS_MIDDLE), net.minecraft.world.item.DyeColor.RED);
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.CIRCLE_MIDDLE), net.minecraft.world.item.DyeColor.YELLOW);
+		} else {
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.STRIPE_CENTER), net.minecraft.world.item.DyeColor.WHITE);
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.STRIPE_MIDDLE), net.minecraft.world.item.DyeColor.WHITE);
+			builder.add(patterns.getHolderOrThrow(net.minecraft.world.level.block.entity.BannerPatterns.CURLY_BORDER), net.minecraft.world.item.DyeColor.BLACK);
+		}
+		ItemStack stack = ModBlocks.TAPESTRY.asStack();
+		stack.set(net.minecraft.core.component.DataComponents.BANNER_PATTERNS, builder.build());
+		return stack;
+	}
+
 	private static void shot(Minecraft mc, String name) {
 		Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), msg -> {});
 	}
@@ -172,6 +190,19 @@ public class ScreenshotTour {
 			level.setBlock(p.east(5).above(), Blocks.STONE_BRICKS.defaultBlockState(), 2);
 			level.setBlock(p.east(10), Blocks.STONE_BRICKS.defaultBlockState(), 2);
 			level.setBlock(p.east(10).above(), Blocks.STONE_BRICKS.defaultBlockState(), 2);
+			// Mur de tapisseries
+			for (int x = 12; x <= 16; x++)
+				for (int y = 0; y <= 2; y++)
+					level.setBlock(p.offset(x, y, 0), Blocks.STONE_BRICKS.defaultBlockState(), 2);
+			ItemStack[] tapestries = { ModBlocks.TAPESTRY.asStack(), patterned(level, 0), patterned(level, 1) };
+			for (int i = 0; i < tapestries.length; i++) {
+				BlockPos t = p.offset(12 + i * 2, 2, 1);
+				level.setBlock(t, ModBlocks.TAPESTRY.getDefaultState()
+					.setValue(net.minecraft.world.level.block.WallBannerBlock.FACING, Direction.SOUTH), 2);
+				if (level.getBlockEntity(t) instanceof net.minecraft.world.level.block.entity.BlockEntity be)
+					be.applyComponentsFromItemStack(tapestries[i]);
+				level.sendBlockUpdated(t, level.getBlockState(t), level.getBlockState(t), 3);
+			}
 		})));
 		STEPS.add(new Step(80, () -> {
 			mc.options.hideGui = true;
@@ -188,6 +219,18 @@ public class ScreenshotTour {
 		STEPS.add(new Step(10, () -> shot(mc, "03_doors")));
 		STEPS.add(new Step(60, () -> teleport(mc, 6.5, -58.6, -2.5, 0f, 25f)));
 		STEPS.add(new Step(10, () -> shot(mc, "04_back")));
+		STEPS.add(new Step(60, () -> teleport(mc, 7.6, -59.0, 3.4, 160f, 12f)));
+		STEPS.add(new Step(1, () -> server(mc, level -> {
+			BlockPos door = BASE.east(6);
+			BlockState state = level.getBlockState(door);
+			if (state.getBlock() instanceof ArmoredDoorBlock block)
+				block.swing(null, level, state, door, true);
+		})));
+		STEPS.add(new Step(6, () -> shot(mc, "03c_door_swing_1")));
+		STEPS.add(new Step(5, () -> shot(mc, "03c_door_swing_2")));
+		STEPS.add(new Step(25, () -> shot(mc, "03c_door_swing_3")));
+		STEPS.add(new Step(60, () -> teleport(mc, 14.5, -59.0, 5.5, 180f, 8f)));
+		STEPS.add(new Step(10, () -> shot(mc, "03b_tapestries")));
 
 		if (Boolean.getBoolean("locksmithing.screenshots.quick")) {
 			STEPS.add(new Step(10, () -> mc.setScreen(null)));
@@ -222,12 +265,28 @@ public class ScreenshotTour {
 				ModItems.COPPER_BAR.asStack(), ModItems.ZINC_BAR.asStack(), ModItems.MOLD.asStack(),
 				ModItems.SAW_BLADE.asStack(), ModItems.BLANK_KEY.asStack(), ModItems.COPPER_KEY.asStack(),
 				new ItemStack(ModFluids.MOLTEN_IRON.get().getBucket()), new ItemStack(ModFluids.MOLTEN_GOLD.get().getBucket()),
-				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()) };
+				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()),
+				ModBlocks.TAPESTRY.asStack(), patterned(level, 0), patterned(level, 1) };
 			for (int i = 0; i < stacks.length; i++)
 				player.getInventory().setItem(9 + i, stacks[i]);
 		})));
 		STEPS.add(new Step(20, () -> mc.setScreen(new InventoryScreen(mc.player))));
 		STEPS.add(new Step(10, () -> shot(mc, "07_items")));
+
+		// Métier à tisser de Minecraft avec une tapisserie et un colorant
+		STEPS.add(new Step(30, () -> server(mc, level -> {
+			ServerPlayer player = level.getServer().getPlayerList().getPlayers().get(0);
+			BlockPos loom = BASE.offset(12, 0, 3);
+			level.setBlock(loom, Blocks.LOOM.defaultBlockState(), 2);
+			player.openMenu(Blocks.LOOM.defaultBlockState().getMenuProvider(level, loom));
+			if (player.containerMenu instanceof net.minecraft.world.inventory.LoomMenu menu) {
+				menu.getBannerSlot().set(ModBlocks.TAPESTRY.asStack());
+				menu.getDyeSlot().set(new ItemStack(Items.YELLOW_DYE));
+				menu.clickMenuButton(player, 3);
+			}
+		})));
+		STEPS.add(new Step(10, () -> shot(mc, "07a_loom")));
+		STEPS.add(new Step(10, () -> server(mc, level -> level.getServer().getPlayerList().getPlayers().get(0).closeContainer())));
 
 		// 3. JEI
 		STEPS.add(new Step(40, () -> {
