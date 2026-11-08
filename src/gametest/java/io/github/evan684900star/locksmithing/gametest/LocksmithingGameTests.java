@@ -266,6 +266,8 @@ public class LocksmithingGameTests {
 		// Le métier à tisser accepte tout BannerItem
 		helper.assertTrue(ModBlocks.TAPESTRY.asStack().getItem() instanceof net.minecraft.world.item.BannerItem,
 			"The tapestry must be usable in a Loom");
+		helper.assertTrue("block.create_locksmithing.tapestry".equals(ModBlocks.TAPESTRY.asStack().getDescriptionId()),
+			"The tapestry needs its own name");
 		BlockPos wall = new BlockPos(2, 1, 2);
 		BlockPos pos = wall.south();
 		helper.setBlock(wall, Blocks.STONE_BRICKS);
