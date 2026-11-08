@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Nécessaire pour publier le jar dans la page "Releases"
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,3 +37,17 @@ jobs:
           name: create_locksmithing
           path: build/libs/*.jar
           if-no-files-found: error
+
+      # Page de téléchargement simple (téléphone ou PC) : Releases > "dev"
+      # Remplacée à chaque push, le lien direct du jar reste le même.
+      - name: Mettre le jar en téléchargement (release dev)
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete dev --cleanup-tag --yes || true
+          gh release create dev build/libs/*.jar \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Create: Locksmithing (version de développement)" \
+            --notes "Dernière version compilée et testée automatiquement (commit $GITHUB_SHA). À mettre dans le dossier mods avec Create 6.0.10, NeoForge 1.21.1."

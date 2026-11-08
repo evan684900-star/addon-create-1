@@ -39,6 +39,14 @@ A B B              C C C                  P P P
 `A` alliage d'andésite · `P` plaque de fer · `B` bloc de fer (enclume, machine) / barre de fer (clé vierge) ·
 `M` moule · `S` lame de scie · `C` barre de cuivre · `W` bois compressé · `F` fourneau · `K` briques.
 
+## Télécharger
+
+Dernière version (compilée et testée automatiquement à chaque mise à jour) :
+**[create_locksmithing-1.21.1-0.1.0.jar](https://github.com/evan684900-star/addon-create-1/releases/download/dev/create_locksmithing-1.21.1-0.1.0.jar)**
+(page : [Releases › dev](https://github.com/evan684900-star/addon-create-1/releases/tag/dev)).
+
+À mettre dans le dossier `mods` avec **Create 6.0.10** sur **NeoForge 1.21.1**. JEI est facultatif.
+
 ## Compiler
 
 Il faut **Java 21**. Gradle est téléchargé tout seul par le wrapper.
