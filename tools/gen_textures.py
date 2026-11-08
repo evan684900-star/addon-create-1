@@ -66,7 +66,8 @@ MOLTEN = {
 }
 METALS = {"iron": IRON, "gold": GOLD, "copper": COPPER, "zinc": ZINC}
 # Métaux des portes et des clés, du minerai le plus courant au plus rare
-DOOR_METALS = {"copper": COPPER, "iron": IRON, "zinc": ZINC, "gold": GOLD}
+NETHERITE = [rgb("1d1719"), rgb("3a3134"), rgb("524749"), rgb("736669"), rgb("a3969a")]
+DOOR_METALS = {"copper": COPPER, "iron": IRON, "zinc": ZINC, "gold": GOLD, "netherite": NETHERITE}
 
 
 # --------------------------------------------------------------------------------------------

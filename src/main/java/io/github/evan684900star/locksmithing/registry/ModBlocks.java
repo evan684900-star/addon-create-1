@@ -27,10 +27,11 @@ public class ModBlocks {
 	public static final BlockEntry<ArmoredDoorBlock> ARMORED_IRON_DOOR = door(DoorMetal.IRON);
 	public static final BlockEntry<ArmoredDoorBlock> ARMORED_ZINC_DOOR = door(DoorMetal.ZINC);
 	public static final BlockEntry<ArmoredDoorBlock> ARMORED_GOLD_DOOR = door(DoorMetal.GOLD);
+	public static final BlockEntry<ArmoredDoorBlock> ARMORED_NETHERITE_DOOR = door(DoorMetal.NETHERITE);
 
 	@SuppressWarnings("unchecked")
 	public static final BlockEntry<ArmoredDoorBlock>[] ARMORED_DOORS = new BlockEntry[] {
-		ARMORED_COPPER_DOOR, ARMORED_IRON_DOOR, ARMORED_ZINC_DOOR, ARMORED_GOLD_DOOR };
+		ARMORED_COPPER_DOOR, ARMORED_IRON_DOOR, ARMORED_ZINC_DOOR, ARMORED_GOLD_DOOR, ARMORED_NETHERITE_DOOR };
 
 	private static BlockEntry<ArmoredDoorBlock> door(DoorMetal metal) {
 		return REGISTRATE.block("armored_" + metal.id() + "_door",
@@ -44,6 +45,7 @@ public class ModBlocks {
 				.dynamicShape()
 				.pushReaction(PushReaction.BLOCK))
 			.item(ArmoredDoorItem::new)
+			.properties(p -> metal.fireResistant() ? p.fireResistant() : p)
 			.build()
 			.register();
 	}

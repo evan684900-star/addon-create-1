@@ -238,8 +238,8 @@ public class ScreenshotTour {
 				if (level.getBlockEntity(door) instanceof io.github.evan684900star.locksmithing.content.door.ArmoredDoorBlockEntity be)
 					be.setTapestry(tapestries[i]);
 			}
-			// Portes en fer, zinc et or
-			for (int x = 25; x <= 31; x++)
+			// Portes en fer, zinc, or et netherite
+			for (int x = 25; x <= 33; x++)
 				for (int y = 0; y <= 2; y++)
 					if (y == 2 || x % 2 == 1)
 						level.setBlock(p.offset(x, y, 0), Blocks.STONE_BRICKS.defaultBlockState(), 2);
@@ -279,7 +279,7 @@ public class ScreenshotTour {
 		STEPS.add(new Step(10, () -> shot(mc, "03b_tapestries")));
 		STEPS.add(new Step(60, () -> teleport(mc, 17.6, -59.0, 3.2, 125f, 8f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03b2_tapestries_side")));
-		STEPS.add(new Step(60, () -> teleport(mc, 28.5, -59.0, 4.2, 180f, 6f)));
+		STEPS.add(new Step(60, () -> teleport(mc, 29.5, -59.0, 4.6, 180f, 6f)));
 		STEPS.add(new Step(10, () -> shot(mc, "03h_metal_doors")));
 		// Contour de la porte pendant l'ouverture (avec l'interface pour voir le contour)
 		STEPS.add(new Step(60, () -> {
@@ -362,7 +362,8 @@ public class ScreenshotTour {
 				ModItems.IRON_BAR.asStack(), ModItems.GOLD_BAR.asStack(), ModItems.COPPER_BAR.asStack(),
 				ModItems.ZINC_BAR.asStack(), ModItems.COPPER_BLANK_KEY.asStack(), ModItems.IRON_BLANK_KEY.asStack(),
 				ModItems.ZINC_BLANK_KEY.asStack(), ModItems.GOLD_BLANK_KEY.asStack(), ModItems.IRON_KEY.asStack(),
-				ModItems.ZINC_KEY.asStack(), ModItems.GOLD_KEY.asStack(),
+				ModItems.ZINC_KEY.asStack(), ModItems.GOLD_KEY.asStack(), ModBlocks.ARMORED_NETHERITE_DOOR.asStack(),
+				ModItems.NETHERITE_BLANK_KEY.asStack(), ModItems.NETHERITE_KEY.asStack(),
 				new ItemStack(ModFluids.MOLTEN_IRON.get().getBucket()), new ItemStack(ModFluids.MOLTEN_GOLD.get().getBucket()),
 				new ItemStack(ModFluids.MOLTEN_COPPER.get().getBucket()), new ItemStack(ModFluids.MOLTEN_ZINC.get().getBucket()) };
 			// Les 9 premiers dans la barre (pour les vues "en main"), le reste dans l'inventaire

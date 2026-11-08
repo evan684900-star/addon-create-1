@@ -21,8 +21,12 @@ DATA = os.path.join(ROOT, "data")
 METALS = ["iron", "gold", "copper", "zinc"]
 STAGES = ["", "exposed", "weathered", "oxidized"]
 # Métaux des portes et des clés (du minerai le plus courant au plus rare) : temps de casse à la hache en fer
-DOOR_METALS = {"copper": 42, "iron": 56, "zinc": 70, "gold": 84}
-DOOR_NAMES = {"copper": ("Copper", "cuivre"), "iron": ("Iron", "fer"), "zinc": ("Zinc", "zinc"), "gold": ("Gold", "or")}
+DOOR_METALS = {"copper": 42, "iron": 56, "zinc": 70, "gold": 84, "netherite": 120}
+DOOR_NAMES = {"copper": ("Copper", "cuivre"), "iron": ("Iron", "fer"), "zinc": ("Zinc", "zinc"), "gold": ("Gold", "or"),
+              "netherite": ("Netherite", "netherite")}
+# La netherite ne se coule pas en barres : porte et clé vierge s'améliorent à la table de forgeron (comme dans
+# Minecraft), et il faut une hache en diamant pour la casser.
+DIAMOND_DOORS = ["netherite"]
 FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
 
 
@@ -482,7 +486,8 @@ def lang():
                         ("oxidized", "Oxidized", "Oxydée")]:
         add(f"item.{MOD}.armored_door.oxidation.{stage}", e, f)
     add(f"item.{MOD}.armored_door.waxed", "Waxed", "Cirée")
-    add(f"item.{MOD}.armored_door.break_time", "%s s to break with an Iron Axe", "%s s pour la casser à la hache en fer")
+    add(f"item.{MOD}.armored_door.break_time", "%2$s: %1$s s to break", "%2$s : %1$s s pour la casser")
+    add(f"item.{MOD}.armored_door.fire_resistant", "Does not burn", "Ne brûle pas")
     add(f"message.{MOD}.door.need_key", "This door is locked: it needs a key",
         "Cette porte est verrouillée : il faut une clé")
     add(f"message.{MOD}.door.wrong_key_type", "This key does not fit this kind of door",
@@ -520,6 +525,12 @@ def lang():
                 (("Over time", "Avec le temps"),
                  ("_Oxidizes_ like copper. Use a _Honeycomb_ to keep its look, an _Axe_ to scrape it.",
                   "_S'oxyde_ comme le cuivre. Un _rayon de miel_ garde son apparence, une _hache_ la gratte.")))
+        if metal == "netherite":
+            behaviours.append(
+                (("Making it", "Fabrication"),
+                 ("Upgrade an _Armored Gold Door_ at a _Smithing Table_. Needs a _Diamond Axe_ to break. Does not burn.",
+                  "S'améliore à partir d'une _porte en or blindée_ à la _table de forgeron_. Il faut une _hache en "
+                  "diamant_ pour la casser. Ne brûle pas.")))
         behaviours.append(
             (("When R-Clicked with a Tapestry", "Clic droit avec une tapisserie"),
              ("The _tapestry_ replaces the _wood_, on both sides. _Shears_ take it back.",
@@ -559,9 +570,13 @@ def lang():
         tip(f"item.{MOD}.{metal}_key",
             (f"Opens _Armored {e} Doors_. Every cut key is _unique_.",
              f"Ouvre les _portes en {fr_name} blindées_. Chaque clé taillée est _unique_."), [])
+        made = [] if metal != "netherite" else [
+            (("Making it", "Fabrication"),
+             ("Upgrade a _Blank Gold Key_ at a _Smithing Table_.",
+              "S'améliore à partir d'une _clé vierge en or_ à la _table de forgeron_."))]
         tip(f"item.{MOD}.{metal}_blank_key",
             (f"Cut it in a _Key Cutter_ to get a _{e} Key_.",
-             f"À tailler dans une _machine à tailler les clés_ pour obtenir une _clé en {fr_name}_."), [])
+             f"À tailler dans une _machine à tailler les clés_ pour obtenir une _clé en {fr_name}_."), made)
 
     # Sous-titres des sons
     for event, (_, sub_en, sub_fr) in SOUNDS.items():
@@ -576,10 +591,10 @@ def lang():
     add(f"jei.{MOD}.seconds", "%s s", "%s s")
     add(f"jei.{MOD}.info.armored_door",
         "Opens only with a cut key of its metal. The first key used on the door becomes its only key; breaking the door "
-        "resets the lock. Takes %s seconds to break with an Iron Axe (the rarer the metal, the longer). "
+        "resets the lock. Needs at least: %2$s, which takes %1$s seconds (the rarer the metal, the longer). "
         "Right-click it with a Tapestry to replace its wood; Shears take the tapestry back.",
         "S'ouvre seulement avec une clé taillée de son métal. La première clé utilisée devient sa seule clé ; casser la "
-        "porte remet la serrure à zéro. %s secondes pour la casser à la hache en fer (plus le métal est rare, plus c'est "
+        "porte remet la serrure à zéro. Il faut au moins : %2$s, et %1$s secondes (plus le métal est rare, plus c'est "
         "long). Clic droit avec une tapisserie pour remplacer son bois ; des cisailles reprennent la tapisserie.")
     add(f"jei.{MOD}.info.armored_door.oxidizes",
         "Oxidizes like copper: wax it with a Honeycomb.",
@@ -672,9 +687,20 @@ def recipes():
            ml("key_cutter"))
     # Clé vierge et porte de chaque métal, avec les barres coulées dans l'enclume de moulage
     for metal in DOOR_METALS:
+        if metal == "netherite":
+            continue
         shaped(f"{metal}_blank_key", ["ABB"], {"A": alloy, "B": item(ml(f"{metal}_bar"))}, ml(f"{metal}_blank_key"))
         shaped(f"armored_{metal}_door", ["BBB", "BCB", "BCB"],
                {"B": item(ml(f"{metal}_bar")), "C": item(ml("compressed_wood"))}, ml(f"armored_{metal}_door"))
+    # Netherite : à la table de forgeron, à partir de la version en or (comme l'équipement de Minecraft)
+    for name, base in (("armored_netherite_door", "armored_gold_door"), ("netherite_blank_key", "gold_blank_key")):
+        write_json(os.path.join(r, "smithing", f"{name}.json"), {
+            "type": "minecraft:smithing_transform",
+            "template": item("minecraft:netherite_upgrade_smithing_template"),
+            "base": item(ml(base)),
+            "addition": item("minecraft:netherite_ingot"),
+            "result": {"id": ml(name), "count": 1},
+        })
     shaped("tapestry", ["LLL", "LLL", "LLL"], {"L": item("minecraft:leather")}, ml("tapestry"))
     shaped("muffle_furnace", ["PPP", "PFP", "KKK"],
            {"P": iron_plate, "F": item("minecraft:furnace"), "K": item("minecraft:bricks")}, ml("muffle_furnace"))
@@ -752,7 +778,10 @@ def tags():
     t = lambda *p: os.path.join(DATA, *p)
     write_json(t("minecraft", "tags", "block", "mineable", "axe.json"), {"values": door})
     write_json(t("minecraft", "tags", "block", "mineable", "pickaxe.json"), {"values": machines})
-    write_json(t("minecraft", "tags", "block", "needs_iron_tool.json"), {"values": door})
+    write_json(t("minecraft", "tags", "block", "needs_iron_tool.json"),
+               {"values": [ml(f"armored_{metal}_door") for metal in DOOR_METALS if metal not in DIAMOND_DOORS]})
+    write_json(t("minecraft", "tags", "block", "needs_diamond_tool.json"),
+               {"values": [ml(f"armored_{metal}_door") for metal in DIAMOND_DOORS]})
     write_json(t("minecraft", "tags", "block", "doors.json"), {"values": door})
     write_json(t("minecraft", "tags", "item", "doors.json"), {"values": door})
     # Une contraption de Create ne doit pas pouvoir emporter une porte verrouillée

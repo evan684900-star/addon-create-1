@@ -66,7 +66,8 @@ public class LocksmithingJeiPlugin implements IModPlugin {
 
 		for (var door : ModBlocks.ARMORED_DOORS) {
 			var metal = door.get().getMetal();
-			Component info = Component.translatable("jei.create_locksmithing.info.armored_door", metal.breakSeconds());
+			Component info = Component.translatable("jei.create_locksmithing.info.armored_door", metal.breakSeconds(),
+				Component.translatable(metal.minimumAxe().getDescriptionId()));
 			if (metal.oxidizes())
 				registration.addItemStackInfo(door.asStack(), info,
 					Component.translatable("jei.create_locksmithing.info.armored_door.oxidizes"));

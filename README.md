@@ -14,8 +14,8 @@ et toute la chaîne pour les fabriquer (bois compressé, métal en fusion, moule
 | **Enclume de moulage** | L'enclume de Minecraft avec un **moule incrusté** au milieu. Clic droit = interface : seau de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
 | **Barres** de fer, or, cuivre, zinc | Sortent de l'enclume de moulage. |
 | **Machine à tailler les clés** | L'enclume de Minecraft avec une **lame de scie sur le dessus**. A besoin de **rotation** (l'axe traverse le pied). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
-| **Clés vierges et clés** en cuivre, fer, zinc, or | La clé vierge de chaque métal se fait avec ses **barres** ; la machine la taille en clé de ce métal. Une clé n'ouvre que les portes de **son métal**. |
-| **Portes blindées** en cuivre, fer, zinc, or | Ne s'ouvrent ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. Il faut au moins une **hache en fer**, et plus le minerai est rare, plus c'est long : **cuivre 42 s, fer 56 s, zinc 70 s, or 84 s** (plus rapide avec une meilleure hache/Efficacité). Résistent aux explosions. S'ouvrent avec une **animation** (elles pivotent sur leurs gonds en 1 s) et leur **contour/collision suit le mouvement**. Le cuivre s'oxyde : **rayon de miel** pour le cirer, **hache** pour gratter. Clic droit avec une **tapisserie** : elle remplace le bois de la porte (des deux côtés, avec ses motifs) ; des **cisailles** la reprennent, et elle revient aussi quand on casse la porte. |
+| **Clés vierges et clés** en cuivre, fer, zinc, or, netherite | La clé vierge de chaque métal se fait avec ses **barres** (netherite : clé vierge en or améliorée à la **table de forgeron**) ; la machine la taille en clé de ce métal. Une clé n'ouvre que les portes de **son métal**. |
+| **Portes blindées** en cuivre, fer, zinc, or, netherite | Ne s'ouvrent ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. Il faut au moins une **hache en fer**, et plus le minerai est rare, plus c'est long : **cuivre 42 s, fer 56 s, zinc 70 s, or 84 s** (plus rapide avec une meilleure hache/Efficacité). **Netherite** : porte en or améliorée à la **table de forgeron** (modèle d'amélioration + lingot de netherite), il faut une **hache en diamant** et **2 min** ; la porte et ses clés ne brûlent pas. Résistent aux explosions. S'ouvrent avec une **animation** (elles pivotent sur leurs gonds en 1 s) et leur **contour/collision suit le mouvement**. Le cuivre s'oxyde : **rayon de miel** pour le cirer, **hache** pour gratter. Clic droit avec une **tapisserie** : elle remplace le bois de la porte (des deux côtés, avec ses motifs) ; des **cisailles** la reprennent, et elle revient aussi quand on casse la porte. |
 | **Tapisserie en cuir** | Se colle **à plat sur un mur**, comme du **papier peint** : 1 bloc de large, 2 de haut, à partir du bloc visé vers le haut. Côte à côte, elles tapissent un mur. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. Se pose aussi **sur une porte blindée** à la place du bois. |
 
 Chaque machine a un **tuto Ponder** (touche **W** au-dessus de l'objet), en français et en anglais.
@@ -40,6 +40,9 @@ A X X              X X X                  P P P                  L L L
 ```
 `A` alliage d'andésite · `P` plaque de fer · `B` bloc de fer · `M` moule · `S` lame de scie ·
 `X` barre du métal de la clé/porte (cuivre, fer, zinc ou or) · `W` bois compressé · `F` fourneau · `K` briques · `L` cuir.
+
+Netherite, à la **table de forgeron** : modèle d'amélioration en netherite + porte en or blindée (ou clé vierge en or)
++ lingot de netherite.
 
 ## Télécharger
 

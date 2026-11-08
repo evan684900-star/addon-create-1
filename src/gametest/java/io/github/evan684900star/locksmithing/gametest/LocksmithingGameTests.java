@@ -66,7 +66,9 @@ public class LocksmithingGameTests {
 			var cuts = ModRecipeTypes.findKeyCutting(level, ModItems.blankKeyFor(metal).asStack());
 			helper.assertTrue(cuts.size() == 1 && cuts.get(0).value().result().is(ModItems.keyFor(metal).get()),
 				"The blank " + metal.id() + " key should cut into a " + metal.id() + " key");
-			for (String id : new String[] { "crafting/" + metal.id() + "_blank_key", "crafting/armored_" + metal.id() + "_door" })
+			// La netherite s'améliore à la table de forgeron, les autres se font avec leurs barres
+			String kind = metal == DoorMetal.NETHERITE ? "smithing/" : "crafting/";
+			for (String id : new String[] { kind + metal.id() + "_blank_key", kind + "armored_" + metal.id() + "_door" })
 				helper.assertTrue(level.getRecipeManager().byKey(Locksmithing.asResource(id)).isPresent(), "Missing recipe " + id);
 		}
 		for (String id : new String[] { "pressing/pressed_plank", "compacting/compressed_wood", "crafting/mold",
@@ -258,19 +260,26 @@ public class LocksmithingGameTests {
 
 	@GameTest(template = "empty")
 	public static void doorBreakTimeDependsOnMetal(GameTestHelper helper) {
-		int[] expected = { 42, 56, 70, 84 };
+		// Cuivre, fer, zinc, or à la hache en fer ; netherite à la hache en diamant (la hache en fer ne suffit pas)
+		int[] expected = { 42, 56, 70, 84, 120 };
 		for (int i = 0; i < ModBlocks.ARMORED_DOORS.length; i++) {
 			BlockState door = ModBlocks.ARMORED_DOORS[i].getDefaultState();
+			DoorMetal metal = ModBlocks.ARMORED_DOORS[i].get().getMetal();
 			float hardness = door.getDestroySpeed(helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
-			ItemStack ironAxe = new ItemStack(Items.IRON_AXE);
-			helper.assertTrue(ironAxe.isCorrectToolForDrops(door), "An iron axe should harvest " + door);
+			ItemStack axe = new ItemStack(metal.minimumAxe());
+			helper.assertTrue(axe.isCorrectToolForDrops(door), axe + " should harvest " + door);
 			helper.assertFalse(new ItemStack(Items.STONE_AXE).isCorrectToolForDrops(door), "A stone axe must not harvest it");
 			helper.assertFalse(new ItemStack(Items.DIAMOND_PICKAXE).isCorrectToolForDrops(door), "It is mined with an axe");
-			float perTick = ironAxe.getDestroySpeed(door) / hardness / 30f;
-			int ticks = (int) Math.ceil(1f / perTick);
+			if (metal.needsDiamond())
+				helper.assertFalse(new ItemStack(Items.IRON_AXE).isCorrectToolForDrops(door), "An iron axe is not enough");
+			float perTick = axe.getDestroySpeed(door) / hardness / 30f;
+			int ticks = Math.round(1f / perTick);
 			helper.assertTrue(ticks == expected[i] * 20,
-				"Expected " + expected[i] + " s with an iron axe for " + door.getBlock() + ", got " + ticks + " ticks");
+				"Expected " + expected[i] + " s with " + axe + " for " + door.getBlock() + ", got " + ticks + " ticks");
 		}
+		helper.assertTrue(ModBlocks.ARMORED_NETHERITE_DOOR.asStack().has(net.minecraft.core.component.DataComponents.FIRE_RESISTANT)
+			&& ModItems.NETHERITE_KEY.asStack().has(net.minecraft.core.component.DataComponents.FIRE_RESISTANT),
+			"Netherite door and key must not burn");
 		helper.succeed();
 	}
 

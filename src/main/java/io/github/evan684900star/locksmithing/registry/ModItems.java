@@ -28,19 +28,24 @@ public class ModItems {
 	public static final ItemEntry<Item> IRON_BLANK_KEY = blankKey(DoorMetal.IRON);
 	public static final ItemEntry<Item> ZINC_BLANK_KEY = blankKey(DoorMetal.ZINC);
 	public static final ItemEntry<Item> GOLD_BLANK_KEY = blankKey(DoorMetal.GOLD);
+	public static final ItemEntry<Item> NETHERITE_BLANK_KEY = blankKey(DoorMetal.NETHERITE);
 
 	public static final ItemEntry<KeyItem> COPPER_KEY = key(DoorMetal.COPPER);
 	public static final ItemEntry<KeyItem> IRON_KEY = key(DoorMetal.IRON);
 	public static final ItemEntry<KeyItem> ZINC_KEY = key(DoorMetal.ZINC);
 	public static final ItemEntry<KeyItem> GOLD_KEY = key(DoorMetal.GOLD);
+	public static final ItemEntry<KeyItem> NETHERITE_KEY = key(DoorMetal.NETHERITE);
 
 	private static ItemEntry<Item> blankKey(DoorMetal metal) {
-		return REGISTRATE.item(metal.id() + "_blank_key", Item::new).register();
+		return REGISTRATE.item(metal.id() + "_blank_key", Item::new)
+			.properties(p -> metal.fireResistant() ? p.fireResistant() : p)
+			.register();
 	}
 
 	private static ItemEntry<KeyItem> key(DoorMetal metal) {
 		return REGISTRATE.item(metal.id() + "_key", KeyItem::new)
 			.properties(p -> p.stacksTo(1))
+			.properties(p -> metal.fireResistant() ? p.fireResistant() : p)
 			.register();
 	}
 
@@ -51,6 +56,7 @@ public class ModItems {
 			case IRON -> IRON_BLANK_KEY;
 			case ZINC -> ZINC_BLANK_KEY;
 			case GOLD -> GOLD_BLANK_KEY;
+			case NETHERITE -> NETHERITE_BLANK_KEY;
 		};
 	}
 
@@ -61,6 +67,7 @@ public class ModItems {
 			case IRON -> IRON_KEY;
 			case ZINC -> ZINC_KEY;
 			case GOLD -> GOLD_KEY;
+			case NETHERITE -> NETHERITE_KEY;
 		};
 	}
 
