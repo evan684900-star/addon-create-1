@@ -14,7 +14,8 @@ et toute la chaîne pour les fabriquer (bois compressé, métal en fusion, moule
 | **Enclume de moulage** | L'enclume de Minecraft avec un **moule incrusté** au milieu. Clic droit = interface : seau de métal en fusion à gauche, flèche de progression, **barre** à droite (90 mB par barre). Remplissable par tuyau, barres récupérables par entonnoir. |
 | **Barres** de fer, or, cuivre, zinc | Sortent de l'enclume de moulage. |
 | **Machine à tailler les clés** | L'enclume de Minecraft avec une **lame de scie sur le dessus**. A besoin de **rotation** (l'axe traverse le pied). Clic droit = interface : clé vierge à gauche, choix de la clé à tailler, clé taillée à droite. Chaque clé taillée est **unique**. |
-| **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. |
+| **Porte en cuivre blindée** | Ne s'ouvre ni à la main, ni à la redstone : **la première clé utilisée dessus devient sa seule clé**. Casser la porte remet la serrure à zéro. **42 s à la hache en fer** (minimum pour la récupérer), plus rapide avec une meilleure hache/Efficacité. Résiste aux explosions. S'oxyde comme le cuivre, **rayon de miel** pour la cirer, **hache** pour gratter. S'ouvre avec une **animation** : elle pivote sur ses gonds en 1 s. |
+| **Tapisserie en cuir** | Se pose au mur comme une bannière murale. Se décore dans le **métier à tisser** de Minecraft (motifs et couleurs de bannière). Garde ses motifs quand on la casse ; l'icône montre les motifs. |
 
 Chaque machine a un **tuto Ponder** (touche **W** au-dessus de l'objet), en français et en anglais.
 
@@ -31,13 +32,13 @@ A . A              B M B                  . A .                S B B
 A P A              . B .                  A A A                . B .
                    P P P                  . A .                P P P
 
-Clé vierge         Porte blindée          Four à moufle
-A B B              C C C                  P P P
-                   C W C                  P F P
-                   C W C                  K K K
+Clé vierge         Porte blindée          Four à moufle          Tapisserie
+A B B              C C C                  P P P                  L L L
+                   C W C                  P F P                  L L L
+                   C W C                  K K K                  L L L
 ```
 `A` alliage d'andésite · `P` plaque de fer · `B` bloc de fer (enclume, machine) / barre de fer (clé vierge) ·
-`M` moule · `S` lame de scie · `C` barre de cuivre · `W` bois compressé · `F` fourneau · `K` briques.
+`M` moule · `S` lame de scie · `C` barre de cuivre · `W` bois compressé · `F` fourneau · `K` briques · `L` cuir.
 
 ## Télécharger
 

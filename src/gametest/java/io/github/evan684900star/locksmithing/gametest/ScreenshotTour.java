@@ -276,7 +276,7 @@ public class ScreenshotTour {
 		// Métier à tisser de Minecraft avec une tapisserie et un colorant
 		STEPS.add(new Step(30, () -> server(mc, level -> {
 			ServerPlayer player = level.getServer().getPlayerList().getPlayers().get(0);
-			BlockPos loom = BASE.offset(12, 0, 3);
+			BlockPos loom = BASE.offset(2, 0, 4);
 			level.setBlock(loom, Blocks.LOOM.defaultBlockState(), 2);
 			player.openMenu(Blocks.LOOM.defaultBlockState().getMenuProvider(level, loom));
 			if (player.containerMenu instanceof net.minecraft.world.inventory.LoomMenu menu) {
